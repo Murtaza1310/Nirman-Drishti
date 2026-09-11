@@ -1,0 +1,97 @@
+{
+  "total_records": 19898,
+  "train_samples": 15918,
+  "test_samples": 3980,
+  "model_1_risk_classifier": {
+    "algorithm": "XGBoost Classifier",
+    "accuracy": 0.9445,
+    "macro_f1": 0.9365,
+    "confusion_matrix": [
+      [
+        1934,
+        54,
+        2
+      ],
+      [
+        100,
+        776,
+        10
+      ],
+      [
+        11,
+        44,
+        1049
+      ]
+    ],
+    "classes": [
+      "Low",
+      "Medium",
+      "High"
+    ]
+  },
+  "model_2_delay_regressor": {
+    "algorithm": "XGBoost Regressor",
+    "r2_score": 0.9627,
+    "rmse_months": 5.69,
+    "mae_months": 3.52,
+    "rmse_days": 173,
+    "mae_days": 107
+  },
+  "model_3_root_cause_classifier": {
+    "algorithm": "Random Forest Classifier (Balanced)",
+    "accuracy": 0.8595,
+    "macro_f1": 0.7256,
+    "classes": [
+      "Administrative & Inter-Agency Coordination",
+      "Contractor / Vendor Non-Performance",
+      "Forest & Environmental Clearances",
+      "Fund Constraint & Financial Stress",
+      "Land Acquisition & Right of Way",
+      "Legal Disputes & Local Agitations",
+      "On Schedule",
+      "Scope & Engineering Design Modifications"
+    ]
+  },
+  "top_10_features": [
+    {
+      "feature": "cost_escalation_ratio",
+      "importance": 0.21412251889705658
+    },
+    {
+      "feature": "cost_overrun_pct",
+      "importance": 0.14580793678760529
+    },
+    {
+      "feature": "expenditure_burn_ratio",
+      "importance": 0.03546755388379097
+    },
+    {
+      "feature": "report_year",
+      "importance": 0.030314357951283455
+    },
+    {
+      "feature": "state_Odisha",
+      "importance": 0.028481710702180862
+    },
+    {
+      "feature": "sector_Road Transport & Highways",
+      "importance": 0.026890583336353302
+    },
+    {
+      "feature": "fund_drain_anomaly_flag",
+      "importance": 0.026169508695602417
+    },
+    {
+      "feature": "financial_progress_pct",
+      "importance": 0.025550037622451782
+    },
+    {
+      "feature": "planned_duration_months",
+      "importance": 0.025383301079273224
+    },
+    {
+      "feature": "state_Assam",
+      "importance": 0.024257367476820946
+    }
+  ]
+}
