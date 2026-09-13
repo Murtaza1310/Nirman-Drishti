@@ -1,186 +1,268 @@
-﻿"""
-SIH Problem Statement 26103 (MoSPI - IPMD)
-Prescriptive Decision-Support Engine & Multi-Level Escalation Matrix
+"""
+SIH 2026 - Problem Statement 26103 (MoSPI)
+Integrated Project-Monitoring Platform: Prescriptive Decision Engine
+---------------------------------------------------------------------
+Transforms predictive outputs (Predicted Delay, Risk Level, Root Cause, S-Curve Gap)
+into actionable administrative directives, statutory SOP workflows, multi-level
+escalation triggers, and quantitative "What-If" scenario simulations.
 """
 
-from typing import Dict, Any, List
+import json
+from dataclasses import dataclass
+from typing import List, Dict, Any, Optional
 
-# -------------------------------------------------------------------------
-# SOP Knowledge Base mapped to Government of India Regulatory Frameworks
-# (PM GatiShakti, RFCTLARR Act 2013, PARIVESH 2.0, CVC Procurement Manual)
-# -------------------------------------------------------------------------
-MITIGATION_PROTOCOLS = {
+@dataclass
+class ProjectPrediction:
+    project_code: str
+    project_name: str
+    agency: str
+    original_cost_cr: float
+    anticipated_cost_cr: float
+    predicted_delay_months: float
+    predicted_risk_level: str  # 'Low', 'Medium', 'High'
+    root_cause: str
+    financial_vs_physical_gap: float  # expenditure % - physical progress %
+
+# Statutory SOP Playbook mapped to Government of India Regulatory Frameworks
+SOP_ACTION_PLAYBOOK = {
     "Land Acquisition & Right of Way": {
-        "regulatory_framework": "RFCTLARR Act 2013 & National PM GatiShakti RoW Rules",
+        "framework": "RFCTLARR Act 2013 (Right to Fair Compensation in Land Acquisition) & State Direct Purchase Rules",
         "immediate_actions": [
-            "Trigger Section 19 declaration under RFCTLARR Act 2013 for expedited possession.",
-            "Integrate parcel cadastral data onto PM GatiShakti NMP (National Master Plan) portal for GIS overlay.",
-            "Convene emergency District Level Land Purchase Committee (DLLPC) meeting under District Collector.",
-            "Fast-track compensation disbursement via Direct Benefit Transfer (DBT) / Bhoomi Rashi portal to eliminate court injunctions."
+            "Trigger District Level Land Purchase Committee (DLLPC) for direct private negotiation to bypass prolonged compulsory acquisition.",
+            "Verify publication status of Section 11 (preliminary notification) and Section 19 (declaration of public purpose) under RFCTLARR Act.",
+            "Establish dedicated land escrow account and deposit 100% compensation + 100% solatium for immediate land handover."
         ],
-        "statutory_timeline_days": 21,
-        "primary_accountable_authority": "District Magistrate / Competent Authority for Land Acquisition (CALA)"
+        "statutory_milestones": [
+            "Joint Land Measurement Survey (JLMS) within 21 days.",
+            "Disbursement of Resettlement & Rehabilitation (R&R) awards under Section 31.",
+            "Formal physical possession certificate issuance by District Collector."
+        ],
+        "escalation_tier": {
+            "Low": "Project Director coordinates with District Revenue Officer (SDM).",
+            "Medium": "Divisional Commissioner / State Secretary (Revenue) intervention.",
+            "High": "Escalate to PMG (Project Monitoring Group) / Cabinet Secretariat & State Chief Secretary via PRAGATI review."
+        },
+        "recovery_factor_per_month_expedited": 0.85
     },
-    "Forest & Environmental Clearances": {
-        "regulatory_framework": "Forest Conservation Amendment Act 2023 & PARIVESH 2.0 Portal",
+    "Forest & Environmental Clearance": {
+        "framework": "Forest (Conservation) Act 1980 & MoEFCC PARIVESH 2.0 Clearance Workflow",
         "immediate_actions": [
-            "Submit pending Stage-I compliance conditions on PARIVESH 2.0 single-window platform.",
-            "Expedite Compensatory Afforestation (CA) land mutation and deposit Net Present Value (NPV) into CAMPA account.",
-            "Request special dispensation from Regional Empowered Committee (REC), MoEF&CC for linear project tree-felling permission.",
-            "Engage State Wildlife Warden for mitigation plan approval if intersecting eco-sensitive buffer zones."
+            "Fast-track Stage-II approval through State Level Expert Appraisal Committee (SEAC) on PARIVESH portal.",
+            "Coordinate with State Forest Department to identify non-forest land for Compensatory Afforestation (CA) within 30 days.",
+            "Transfer necessary NPV (Net Present Value) and CA funds into State CAMPA account."
         ],
-        "statutory_timeline_days": 30,
-        "primary_accountable_authority": "State Principal Chief Conservator of Forests (PCCF) & MoEF&CC Nodal Officer"
+        "statutory_milestones": [
+            "Fulfillment of Stage-I 16-point compliance certificate.",
+            "Final Tree Felling Permission (TFP) under Working Plan Code.",
+            "MoEFCC Regional Office site inspection & Stage-II clearance issuance."
+        ],
+        "escalation_tier": {
+            "Low": "Liaison Officer with Divisional Forest Officer (DFO).",
+            "Medium": "Principal Chief Conservator of Forests (PCCF) monthly state review.",
+            "High": "MoEFCC Central Forest Advisory Committee (FAC) fast-track docket & PMG portal flag."
+        },
+        "recovery_factor_per_month_expedited": 0.90
     },
-    "Fund Constraint & Financial Stress": {
-        "regulatory_framework": "General Financial Rules (GFR) 2017 & Dept of Expenditure (DoE) OM",
+    "Contractor / Vendor Underperformance": {
+        "framework": "General Conditions of Contract (GCC), FIDIC Pink Book & CVC Guidelines",
         "immediate_actions": [
-            "Initiate Revised Cost Estimate (RCE) memorandum for Public Investment Board (PIB) / Cabinet Committee on Economic Affairs (CCEA).",
-            "Audit financial vs physical progress S-curve divergence to detect contractor fund misallocation.",
-            "Release verified milestone payment tranches within 7 business days to restore contractor working capital.",
-            "Review mobilization advance against unconditional bank guarantees under GFR Rule 172."
+            "Issue formal 14-day Cure Notice under GCC Clause 63 / Default Clause.",
+            "Conduct joint plant, machinery, and manpower deployment audit against baseline DPR schedule.",
+            "Invoke interim Liquidated Damages (LD) at 0.5% per week of delay (capped at 10% contract value)."
         ],
-        "statutory_timeline_days": 14,
-        "primary_accountable_authority": "Integrated Finance Division (IFD) & Ministry Financial Advisor"
+        "statutory_milestones": [
+            "Submission of revised resource mobilization plan within 10 days.",
+            "Offloading of delayed milestone components to secondary subcontractor at contractor risk and cost.",
+            "Contract termination and invocation of Performance Bank Guarantee (PBG) if no progress within 28 days."
+        ],
+        "escalation_tier": {
+            "Low": "Engineer-in-Charge enforces milestone recovery plan.",
+            "Medium": "CMD / Board of Directors review of implementing PSU.",
+            "High": "Debarment / Blacklisting proposal submitted under GFR 2017 Rule 151; Fast-track retendering."
+        },
+        "recovery_factor_per_month_expedited": 0.70
     },
-    "Contractor / Vendor Non-Performance": {
-        "regulatory_framework": "FIDIC / Standard EPC Contract Conditions & CVC Guidelines",
+    "Fund Constraint & Financing": {
+        "framework": "GFR 2017 Rule 140, Revised Cost Estimate (RCE) Guidelines & Department of Expenditure",
         "immediate_actions": [
-            "Issue 14-day statutory Cure Period Notice under General Conditions of Contract (GCC).",
-            "Conduct joint site physical audit by Authority Engineer / Independent Engineer (AE/IE).",
-            "Invoke Clause for deployment of supplementary machinery/manpower at contractor risk and cost.",
-            "Evaluate selective encashment of Performance Security if critical path milestones are missed by > 30%."
+            "Prepare and submit Revised Cost Estimate (RCE-I/II) to Public Investment Board (PIB) / EFC.",
+            "Seek interim liquidity line or bridge financing from sovereign infrastructure funds (NIIF / PFC / REC).",
+            "Reallocate unspent budget from delayed auxiliary components to critical path packages."
         ],
-        "statutory_timeline_days": 14,
-        "primary_accountable_authority": "Project Director / Executive Engineer (Executing Agency)"
+        "statutory_milestones": [
+            "Inter-ministerial Appraisal Committee review within 30 days.",
+            "Cabinet Committee on Economic Affairs (CCEA) approval for revised outlay.",
+            "Release of budget allocation via Single Nodal Agency (SNA) / Treasury portal."
+        ],
+        "escalation_tier": {
+            "Low": "Internal financial advisor budget reallocation.",
+            "Medium": "Secretary of Administrative Ministry & Expenditure Secretary meeting.",
+            "High": "Cabinet Committee on Economic Affairs (CCEA) / Finance Minister special sanction."
+        },
+        "recovery_factor_per_month_expedited": 0.80
     },
-    "Scope & Engineering Design Modifications": {
-        "regulatory_framework": "Ministry Technical Sanction Manual & CVC Variation Thresholds",
+    "Legal / Court Litigation": {
+        "framework": "Commercial Courts Act 2015 & Arbitration and Conciliation (Amendment) Act 2019",
         "immediate_actions": [
-            "Refer structural alignment revision to Proof Consultant / IIT Technical Advisory panel.",
-            "Freeze further scope variations beyond statutory 10% limit without inter-departmental consensus.",
-            "Obtain fast-track in-principle approval from Central Electricity Authority (CEA) / IRC Technical Committee.",
-            "Issue variation order with revised bill of quantities (BOQ) within 15 calendar days."
+            "File urgent application for vacation of stay under Article 226 citing Section 20A of Specific Relief Act (prohibiting injunctions on infrastructure projects).",
+            "File caveat in appellate courts / High Court Division Bench.",
+            "Refer commercial dispute to Conciliation Committee of Independent Experts (CCIE) for out-of-court mediation."
         ],
-        "statutory_timeline_days": 21,
-        "primary_accountable_authority": "Chief Engineer / Member Projects"
+        "statutory_milestones": [
+            "Submission of Counter Affidavit within 14 days.",
+            "Hearing in designated Commercial Division / High Court green bench.",
+            "Execution of binding conciliation settlement agreement."
+        ],
+        "escalation_tier": {
+            "Low": "Government Standing Counsel urgent listing motion.",
+            "Medium": "Solicitor General / Additional Solicitor General brief.",
+            "High": "Inter-Ministerial Legal Cell escalation & Special Leave Petition (SLP) in Supreme Court."
+        },
+        "recovery_factor_per_month_expedited": 0.75
     },
-    "Administrative & Inter-Agency Coordination": {
-        "regulatory_framework": "Cabinet Secretariat PRAGATI & Committee of Secretaries (CoS) Guidelines",
+    "Scope & Design Changes": {
+        "framework": "MoRTH / Indian Road Congress (IRC) / CEA Technical Audit Guidelines",
         "immediate_actions": [
-            "Issue urgent inter-ministerial utility shifting requisition (water pipelines, high-voltage lines, optic fiber).",
-            "Convene State Level Empowered Committee (SLEC) chaired by State Chief Secretary.",
-            "Appoint dedicated State Nodal Officer to resolve joint inspection deadlocks.",
-            "Submit bi-weekly status flash note directly to MoSPI IPMD monitoring cell."
+            "Appoint Third-Party Technical Auditor (IIT / NIT) for geo-technical and structural design review.",
+            "Freeze all non-essential variation orders; validate Scope Modification Matrix.",
+            "Issue revised Good for Construction (GFC) drawings for critical-path foundation works within 21 days."
         ],
-        "statutory_timeline_days": 10,
-        "primary_accountable_authority": "MoSPI Infrastructure & Project Monitoring Division (IPMD)"
+        "statutory_milestones": [
+            "Finalization of Geo-technical investigation report.",
+            "Technical Advisory Committee (TAC) sign-off on design amendment.",
+            "Approval of Variation Order within statutory 15% budget tolerance."
+        ],
+        "escalation_tier": {
+            "Low": "Chief Engineer / Design Consultant technical workshop.",
+            "Medium": "Technical Member / Director of executing PSU.",
+            "High": "National Technical Advisory Committee review."
+        },
+        "recovery_factor_per_month_expedited": 0.85
     },
-    "On Schedule": {
-        "regulatory_framework": "Standard MoSPI Routine Project Monitoring Framework",
+    "General Execution Delay": {
+        "framework": "MoSPI Project Monitoring Guidelines & PMG Best Practices",
         "immediate_actions": [
-            "Maintain current milestone run-rate and continuous monthly reporting on OCMS / PAIMANA.",
-            "Conduct proactive vendor logistics verification for forthcoming long-lead packages.",
-            "Monitor financial vs physical progress convergence within standard 5% tolerance band."
+            "Crash the critical path (Fast-tracking / Crashing method): introduce double-shift working hours.",
+            "Deploy IoT-based site monitoring / drone surveillance for daily progress tracking.",
+            "Resolve inter-agency utility conflicts (power transmission line / water mains relocation)."
         ],
-        "statutory_timeline_days": 60,
-        "primary_accountable_authority": "Resident Project Manager"
+        "statutory_milestones": [
+            "Revised Milestone S-curve baseline agreed by all contractors.",
+            "Bi-weekly digital compliance report submitted to MoSPI PMD.",
+            "Quarterly physical milestone audit by independent inspection agency."
+        ],
+        "escalation_tier": {
+            "Low": "Field Project Director daily review.",
+            "Medium": "Ministry Nodal Officer fortnightly coordination meeting.",
+            "High": "MoSPI IPMD Flash Report red flag & PMG monthly agenda item."
+        },
+        "recovery_factor_per_month_expedited": 0.75
     }
 }
 
+class PrescriptiveDecisionEngine:
+    def __init__(self):
+        self.playbook = SOP_ACTION_PLAYBOOK
 
-def determine_escalation_tier(risk_level: str, delay_months: float, cost_cr: float, gap_pct: float) -> Dict[str, Any]:
-    """
-    Computes the 3-Tier Multi-Level Administrative Escalation Matrix.
-    """
-    # Tier 3: Apex Level (PMO PRAGATI / Union Cabinet Committee)
-    # Mega projects (> ₹1,000 Cr) with high delay, or critical delay > 18 months
-    if (cost_cr >= 1000.0 and delay_months >= 12.0) or delay_months >= 24.0 or (risk_level == "High" and gap_pct >= 25.0):
+    def generate_recommendations(self, pred: ProjectPrediction) -> Dict[str, Any]:
+        cause_key = self._match_cause(pred.root_cause)
+        sop = self.playbook.get(cause_key, self.playbook["General Execution Delay"])
+        escalation_level = sop["escalation_tier"].get(pred.predicted_risk_level, sop["escalation_tier"]["Medium"])
+        
+        anomaly_warning = None
+        if pred.financial_vs_physical_gap > 20.0:
+            anomaly_warning = (
+                f"S-CURVE ANOMALY DETECTED: Budget burn rate exceeds physical progress by "
+                f"{pred.financial_vs_physical_gap:.1f}%. Immediate physical audit recommended before next milestone payment disbursement."
+            )
+            
         return {
-            "tier": "Tier 3: Apex PRAGATI Review (PMO Level)",
-            "escalation_target": "Prime Minister's Office (PRAGATI) & Cabinet Secretary",
-            "action_urgency": "CRITICAL / IMMEDIATE ACTION (Within 72 Hours)",
-            "urgency_score": 95,
-            "governance_mechanism": "Direct monthly agenda review by PM with concerned State Chief Secretaries and Union Secretaries."
+            "project_metadata": {
+                "project_code": pred.project_code,
+                "project_name": pred.project_name,
+                "agency": pred.agency,
+                "original_cost_cr": pred.original_cost_cr,
+                "anticipated_cost_cr": pred.anticipated_cost_cr,
+                "predicted_delay_months": pred.predicted_delay_months,
+                "predicted_risk_level": pred.predicted_risk_level
+            },
+            "root_cause_identified": cause_key,
+            "statutory_governance_framework": sop["framework"],
+            "anomaly_audit_alert": anomaly_warning,
+            "escalation_protocol": {
+                "risk_tier": pred.predicted_risk_level,
+                "authorized_officer": escalation_level
+            },
+            "immediate_sop_directives": sop["immediate_actions"],
+            "statutory_target_milestones": sop["statutory_milestones"]
         }
 
-    # Tier 2: Ministerial & Inter-Ministerial (MoSPI IPMD / Committee of Secretaries)
-    if risk_level in ["High", "Medium"] or delay_months >= 6.0 or gap_pct >= 15.0 or cost_cr >= 500.0:
+    def simulate_what_if(self, pred: ProjectPrediction, months_expedited: float) -> Dict[str, Any]:
+        cause_key = self._match_cause(pred.root_cause)
+        sop = self.playbook.get(cause_key, self.playbook["General Execution Delay"])
+        factor = sop["recovery_factor_per_month_expedited"]
+        
+        effective_delay_recovered = min(pred.predicted_delay_months, months_expedited * factor)
+        revised_predicted_delay = max(0.0, pred.predicted_delay_months - effective_delay_recovered)
+        
+        monthly_burn_rate = (pred.anticipated_cost_cr - pred.original_cost_cr) / max(1.0, pred.predicted_delay_months) if pred.predicted_delay_months > 0 else 0
+        projected_cost_savings = round(monthly_burn_rate * effective_delay_recovered, 2)
+        revised_anticipated_cost = max(pred.original_cost_cr, round(pred.anticipated_cost_cr - projected_cost_savings, 2))
+        
+        if revised_predicted_delay > 24.0:
+            revised_risk = "High"
+        elif revised_predicted_delay > 6.0:
+            revised_risk = "Medium"
+        else:
+            revised_risk = "Low"
+            
         return {
-            "tier": "Tier 2: Ministerial & Inter-Ministerial Review (MoSPI IPMD)",
-            "escalation_target": "Secretary, MoSPI & Inter-Ministerial Empowered Committee",
-            "action_urgency": "HIGH PRIORITY (Within 7 Business Days)",
-            "urgency_score": 75,
-            "governance_mechanism": "State-level Empowered Committee (SLEC) review chaired by State Chief Secretary with Union Nodal Officers."
+            "intervention": f"Expedite '{cause_key}' resolution by {months_expedited} month(s)",
+            "baseline": {
+                "delay_months": round(pred.predicted_delay_months, 1),
+                "risk_level": pred.predicted_risk_level,
+                "anticipated_cost_cr": pred.anticipated_cost_cr
+            },
+            "simulated_outcome": {
+                "schedule_recovered_months": round(effective_delay_recovered, 1),
+                "revised_delay_months": round(revised_predicted_delay, 1),
+                "revised_risk_level": revised_risk,
+                "projected_cost_savings_cr": projected_cost_savings,
+                "revised_anticipated_cost_cr": revised_anticipated_cost
+            }
         }
 
-    # Tier 1: Project Implementing Agency (PIA) Internal Execution
-    return {
-        "tier": "Tier 1: Implementing Agency Operational Level",
-        "escalation_target": "Project Director / Chief Engineer (NHAI / RVNL / NTPC / Executing Agency)",
-        "action_urgency": "STANDARD SUPERVISORY MONITORING",
-        "urgency_score": 35,
-        "governance_mechanism": "Routine fortnightly project review meeting and contractor milestone audit."
-    }
-
-
-def generate_prescriptive_plan(
-    project_name: str,
-    risk_level: str,
-    delay_months: float,
-    root_cause: str,
-    cost_cr: float = 500.0,
-    gap_pct: float = 0.0,
-    state: str = "Multi-State / Central",
-    sector: str = "Road Transport & Highways"
-) -> Dict[str, Any]:
-    """
-    Generates an actionable, executive prescriptive action plan combining
-    regulatory SOP checklists and administrative escalation level.
-    """
-    protocol = MITIGATION_PROTOCOLS.get(root_cause, MITIGATION_PROTOCOLS["Administrative & Inter-Agency Coordination"])
-    escalation = determine_escalation_tier(risk_level, delay_months, cost_cr, gap_pct)
-
-    # Anomaly warnings
-    anomaly_warnings = []
-    if gap_pct >= 15.0:
-        anomaly_warnings.append(
-            f"WARNING: Financial expenditure exceeds physical completion by {gap_pct:.1f}%. Risk of contractor liquidity exhaustion!"
-        )
-    if delay_months >= 18.0:
-        anomaly_warnings.append(
-            f"CRITICAL: Project has exceeded timeline by {delay_months:.1f} months. Requires statutory Revised Cost Estimate (RCE) appraisal."
-        )
-
-    return {
-        "project_name": project_name,
-        "risk_classification": risk_level,
-        "forecasted_delay_months": round(float(delay_months), 1),
-        "forecasted_delay_days": int(round(float(delay_months) * 30.4)),
-        "diagnosed_root_cause": root_cause,
-        "regulatory_framework": protocol["regulatory_framework"],
-        "accountable_authority": protocol["primary_accountable_authority"],
-        "compliance_window_days": protocol["statutory_timeline_days"],
-        "immediate_action_checklist": protocol["immediate_actions"],
-        "escalation_tier": escalation["tier"],
-        "escalation_target": escalation["escalation_target"],
-        "action_urgency": escalation["action_urgency"],
-        "urgency_score": escalation["urgency_score"],
-        "governance_mechanism": escalation["governance_mechanism"],
-        "anomaly_warnings": anomaly_warnings
-    }
+    def _match_cause(self, raw_cause: str) -> str:
+        if not raw_cause:
+            return "General Execution Delay"
+        for key in self.playbook.keys():
+            if key.lower() in raw_cause.lower() or any(w in raw_cause.lower() for w in key.lower().split()):
+                return key
+        return "General Execution Delay"
 
 if __name__ == "__main__":
-    # Test simulation
-    plan = generate_prescriptive_plan(
-        project_name="DELHI-AMRITSAR-KATRA EXPRESSWAY (PACKAGE-IV)",
-        risk_level="High",
-        delay_months=22.5,
-        root_cause="Land Acquisition & Right of Way",
-        cost_cr=4500.0,
-        gap_pct=28.5,
-        state="Punjab",
-        sector="Road Transport & Highways"
+    engine = PrescriptiveDecisionEngine()
+    
+    proj1 = ProjectPrediction(
+        project_code="180100221",
+        project_name="SUBANSIRI LOWER H.E.P (8X250 MW)",
+        agency="NHPC",
+        original_cost_cr=6285.33,
+        anticipated_cost_cr=26075.54,
+        predicted_delay_months=188.0,
+        predicted_risk_level="High",
+        root_cause="Forest & Environmental Clearance; Land Acquisition",
+        financial_vs_physical_gap=281.8
     )
-    import json
-    print(json.dumps(plan, indent=2))
+    
+    print("=" * 80)
+    print("PRESCRIPTIVE DECISION DIRECTIVE: SAMPLE HIGH-RISK PROJECT")
+    print("=" * 80)
+    directive = engine.generate_recommendations(proj1)
+    print(json.dumps(directive, indent=2))
+    
+    print("\n" + "=" * 80)
+    print("WHAT-IF SCENARIO SIMULATION: EXPEDITING CLEARANCES BY 12 MONTHS")
+    print("=" * 80)
+    simulation = engine.simulate_what_if(proj1, months_expedited=12.0)
+    print(json.dumps(simulation, indent=2))
