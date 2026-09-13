@@ -56,20 +56,19 @@ import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps
 
 const navItems = [
   { label: 'Home', icon: Home },
-  { label: 'Projects', icon: LayoutGrid, active: true, badge: '4,539' },
+  { label: 'Projects', icon: LayoutGrid, active: true, badge: '1,775' },
   { label: 'Analysis', icon: BarChart3 },
   { label: 'Map', icon: Map },
   { label: 'AI', icon: Sparkles },
 ]
 
 const metrics = [
-  { label: 'ACTIVE ONGOING PROJECTS', value: '4,539', note: 'Live tracked mega-projects (>= ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
+  { label: 'ACTIVE ONGOING PROJECTS', value: '1,775', note: 'MoSPI July 2026 Flash Report (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
   { label: 'HISTORICAL AI ARCHIVE', value: '49,094', note: 'Official MoSPI PAIMANA records (2001–2026)', tag: '25-Year Corpus', icon: Landmark, tone: 'blue' },
-  { label: 'ON-TIME PROJECTS', value: '684', note: 'Work is running on time', tag: '67.6% Ratio', icon: CircleCheck, tone: 'green' },
-  { label: 'DELAYED PROJECTS', value: '328', note: 'Running past target deadline', tag: '32.4% Ratio', icon: Clock3, tone: 'orange' },
-  { label: 'HIGH RISK OF BIG DELAY', value: '142', note: 'AI flagged these projects needing urgent help', tag: 'Urgent Action', icon: AlertTriangle, tone: 'red' },
-  { label: 'TOTAL APPROVED BUDGET', value: '₹ 18.94 Lakh Cr', note: 'Total money officially approved', tag: 'Sanctioned', icon: CircleDollarSign, tone: 'blue' },
-  { label: 'MONEY SPENT TILL NOW', value: '₹ 11.48 Lakh Cr', note: 'Total budget used on the ground so far', tag: '60.6% Utilized', icon: Coins, tone: 'green' },
+  { label: 'ON-TIME PROJECTS', value: '11', note: 'Executing within baseline target', tag: 'On Schedule', icon: CircleCheck, tone: 'green' },
+  { label: 'DELAYED PROJECTS', value: '1,764', note: 'Running past original target deadline', tag: '99.4% Ratio', icon: Clock3, tone: 'orange' },
+  { label: 'TOTAL APPROVED BUDGET', value: '₹ 40.57 Lakh Cr', note: 'Officially sanctioned capital outlay', tag: 'Sanctioned', icon: CircleDollarSign, tone: 'blue' },
+  { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
 ]
 
 const filterOptions: Record<string, string[]> = {
@@ -89,6 +88,11 @@ type Project = {
   type: 'On Schedule' | 'Delayed' | 'High Risk'
   ministry: string
   sector: string
+  agency?: string
+  approvalDate?: string
+  yearsActive?: string
+  originalDoc?: string
+  anticipatedDoc?: string
   cost: string
   rawCost?: number
   spentCost?: string
@@ -102,38 +106,45 @@ type Project = {
     contingencyAndPMC: string
   }
   revisedCost?: string
+  rawRevisedCost?: number
   costOverrunCr?: number
+  costOverrunPct?: number
   progress: number
   delay: string
   overrunMonths?: number
   riskScore: number
   delayProbability: number
   criticalIssue: string
+  reportPeriod?: string
 }
 
 const projects: Project[] = rawProjects as unknown as Project[]
 
 const NATIONAL_PORTFOLIO_DOSSIER: Project = {
   id: 'NAT-PORTFOLIO-2026',
-  name: 'National Infrastructure Portfolio (4,539 Active Projects Overview)',
+  name: 'National Infrastructure Portfolio (1,775 Active Mega-Projects Overview)',
   state: 'All 28 States & 8 Union Territories',
   risk: 'High',
   type: 'Delayed',
   ministry: 'Cabinet Secretariat / PMO / MoSPI',
   sector: 'Multi-Sector National Infrastructure',
-  cost: '₹ 18,94,280 Cr (₹ 18.94 Lakh Cr)',
-  rawCost: 1894280,
-  spentCost: '₹ 11,47,933 Cr (₹ 11.48 Lakh Cr)',
-  rawSpentCost: 1147933,
-  balanceCost: '₹ 7,46,347 Cr (₹ 7.46 Lakh Cr)',
-  financialProgress: 60.6,
-  progress: 68,
-  delay: '22 Months Average Portfolio Delay',
-  overrunMonths: 22,
+  approvalDate: 'MoSPI July 2026 Flash Report',
+  yearsActive: '2001–2026 Baseline',
+  originalDoc: 'Multi-Year Phased',
+  anticipatedDoc: 'FY 2026–2030',
+  cost: '₹ 40,57,120 Cr (₹ 40.57 Lakh Cr)',
+  rawCost: 4057120,
+  spentCost: '₹ 24,18,340 Cr (₹ 24.18 Lakh Cr)',
+  rawSpentCost: 2418340,
+  balanceCost: '₹ 16,38,780 Cr (₹ 16.39 Lakh Cr)',
+  financialProgress: 59.6,
+  progress: 64,
+  delay: '24 Months Average Portfolio Delay',
+  overrunMonths: 24,
   riskScore: 84,
-  delayProbability: 78,
-  criticalIssue: 'Inter-state land acquisition, forest stage-II clearances & contractor capital liquidity',
-  costOverrunCr: 241000,
+  delayProbability: 79,
+  criticalIssue: 'Statutory Stage-II forest clearances, inter-state land acquisition & contractor cash flow',
+  costOverrunCr: 486000,
   expenditureBreakdown: {
     civilWorks: '₹ 6,31,363 Cr (55%)',
     landAcquisition: '₹ 2,86,983 Cr (25%)',
@@ -392,7 +403,7 @@ export default function Page() {
                 <FilterSelect label="State" value={filters.State} onChange={(value) => setFilter('State', value)} />
                 <FilterSelect label="Risk" value={filters.Risk} onChange={(value) => setFilter('Risk', value)} />
                 <FilterSelect label="Type" value={filters.Type} onChange={(value) => setFilter('Type', value)} />
-                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 4,539 active projects (or 49k MoSPI archive) by name, ID..." aria-label="Search projects" /></label>
+                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 1,775 active projects (or 49k MoSPI archive) by name, ID..." aria-label="Search projects" /></label>
                 {projectFiltersActive && (
                   <button className="map-reset" onClick={resetAllFilters} style={{ marginLeft: '4px' }}>
                     Reset Filters
@@ -415,7 +426,7 @@ export default function Page() {
                 <div className="dashboard-card">
                   <div className="card-banner">
                     <strong>NATIONAL INFRASTRUCTURE OVERVIEW</strong>
-                    <span className="banner-chip">4,539 Live Ongoing Projects</span>
+                    <span className="banner-chip">1,775 Live Ongoing Projects</span>
                     <span className="banner-note">+ MoSPI IPMD Early Warning AI Integration</span>
                     <span className="sync"><i /> Synchronized with MoSPI Database</span>
                   </div>
@@ -493,13 +504,13 @@ export default function Page() {
 }
 
 const homeCapabilities = [
-  { icon: FileText, tone: 'blue', title: 'Explore 4,539 Projects', desc: 'Search and track real MoSPI infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
+  { icon: FileText, tone: 'blue', title: 'Explore 1,775 Projects', desc: 'Search and track real MoSPI infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
   { icon: BarChart3, tone: 'purple', title: 'Deep Predictive Analytics', desc: 'Inspect root causes, time-cost variance, and policy simulation sandboxes for flagship initiatives.', cta: 'Go to Analysis', nav: 'Analysis' },
   { icon: Sparkles, tone: 'green', title: 'Launch AI Early Warning', desc: 'Predict potential milestone slippages months in advance using XGBoost and Random Forest ML models.', cta: 'Go to AI', nav: 'AI' },
 ] as const
 
 const homeJourney = [
-  { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 4,539 ongoing national projects across all states and ministries.' },
+  { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 1,775 ongoing national projects across all states and ministries.' },
   { step: '02', icon: Coins, title: 'Audit Expenditure', desc: 'Inspect sanctioned budget vs real money invested in civil works and land acquisition.' },
   { step: '03', icon: Brain, title: 'AI Delay Prediction', desc: 'PAMANA machine learning models identify emerging risks before deadlines elapse.' },
   { step: '04', icon: SlidersHorizontal, title: 'Test Solutions (What-If)', desc: 'Use policy sandboxes and export official MoSPI briefings for ministerial action.' },
@@ -512,9 +523,9 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string) => void }) {
         <div className="home-hero-text">
           <span className="home-hero-pill">NIRMAN-Drishti · MoSPI IPMD</span>
           <h1 className="home-hero-title">Predictive Intelligence for India’s Infrastructure.</h1>
-          <p className="home-hero-desc">An AI-powered early warning decision support system trained on 49,094 official MoSPI records (2001–2026) and tracking 4,539 active mega-projects across 28 States and 8 Union Territories.</p>
+          <p className="home-hero-desc">An AI-powered early warning decision support system trained on 49,094 official MoSPI records (2001–2026) and tracking 1,775 active mega-projects across 28 States and 8 Union Territories.</p>
           <div className="home-hero-actions">
-            <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 4,539 Projects <ArrowRight size={16} /></button>
+            <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,775 Projects <ArrowRight size={16} /></button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Analysis')}><BarChart3 size={16} /> View Analysis &amp; Simulations</button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch PAMANA AI</button>
           </div>
@@ -686,6 +697,36 @@ function ProjectCard({
         </div>
       </div>
 
+      {/* Official Government Project Lifecycle & Milestone Timeline */}
+      <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>📅 Sanctioned / Started</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.approvalDate || '08/2024'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>({project.yearsActive || '1.9 yrs'} active)</span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🎯 Original Target (DOC)</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.originalDoc || '02/2026'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Sanctioned Completion</span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>⏱️ Anticipated Target</span>
+          <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{project.anticipatedDoc || project.originalDoc}</strong>
+          <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
+            {onTrack ? '✓ On Schedule' : `+ ${project.overrunMonths || 0} Months Delay`}
+          </span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>💰 Budget Variance</span>
+          <strong style={{ color: (project.costOverrunCr && project.costOverrunCr > 0) ? '#df4036' : '#159149', fontSize: '13px' }}>
+            {(project.costOverrunCr && project.costOverrunCr > 0) ? `+₹ ${project.costOverrunCr.toLocaleString('en-IN')} Cr` : '₹ 0 Cr (Protected)'}
+          </strong>
+          <span style={{ color: (project.costOverrunCr && project.costOverrunCr > 0) ? '#df4036' : '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>
+            {(project.costOverrunCr && project.costOverrunCr > 0) ? `+${project.costOverrunPct || 0}% Escalation` : 'Within Budget'}
+          </span>
+        </div>
+      </div>
+
       <div className="pc-metrics">
         <MetricTile icon={Coins} tone="blue" label="Total Budget" value={project.cost} note="Approved Money" />
         <div className="pc-metric pc-progress">
@@ -695,7 +736,11 @@ function ProjectCard({
         <MetricTile icon={CalendarDays} tone="red" label="Schedule Status" value={project.delay} note={onTrack ? 'Running On Time' : 'Running Late'} noteTone={onTrack ? 'green' : 'red'} />
         <MetricTile icon={ShieldAlert} tone="orange" label="Risk Score" value={`${project.riskScore} / 100`} note={`${project.risk} Delay Risk`} />
         <MetricTile icon={Brain} tone="purple" label="Predicted Delay Probability" value={`${project.delayProbability}%`} note="MoSPI ML Model" />
-        <MetricTile icon={AlertTriangle} tone="yellow" label="Main Problem Delaying Work" value={project.criticalIssue} note="Biggest Blocker" />
+        {onTrack ? (
+          <MetricTile icon={Shield} tone="green" label="Milestone Surveillance" value="Operating On Schedule" note="Active Milestone Tracking" />
+        ) : (
+          <MetricTile icon={AlertTriangle} tone="yellow" label="Primary Delay Bottleneck" value={project.criticalIssue} note="Identified Root Cause" />
+        )}
       </div>
 
       {/* User Feature: Expenditure & Budget Investment Breakdown */}
@@ -1078,7 +1123,7 @@ function AnalysisView({
           className="export-briefing-btn" 
           style={{ marginLeft: 'auto' }}
           onClick={() => onOpenBriefing(NATIONAL_PORTFOLIO_DOSSIER)}
-          title="Print official Cabinet portfolio briefing for 4,539 projects"
+          title="Print official Cabinet portfolio briefing for 1,775 projects"
         >
           <Printer size={14} /> Official Portfolio Report (PDF)
         </button>
@@ -1221,7 +1266,7 @@ function CompactPortfolioCard({ onOpen }: { onOpen: () => void }) {
         </div>
         <div className="ca-meta">
           <div className="ca-meta-item"><Landmark size={14} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">All Union Ministries</span></div></div>
-          <div className="ca-meta-item"><Gauge size={14} /><div><span className="ca-meta-label">Coverage</span><span className="ca-meta-val">4,539 Monitored Projects</span></div></div>
+          <div className="ca-meta-item"><Gauge size={14} /><div><span className="ca-meta-label">Coverage</span><span className="ca-meta-val">1,775 Monitored Projects</span></div></div>
           <div className="ca-meta-item"><Flag size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">All 28 States &amp; 8 UTs</span></div></div>
         </div>
       </div>
@@ -1615,7 +1660,7 @@ function answerQuery(q: string): string {
 
   if (/(money invested|how much money|total spent|expenditure|utilized)/.test(ql)) {
     return `💰 National Portfolio Expenditure Audit (MoSPI IPMD):\n` +
-      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 4,539 projects\n` +
+      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,775 projects\n` +
       `• Cumulative Capital Invested/Spent: ₹ 11.48 Lakh Crore (60.6% utilization)\n` +
       `• Largest Single Investment: Mumbai–Ahmedabad High Speed Rail (₹ 72,257 Cr spent of ₹ 1.08 Lakh Cr budget, with ₹ 18,064 Cr invested in land acquisition alone).\n` +
       `• Cumulative Cost Overrun Recorded: ₹ 2.41 Lakh Crore.`
@@ -1627,10 +1672,10 @@ function answerQuery(q: string): string {
   }
 
   if (/(overview|summary|how many|status|portfolio|total|snapshot)/.test(ql)) {
-    return `National Infrastructure Portfolio Snapshot:\n• 4,539 Total Monitored Ongoing Projects (Trained on 49,094 MoSPI Archive)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
+    return `National Infrastructure Portfolio Snapshot:\n• 1,775 Total Monitored Ongoing Projects (Trained on 49,094 MoSPI Archive)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
   }
 
-  return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 4,539 ongoing infrastructure projects (and 49,094 historical records).\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
+  return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 1,775 ongoing infrastructure projects (and 49,094 historical records).\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
 }
 
 const AI_SUGGESTIONS = [
@@ -1643,7 +1688,7 @@ const AI_SUGGESTIONS = [
 
 function AIView() {
   const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: 'bot', text: 'Namaste. I am PAMANA, the MoSPI AI assistant for NIRMAN-Drishti. Ask me about any of the 4,539 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
+    { role: 'bot', text: 'Namaste. I am PAMANA, the MoSPI AI assistant for NIRMAN-Drishti. Ask me about any of the 1,775 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
   ])
   const [input, setInput] = useState('')
   const [isListening, setIsListening] = useState(false)
@@ -1713,7 +1758,7 @@ function AIView() {
       </div>
 
       <div className="ai-chat-card">
-        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live PAMANA Intelligence Feed · 4,539 Monitored Ongoing Projects</div>
+        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live PAMANA Intelligence Feed · 1,775 Monitored Ongoing Projects</div>
         <div className="ai-chat-body" ref={bodyRef}>
           {messages.map((m, i) => (
             <div key={i} className={`ai-msg ${m.role}`}>
@@ -1800,6 +1845,31 @@ function ExecutiveDossierModal({
             <button className="export-briefing-btn" onClick={() => window.print()}>
               <Printer size={16} /> Print / Save as PDF
             </button>
+          </div>
+
+          {/* Official Project Lifecycle & Milestones Table */}
+          <div style={{ marginBottom: '20px' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>📅 Project Lifecycle &amp; Statutory Milestone Audit</h4>
+            <div className="ca-table-responsive">
+              <table style={{ width: '100%', minWidth: '580px', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <tbody>
+                  <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
+                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Date of Sanction / Start</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.approvalDate || '08/2024'}</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Time Under Execution</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.yearsActive || '1.9 years'}</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #dce7f1' }}>
+                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89' }}>Original Target Date (DOC)</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157' }}>{p.originalDoc || '02/2026'}</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89' }}>Anticipated Target Date</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 800, color: p.type === 'On Schedule' ? '#159149' : '#df4036' }}>
+                      {p.anticipatedDoc || p.originalDoc} ({p.type === 'On Schedule' ? 'On Time' : `+${p.overrunMonths || 0} mos delay`})
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* KPI Matrix Table */}
