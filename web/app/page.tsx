@@ -776,20 +776,31 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
   const [contractorAugment, setContractorAugment] = useState(25)
 
   const baseRisk = 'riskScore' in project ? project.riskScore : (project.risk === 'High' ? 82 : project.risk === 'Medium' ? 55 : 28)
-  const baseDelayMonths = 'overrunMonths' in project && typeof (project as any).overrunMonths === 'number'
-    ? (project as any).overrunMonths
-    : (project.delay && project.delay.includes('mos') ? parseInt(project.delay) : 18)
+  
+  const isCurrentlyOnTime = 
+    ('type' in project && project.type === 'On Schedule') ||
+    ('status' in project && project.status === 'On Schedule') ||
+    (project.delay && (project.delay === 'On Track' || project.delay === '0 Months' || project.delay === 'On Schedule')) ||
+    ('overrunMonths' in project && (project as any).overrunMonths === 0)
 
-  const delayReductionMonths = Math.min(
-    baseDelayMonths > 0 ? baseDelayMonths : 14,
-    Math.round(landSpeedupMonths * 0.85 + (contractorAugment / 100) * 8 + (fundInjectionPct / 100) * 4)
-  )
-  const simulatedDelayMonths = Math.max(0, (baseDelayMonths > 0 ? baseDelayMonths : 14) - delayReductionMonths)
+  const rawOverrun = 'overrunMonths' in project && typeof (project as any).overrunMonths === 'number'
+    ? (project as any).overrunMonths
+    : (project.delay && project.delay.includes('mos') ? parseInt(project.delay) : 0)
+
+  const baseDelayMonths = isCurrentlyOnTime ? 0 : (rawOverrun > 0 ? rawOverrun : 14)
+
+  const delayReductionMonths = isCurrentlyOnTime 
+    ? 0 
+    : Math.min(baseDelayMonths, Math.round(landSpeedupMonths * 0.85 + (contractorAugment / 100) * 8 + (fundInjectionPct / 100) * 4))
+
+  const simulatedDelayMonths = Math.max(0, baseDelayMonths - delayReductionMonths)
   const riskReductionPoints = Math.round((landSpeedupMonths * 2.6) + (fundInjectionPct * 0.9) + (contractorAugment * 0.7))
   const simulatedRisk = Math.max(15, baseRisk - riskReductionPoints)
 
   const roughCostNum = 'rawCost' in project && project.rawCost ? project.rawCost : 15000
-  const costSavingsAvoidedCr = Math.round((roughCostNum * 0.0055) * delayReductionMonths)
+  const costSavingsAvoidedCr = isCurrentlyOnTime
+    ? Math.round((roughCostNum * 0.003) * (landSpeedupMonths + (fundInjectionPct / 5)))
+    : Math.round((roughCostNum * 0.0055) * delayReductionMonths)
 
   return (
     <div className="sim-sandbox-card">
@@ -863,10 +874,12 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
           <div className="sim-kpi-row">
             <div className="sim-kpi">
               <div className="sim-kpi-label">Remaining Delay</div>
-              <div className="sim-kpi-val" style={{ color: simulatedDelayMonths <= 3 ? '#148c4b' : '#ed7b11' }}>
-                {simulatedDelayMonths === 0 ? 'On Baseline' : `${simulatedDelayMonths} mos`}
+              <div className="sim-kpi-val" style={{ color: '#148c4b' }}>
+                {isCurrentlyOnTime ? '0 mos (On Track)' : simulatedDelayMonths === 0 ? 'On Baseline' : `${simulatedDelayMonths} mos`}
               </div>
-              <div className="sim-kpi-delta">↓ Saves {delayReductionMonths} Months</div>
+              <div className="sim-kpi-delta">
+                {isCurrentlyOnTime ? '✓ On-Time Schedule Protected' : `↓ Saves ${delayReductionMonths} Months`}
+              </div>
             </div>
             <div className="sim-kpi">
               <div className="sim-kpi-label">New Risk Score</div>
@@ -880,7 +893,9 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
               <div className="sim-kpi-val" style={{ color: '#103f6d' }}>
                 ₹ {costSavingsAvoidedCr.toLocaleString()} Cr
               </div>
-              <div className="sim-kpi-delta">Money saved from price rises</div>
+              <div className="sim-kpi-delta">
+                {isCurrentlyOnTime ? 'Protected against future cost rise' : 'Money saved from price rises'}
+              </div>
             </div>
           </div>
           <div className="sim-actions">
@@ -1336,26 +1351,30 @@ function ProjectAnalysisCard({
       </div>
 
       <div className="pa-section pa-section-bottleneck">
-        <div className="pa-section-head"><span className="pa-sec-icon blue"><AlertTriangle size={18} /></span><strong>Main Problems &amp; Why Work Is Delayed</strong></div>
+        <div className="pa-section-head">
+          <span className="pa-sec-icon blue"><AlertTriangle size={18} /></span>
+          <strong>{onTrack ? 'Key Risks & Watchlist Factors (Preventive Monitoring)' : 'Main Problems & Why Work Is Delayed'}</strong>
+        </div>
         <div className="pa-bottleneck-row">
           <div className="pa-bottleneck-left">
-            <span className="pa-primary-pill">Biggest Blocker</span>
+            <span className="pa-primary-pill">{onTrack ? 'Primary Watchlist Risk' : 'Biggest Blocker'}</span>
             <h3 className="pa-bottleneck-title"><i className="pa-dot" /> {p.bottleneck}</h3>
             <p className="pa-bottleneck-desc">{p.bottleneckDesc}</p>
             <div className="pa-impact-row">
-              <div className="pa-impact"><AlertTriangle size={15} /><div><strong className="pa-red">Damage Caused</strong><span>{p.impact}</span></div></div>
-              <div className="pa-impact"><Activity size={15} /><div><strong>Work Being Stopped</strong><span>{p.affectedActivity}</span></div></div>
-              <div className="pa-impact"><Flag size={15} /><div><strong className="pa-red">Chance of More Delay</strong><span>{p.riskFurther}</span></div></div>
+              <div className="pa-impact"><AlertTriangle size={15} /><div><strong className="pa-red">{onTrack ? 'Potential Severity' : 'Damage Caused'}</strong><span>{p.impact}</span></div></div>
+              <div className="pa-impact"><Activity size={15} /><div><strong>{onTrack ? 'Vulnerable Activity' : 'Work Being Stopped'}</strong><span>{p.affectedActivity}</span></div></div>
+              <div className="pa-impact"><Flag size={15} /><div><strong className="pa-red">{onTrack ? 'Slippage Threat' : 'Chance of More Delay'}</strong><span>{p.riskFurther}</span></div></div>
             </div>
             <span className="pa-conf-pill">Confidence: {p.bottleneckConf}%</span>
           </div>
           <div className="pa-rootcause">
-            <div className="pa-rootcause-title">Why Is It Delayed? (Root Causes)</div>
+            <div className="pa-rootcause-title">{onTrack ? 'Key Factors Under Active Review' : 'Why Is It Delayed? (Root Causes)'}</div>
             {p.rootCause.map((rc, i) => {
+              const displayRc = (onTrack && rc.toLowerCase().includes('project delay')) ? 'Potential Schedule Slippage' : rc
               const Icon = rootCauseIcons[i % rootCauseIcons.length]
               return (
                 <Fragment key={rc}>
-                  <div className="pa-rc-item"><span className="pa-rc-icon"><Icon size={14} /></span><span>{rc}</span></div>
+                  <div className="pa-rc-item"><span className="pa-rc-icon"><Icon size={14} /></span><span>{displayRc}</span></div>
                   {i < p.rootCause.length - 1 && <div className="pa-rc-arrow">↓</div>}
                 </Fragment>
               )
