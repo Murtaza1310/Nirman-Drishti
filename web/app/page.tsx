@@ -56,14 +56,15 @@ import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps
 
 const navItems = [
   { label: 'Home', icon: Home },
-  { label: 'Projects', icon: LayoutGrid, active: true, badge: '1,012' },
+  { label: 'Projects', icon: LayoutGrid, active: true, badge: '4,539' },
   { label: 'Analysis', icon: BarChart3 },
   { label: 'Map', icon: Map },
   { label: 'AI', icon: Sparkles },
 ]
 
 const metrics = [
-  { label: 'TOTAL PROJECTS', value: '1,012', note: 'Active ongoing national initiatives', tag: '100% Tracked', icon: FileText, tone: 'blue' },
+  { label: 'ACTIVE ONGOING PROJECTS', value: '4,539', note: 'Live tracked mega-projects (>= ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
+  { label: 'HISTORICAL AI ARCHIVE', value: '49,094', note: 'Official MoSPI PAIMANA records (2001–2026)', tag: '25-Year Corpus', icon: Landmark, tone: 'blue' },
   { label: 'ON-TIME PROJECTS', value: '684', note: 'Work is running on time', tag: '67.6% Ratio', icon: CircleCheck, tone: 'green' },
   { label: 'DELAYED PROJECTS', value: '328', note: 'Running past target deadline', tag: '32.4% Ratio', icon: Clock3, tone: 'orange' },
   { label: 'HIGH RISK OF BIG DELAY', value: '142', note: 'AI flagged these projects needing urgent help', tag: 'Urgent Action', icon: AlertTriangle, tone: 'red' },
@@ -114,7 +115,7 @@ const projects: Project[] = rawProjects as unknown as Project[]
 
 const NATIONAL_PORTFOLIO_DOSSIER: Project = {
   id: 'NAT-PORTFOLIO-2026',
-  name: 'National Infrastructure Portfolio (1,012 Projects Overview)',
+  name: 'National Infrastructure Portfolio (4,539 Active Projects Overview)',
   state: 'All 28 States & 8 Union Territories',
   risk: 'High',
   type: 'Delayed',
@@ -190,7 +191,7 @@ const DEFAULT_VIEW: MapViewport = { center: [82.5, 22.5], scale: 980 }
 
 type MapViewport = { center: [number, number]; scale: number }
 
-const projectCoords: Record<string, [number, number]> = rawProjectCoords as Record<string, [number, number]>
+const projectCoords: Record<string, [number, number]> = rawProjectCoords as unknown as Record<string, [number, number]>
 
 const stateCenters: Record<string, [number, number]> = {
   Maharashtra: [76.4, 19.4],
@@ -391,7 +392,7 @@ export default function Page() {
                 <FilterSelect label="State" value={filters.State} onChange={(value) => setFilter('State', value)} />
                 <FilterSelect label="Risk" value={filters.Risk} onChange={(value) => setFilter('Risk', value)} />
                 <FilterSelect label="Type" value={filters.Type} onChange={(value) => setFilter('Type', value)} />
-                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 1,012 projects by name, ID, sector, bottleneck..." aria-label="Search projects" /></label>
+                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 4,539 active projects (or 49k MoSPI archive) by name, ID..." aria-label="Search projects" /></label>
                 {projectFiltersActive && (
                   <button className="map-reset" onClick={resetAllFilters} style={{ marginLeft: '4px' }}>
                     Reset Filters
@@ -414,7 +415,7 @@ export default function Page() {
                 <div className="dashboard-card">
                   <div className="card-banner">
                     <strong>NATIONAL INFRASTRUCTURE OVERVIEW</strong>
-                    <span className="banner-chip">1,012 Live Projects</span>
+                    <span className="banner-chip">4,539 Live Ongoing Projects</span>
                     <span className="banner-note">+ MoSPI IPMD Early Warning AI Integration</span>
                     <span className="sync"><i /> Synchronized with MoSPI Database</span>
                   </div>
@@ -492,13 +493,13 @@ export default function Page() {
 }
 
 const homeCapabilities = [
-  { icon: FileText, tone: 'blue', title: 'Explore 1,012 Projects', desc: 'Search and track real MoSPI infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
+  { icon: FileText, tone: 'blue', title: 'Explore 4,539 Projects', desc: 'Search and track real MoSPI infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
   { icon: BarChart3, tone: 'purple', title: 'Deep Predictive Analytics', desc: 'Inspect root causes, time-cost variance, and policy simulation sandboxes for flagship initiatives.', cta: 'Go to Analysis', nav: 'Analysis' },
   { icon: Sparkles, tone: 'green', title: 'Launch AI Early Warning', desc: 'Predict potential milestone slippages months in advance using XGBoost and Random Forest ML models.', cta: 'Go to AI', nav: 'AI' },
 ] as const
 
 const homeJourney = [
-  { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 1,012 ongoing national projects across all states and ministries.' },
+  { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 4,539 ongoing national projects across all states and ministries.' },
   { step: '02', icon: Coins, title: 'Audit Expenditure', desc: 'Inspect sanctioned budget vs real money invested in civil works and land acquisition.' },
   { step: '03', icon: Brain, title: 'AI Delay Prediction', desc: 'PAMANA machine learning models identify emerging risks before deadlines elapse.' },
   { step: '04', icon: SlidersHorizontal, title: 'Test Solutions (What-If)', desc: 'Use policy sandboxes and export official MoSPI briefings for ministerial action.' },
@@ -511,9 +512,9 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string) => void }) {
         <div className="home-hero-text">
           <span className="home-hero-pill">NIRMAN-Drishti · MoSPI IPMD</span>
           <h1 className="home-hero-title">Predictive Intelligence for India’s Infrastructure.</h1>
-          <p className="home-hero-desc">An AI-powered early warning decision support system tracking 1,012 active projects worth ₹ 18.94 Lakh Crore across 28 States and 8 Union Territories.</p>
+          <p className="home-hero-desc">An AI-powered early warning decision support system trained on 49,094 official MoSPI records (2001–2026) and tracking 4,539 active mega-projects across 28 States and 8 Union Territories.</p>
           <div className="home-hero-actions">
-            <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,012 Projects <ArrowRight size={16} /></button>
+            <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 4,539 Projects <ArrowRight size={16} /></button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Analysis')}><BarChart3 size={16} /> View Analysis &amp; Simulations</button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch PAMANA AI</button>
           </div>
@@ -777,15 +778,16 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
 
   const baseRisk = 'riskScore' in project ? project.riskScore : (project.risk === 'High' ? 82 : project.risk === 'Medium' ? 55 : 28)
   
+  const projDelay = 'delay' in project ? (project as any).delay : ('currentDelay' in project ? (project as any).currentDelay : '')
   const isCurrentlyOnTime = 
     ('type' in project && project.type === 'On Schedule') ||
     ('status' in project && project.status === 'On Schedule') ||
-    (project.delay && (project.delay === 'On Track' || project.delay === '0 Months' || project.delay === 'On Schedule')) ||
+    (projDelay && (projDelay === 'On Track' || projDelay === '0 Months' || projDelay === 'On Schedule')) ||
     ('overrunMonths' in project && (project as any).overrunMonths === 0)
 
   const rawOverrun = 'overrunMonths' in project && typeof (project as any).overrunMonths === 'number'
     ? (project as any).overrunMonths
-    : (project.delay && project.delay.includes('mos') ? parseInt(project.delay) : 0)
+    : (projDelay && typeof projDelay === 'string' && projDelay.includes('mos') ? parseInt(projDelay) : 0)
 
   const baseDelayMonths = isCurrentlyOnTime ? 0 : (rawOverrun > 0 ? rawOverrun : 14)
 
@@ -1076,7 +1078,7 @@ function AnalysisView({
           className="export-briefing-btn" 
           style={{ marginLeft: 'auto' }}
           onClick={() => onOpenBriefing(NATIONAL_PORTFOLIO_DOSSIER)}
-          title="Print official Cabinet portfolio briefing for 1,012 projects"
+          title="Print official Cabinet portfolio briefing for 4,539 projects"
         >
           <Printer size={14} /> Official Portfolio Report (PDF)
         </button>
@@ -1219,7 +1221,7 @@ function CompactPortfolioCard({ onOpen }: { onOpen: () => void }) {
         </div>
         <div className="ca-meta">
           <div className="ca-meta-item"><Landmark size={14} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">All Union Ministries</span></div></div>
-          <div className="ca-meta-item"><Gauge size={14} /><div><span className="ca-meta-label">Coverage</span><span className="ca-meta-val">1,012 Monitored Projects</span></div></div>
+          <div className="ca-meta-item"><Gauge size={14} /><div><span className="ca-meta-label">Coverage</span><span className="ca-meta-val">4,539 Monitored Projects</span></div></div>
           <div className="ca-meta-item"><Flag size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">All 28 States &amp; 8 UTs</span></div></div>
         </div>
       </div>
@@ -1613,7 +1615,7 @@ function answerQuery(q: string): string {
 
   if (/(money invested|how much money|total spent|expenditure|utilized)/.test(ql)) {
     return `💰 National Portfolio Expenditure Audit (MoSPI IPMD):\n` +
-      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,012 projects\n` +
+      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 4,539 projects\n` +
       `• Cumulative Capital Invested/Spent: ₹ 11.48 Lakh Crore (60.6% utilization)\n` +
       `• Largest Single Investment: Mumbai–Ahmedabad High Speed Rail (₹ 72,257 Cr spent of ₹ 1.08 Lakh Cr budget, with ₹ 18,064 Cr invested in land acquisition alone).\n` +
       `• Cumulative Cost Overrun Recorded: ₹ 2.41 Lakh Crore.`
@@ -1625,10 +1627,10 @@ function answerQuery(q: string): string {
   }
 
   if (/(overview|summary|how many|status|portfolio|total|snapshot)/.test(ql)) {
-    return `National Infrastructure Portfolio Snapshot:\n• 1,012 Total Monitored Projects\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
+    return `National Infrastructure Portfolio Snapshot:\n• 4,539 Total Monitored Ongoing Projects (Trained on 49,094 MoSPI Archive)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
   }
 
-  return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 1,012 infrastructure projects.\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
+  return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 4,539 ongoing infrastructure projects (and 49,094 historical records).\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
 }
 
 const AI_SUGGESTIONS = [
@@ -1641,7 +1643,7 @@ const AI_SUGGESTIONS = [
 
 function AIView() {
   const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: 'bot', text: 'Namaste. I am PAMANA, the MoSPI AI assistant for NIRMAN-Drishti. Ask me about any of the 1,012 infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
+    { role: 'bot', text: 'Namaste. I am PAMANA, the MoSPI AI assistant for NIRMAN-Drishti. Ask me about any of the 4,539 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
   ])
   const [input, setInput] = useState('')
   const [isListening, setIsListening] = useState(false)
@@ -1711,7 +1713,7 @@ function AIView() {
       </div>
 
       <div className="ai-chat-card">
-        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live PAMANA Intelligence Feed · 1,012 Monitored Projects</div>
+        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live PAMANA Intelligence Feed · 4,539 Monitored Ongoing Projects</div>
         <div className="ai-chat-body" ref={bodyRef}>
           {messages.map((m, i) => (
             <div key={i} className={`ai-msg ${m.role}`}>
