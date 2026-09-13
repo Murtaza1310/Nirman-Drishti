@@ -3394,3 +3394,126 @@ button {
     max-width: 90%;
   }
 }
+
+/* ----------------------------------------------------
+   PAMANA ML Explainability Tooltips & Synchronized UI
+------------------------------------------------------- */
+.ml-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+
+.ml-tooltip-bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #092540;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  z-index: 1000;
+  width: max-content;
+  max-width: 290px;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.ml-tooltip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #092540 transparent transparent transparent;
+}
+
+.ml-tooltip-wrap:hover .ml-tooltip-bubble,
+.ml-tooltip-wrap:focus-within .ml-tooltip-bubble {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ml-tooltip-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 800;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+
+.ml-tooltip-body {
+  color: #e2e8f0;
+  font-weight: 400;
+  display: block;
+}
+
+.ml-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: help;
+  padding: 2px;
+  margin-left: 4px;
+  border-radius: 50%;
+  transition: color 0.15s ease;
+}
+
+.ml-info-btn:hover {
+  color: #0284c7;
+}
+
+/* Explicit Budget 3-Column Visual Grid */
+.pc-budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0;
+}
+
+.pc-budget-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.pc-budget-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 3px;
+}
+
+.pc-budget-val {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.pc-budget-sub {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 2px;
+}

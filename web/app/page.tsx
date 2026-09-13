@@ -1,8 +1,18 @@
 'use client'
 
 import { Fragment, useState, useEffect, useRef, useMemo } from 'react'
-import rawProjects from '@/lib/ongoing_projects.json'
-import rawAnalysisProjects from '@/lib/flagship_analysis.json'
+import {
+  UnifiedProject,
+  Project,
+  ProjectRiskProfile,
+  ProjectBudgets,
+  unifiedProjects,
+  getUnifiedProjectById,
+  getProjectRiskProfile,
+  getProjectBudgets,
+  getFlagshipDetails,
+  getFlagshipProjects,
+} from '@/lib/project_service'
 import rawProjectCoords from '@/lib/project_coords.json'
 import {
   Activity,
@@ -71,7 +81,7 @@ const metrics = [
   { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
 ]
 
-const projects: Project[] = rawProjects as unknown as Project[]
+const projects: UnifiedProject[] = unifiedProjects
 
 const allUniqueStates = Array.from(new Set(projects.map(p => p.state).filter(Boolean))).sort((a, b) => a.localeCompare(b))
 const allUniqueMinistries = Array.from(new Set(projects.map(p => p.ministry).filter(Boolean))).sort((a, b) => a.localeCompare(b))
@@ -86,43 +96,7 @@ const filterOptions: Record<string, string[]> = {
 const ministryOptions = ['All', ...allUniqueMinistries]
 const sectorOptions = ['All', ...allUniqueSectors]
 
-type Project = {
-  id: string
-  name: string
-  state: string
-  risk: 'High' | 'Medium' | 'Low'
-  type: 'On Schedule' | 'Delayed' | 'High Risk'
-  ministry: string
-  sector: string
-  agency?: string
-  approvalDate?: string
-  yearsActive?: string
-  originalDoc?: string
-  anticipatedDoc?: string
-  cost: string
-  rawCost?: number
-  spentCost?: string
-  rawSpentCost?: number
-  balanceCost?: string
-  financialProgress?: number
-  expenditureBreakdown?: {
-    civilWorks: string
-    landAcquisition: string
-    utilityAndSystems: string
-    contingencyAndPMC: string
-  }
-  revisedCost?: string
-  rawRevisedCost?: number
-  costOverrunCr?: number
-  costOverrunPct?: number
-  progress: number
-  delay: string
-  overrunMonths?: number
-  riskScore: number
-  delayProbability: number
-  criticalIssue: string
-  reportPeriod?: string
-}
+
 
 
 
@@ -159,44 +133,8 @@ const NATIONAL_PORTFOLIO_DOSSIER: Project = {
   },
 }
 
-type AnalysisProject = {
-  id: string
-  name: string
-  status: 'On Schedule' | 'Delayed' | 'High Risk'
-  risk: 'High' | 'Medium' | 'Low'
-  ministry: string
-  sector: string
-  states: string
-  cost: string
-  revisedCost: string
-  revisedPct: string
-  progress: number
-  originalCompletion: string
-  currentExpected: string
-  expectedDelta: string
-  currentDelay: string
-  aiConfidence: number
-  predictedDelay: string
-  predictedDelayConf: number
-  estFunding: string
-  estFundingConf: number
-  overallRisk: string
-  overallRiskConf: number
-  bottleneck: string
-  bottleneckDesc: string
-  impact: string
-  affectedActivity: string
-  riskFurther: string
-  bottleneckConf: number
-  rootCause: string[]
-  rootCauseConf: number
-  priority: 'CRITICAL' | 'HIGH' | 'MODERATE'
-  actionText: string
-  expectedImpact: string[]
-  actionConf: number
-}
-
-const analysisProjects: AnalysisProject[] = rawAnalysisProjects as unknown as AnalysisProject[]
+type AnalysisProject = UnifiedProject
+const analysisProjects: UnifiedProject[] = getFlagshipProjects()
 
 const rootCauseIcons = [FileText, MapPin, Target, Clock3]
 
@@ -692,25 +630,69 @@ function MetricTile({ icon: Icon, tone, label, value, note, noteTone }: { icon: 
   )
 }
 
+function MLTooltip({ 
+  title, 
+  text, 
+  children 
+}: { 
+  title?: string; 
+  text: string; 
+  children: React.ReactNode 
+}) {
+  return (
+    <span className="ml-tooltip-wrap" tabIndex={0} role="tooltip" aria-label={text}>
+      {children}
+      <span className="ml-tooltip-bubble">
+        <span className="ml-tooltip-title"><Brain size={12} /> {title || 'PAMANA ML Engine'}</span>
+        <span className="ml-tooltip-body">{text}</span>
+      </span>
+    </span>
+  )
+}
+
+function ProjectBudgetSummary({ budgets }: { budgets: ProjectBudgets }) {
+  return (
+    <div className="pc-budget-grid">
+      <div className="pc-budget-cell">
+        <span className="pc-budget-label">Original Sanctioned Cost (₹ Cr)</span>
+        <strong className="pc-budget-val">{budgets.sanctionedCost}</strong>
+        <span className="pc-budget-sub">Approved Baseline</span>
+      </div>
+      <div className="pc-budget-cell">
+        <span className="pc-budget-label">Anticipated/Revised Cost (₹ Cr)</span>
+        <strong className="pc-budget-val" style={{ color: budgets.hasOverrun ? '#df4036' : '#0f172a' }}>
+          {budgets.revisedCost}
+        </strong>
+        <span className="pc-budget-sub" style={{ color: budgets.hasOverrun ? '#df4036' : '#64748b' }}>
+          {budgets.hasOverrun ? `+${budgets.costOverrunPct}% Escalation` : 'Protected (0% Escalation)'}
+        </span>
+      </div>
+      <div className="pc-budget-cell">
+        <span className="pc-budget-label">Expenditure to Date (₹ Cr)</span>
+        <strong className="pc-budget-val" style={{ color: '#159149' }}>{budgets.spentCost}</strong>
+        <span className="pc-budget-sub" style={{ color: '#159149', fontWeight: 600 }}>
+          {budgets.financialProgress}% Disbursed
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function ProjectCard({ 
   project, 
   onViewAnalysis,
   onOpenBriefing,
 }: { 
-  project: Project; 
+  project: UnifiedProject; 
   onViewAnalysis: () => void;
   onOpenBriefing: () => void;
 }) {
   const [showSim, setShowSim] = useState(false)
-  const onTrack = project.type === 'On Schedule'
-  const riskClass = project.risk === 'High' ? 'badge-high' : project.risk === 'Medium' ? 'badge-medium' : 'badge-low'
+  const onTrack = project.type === 'On Schedule' || (project.overrunMonths ?? 0) === 0
+  const riskProfile = project.riskProfile || getProjectRiskProfile(project)
+  const budgets = project.budgets || getProjectBudgets(project)
+  const riskClass = riskProfile.badgeClass
   const typeClass = onTrack ? 'badge-ontrack' : 'badge-high'
-  const finProgress = project.financialProgress ?? Math.min(100, Math.round(project.progress * 0.95))
-  const projectCostNum = project.rawCost || parseFloat(project.cost.replace(/[^0-9.]/g, '')) || 5000
-  const computedSpentNum = project.rawSpentCost || Math.round(projectCostNum * (finProgress / 100))
-  const computedBalanceNum = Math.max(0, projectCostNum - computedSpentNum)
-  const spentDisplay = project.spentCost || `₹ ${computedSpentNum.toLocaleString('en-IN')} Cr`
-  const balanceDisplay = project.balanceCost || `₹ ${computedBalanceNum.toLocaleString('en-IN')} Cr`
 
   return (
     <article className="project-card">
@@ -721,7 +703,17 @@ function ProjectCard({
         </div>
         <div className="pc-meta">
           <div className="pc-meta-item"><MapPin size={16} /><div><span className="pc-meta-label">State</span><span className="pc-meta-val">{project.state}</span></div></div>
-          <div className="pc-meta-item"><AlertTriangle size={16} /><div><span className="pc-meta-label">Risk Rating</span><em className={`badge ${riskClass}`}><AlertTriangle size={11} /> {project.risk}</em></div></div>
+          <div className="pc-meta-item">
+            <AlertTriangle size={16} />
+            <div>
+              <span className="pc-meta-label">Risk Rating</span>
+              <MLTooltip title="PAMANA ML Risk Profile" text={riskProfile.explanation}>
+                <em className={`badge ${riskClass}`} style={{ cursor: 'help' }}>
+                  <AlertTriangle size={11} /> {riskProfile.tier} Risk ({riskProfile.score}/100) <Info size={10} style={{ marginLeft: 3, verticalAlign: 'middle' }} />
+                </em>
+              </MLTooltip>
+            </div>
+          </div>
           <div className="pc-meta-item"><Clock3 size={16} /><div><span className="pc-meta-label">Status</span><em className={`badge ${typeClass}`}><i className="badge-dot" /> {project.type}</em></div></div>
           <div className="pc-meta-item"><Landmark size={16} /><div><span className="pc-meta-label">Ministry</span><span className="pc-meta-val">{project.ministry}</span></div></div>
           <div className="pc-meta-item"><Share2 size={16} /><div><span className="pc-meta-label">Sector</span><span className="pc-meta-val">{project.sector}</span></div></div>
@@ -749,24 +741,31 @@ function ProjectCard({
         </div>
         <div>
           <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>💰 Budget Variance</span>
-          <strong style={{ color: (project.costOverrunCr && project.costOverrunCr > 0) ? '#df4036' : '#159149', fontSize: '13px' }}>
-            {(project.costOverrunCr && project.costOverrunCr > 0) ? `+₹ ${project.costOverrunCr.toLocaleString('en-IN')} Cr` : '₹ 0 Cr (Protected)'}
+          <strong style={{ color: budgets.hasOverrun ? '#df4036' : '#159149', fontSize: '13px' }}>
+            {budgets.hasOverrun ? `+₹ ${budgets.costOverrunCr.toLocaleString('en-IN')} Cr` : '₹ 0 Cr (Protected)'}
           </strong>
-          <span style={{ color: (project.costOverrunCr && project.costOverrunCr > 0) ? '#df4036' : '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>
-            {(project.costOverrunCr && project.costOverrunCr > 0) ? `+${project.costOverrunPct || 0}% Escalation` : 'Within Budget'}
+          <span style={{ color: budgets.hasOverrun ? '#df4036' : '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>
+            {budgets.hasOverrun ? `+${budgets.costOverrunPct}% Escalation` : 'Within Budget'}
           </span>
         </div>
       </div>
 
+      {/* Explicit 3-Column Unified Budget Definitions */}
+      <ProjectBudgetSummary budgets={budgets} />
+
       <div className="pc-metrics">
-        <MetricTile icon={Coins} tone="blue" label="Total Budget" value={project.cost} note="Approved Money" />
+        <MetricTile icon={Coins} tone="blue" label="Total Approved Budget" value={budgets.sanctionedCost} note="Sanctioned Outlay" />
         <div className="pc-metric pc-progress">
           <div className="pc-progress-top"><ProgressRing value={project.progress} /><div className="pc-metric-body"><div className="pc-metric-label">Work Completed on Ground</div><strong className="pc-metric-value">{project.progress}%</strong></div></div>
           <div className="progress-track"><span style={{ width: `${project.progress}%` }} /></div>
         </div>
-        <MetricTile icon={CalendarDays} tone="red" label="Schedule Status" value={project.delay} note={onTrack ? 'Running On Time' : 'Running Late'} noteTone={onTrack ? 'green' : 'red'} />
-        <MetricTile icon={ShieldAlert} tone="orange" label="Risk Score" value={`${project.riskScore} / 100`} note={`${project.risk} Delay Risk`} />
-        <MetricTile icon={Brain} tone="purple" label="Predicted Delay Probability" value={`${project.delayProbability}%`} note="MoSPI ML Model" />
+        <MetricTile icon={CalendarDays} tone={onTrack ? 'green' : 'red'} label="Schedule Status" value={project.delay || (onTrack ? 'On Schedule (0 mo)' : '+0 Months')} note={onTrack ? 'Operating On Time' : 'Running Late'} noteTone={onTrack ? 'green' : 'red'} />
+        <MLTooltip title="PAMANA ML Risk Engine" text={riskProfile.explanation}>
+          <MetricTile icon={ShieldAlert} tone="orange" label="Risk Score" value={`${riskProfile.score} / 100`} note={`${riskProfile.tier} Delay Risk`} />
+        </MLTooltip>
+        <MLTooltip title="MoSPI Delay Probability Model" text={`PAMANA ML estimates ${riskProfile.delayProbability}% probability of deadline slippage based on statutory permits and vendor milestones.`}>
+          <MetricTile icon={Brain} tone="purple" label="Delay Probability" value={`${riskProfile.delayProbability}%`} note="MoSPI ML Model" />
+        </MLTooltip>
         {onTrack ? (
           <MetricTile icon={Shield} tone="green" label="Milestone Surveillance" value="Operating On Schedule" note="Active Milestone Tracking" />
         ) : (
@@ -779,27 +778,27 @@ function ProjectCard({
         <div className="capex-top">
           <div className="capex-title-group">
             <Coins size={18} color="#0c5c9d" />
-            <strong>Money Spent &amp; Budget Status</strong>
-            <span className="capex-ratio-pill">{finProgress}% Spent So Far</span>
+            <strong>Where Has the Money Been Spent? (Expenditure Status)</strong>
+            <span className="capex-ratio-pill">{budgets.financialProgress}% Spent So Far</span>
           </div>
           <div className="capex-stats">
             <div className="capex-stat-item">
-              <span className="capex-stat-label">Total Budget:</span>
-              <span className="capex-stat-val">{project.cost}</span>
+              <span className="capex-stat-label">Original Sanctioned:</span>
+              <span className="capex-stat-val">{budgets.sanctionedCost}</span>
             </div>
             <div className="capex-stat-item">
               <span className="capex-stat-label">Money Spent Till Now:</span>
-              <span className="capex-stat-val" style={{ color: '#159149' }}>{spentDisplay}</span>
+              <span className="capex-stat-val" style={{ color: '#159149' }}>{budgets.spentCost}</span>
             </div>
             <div className="capex-stat-item">
               <span className="capex-stat-label">Money Left to Spend:</span>
-              <span className="capex-stat-val" style={{ color: '#7047eb' }}>{balanceDisplay}</span>
+              <span className="capex-stat-val" style={{ color: '#7047eb' }}>{budgets.balanceCost}</span>
             </div>
           </div>
         </div>
 
-        <div className="capex-dual-bar" title={`Spent: ${spentDisplay} / Sanctioned: ${project.cost}`}>
-          <div className="capex-fill-bar" style={{ width: `${Math.min(100, finProgress)}%` }} />
+        <div className="capex-dual-bar" title={`Spent: ${budgets.spentCost} / Sanctioned: ${budgets.sanctionedCost}`}>
+          <div className="capex-fill-bar" style={{ width: `${Math.min(100, budgets.financialProgress)}%` }} />
         </div>
 
         {project.expenditureBreakdown && (
@@ -852,7 +851,7 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
   const [fundInjectionPct, setFundInjectionPct] = useState(15)
   const [contractorAugment, setContractorAugment] = useState(25)
 
-  const baseRisk = 'riskScore' in project ? project.riskScore : (project.risk === 'High' ? 82 : project.risk === 'Medium' ? 55 : 28)
+  const baseRisk = project.riskScore || (project.risk === 'High' ? 82 : project.risk === 'Medium' ? 55 : 28)
   
   const projDelay = 'delay' in project ? (project as any).delay : ('currentDelay' in project ? (project as any).currentDelay : '')
   const isCurrentlyOnTime = 
@@ -1000,61 +999,9 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
   )
 }
 
-function getAnalysisProjectById(id: string | null): AnalysisProject | null {
+function getAnalysisProjectById(id: string | null): UnifiedProject | null {
   if (!id) return null
-  const found = analysisProjects.find((x) => x.id === id)
-  if (found) return found
-  const raw = projects.find((x) => x.id === id)
-  if (!raw) return null
-  const rawCostNum = raw.rawCost || parseFloat(raw.cost.replace(/[^0-9.]/g, '')) || 5000
-  const overrunCr = raw.costOverrunCr || Math.round(rawCostNum * (raw.riskScore / 500))
-  const revisedCostVal = raw.revisedCost || `₹ ${(rawCostNum + overrunCr).toLocaleString('en-IN')} Cr`
-  const overrunPct = Math.round((overrunCr / rawCostNum) * 100)
-
-  return {
-    id: raw.id,
-    name: raw.name,
-    status: raw.type,
-    risk: raw.risk,
-    ministry: raw.ministry,
-    sector: raw.sector,
-    states: raw.state,
-    cost: raw.cost,
-    revisedCost: revisedCostVal,
-    revisedPct: `+${overrunPct}%`,
-    progress: raw.progress,
-    originalCompletion: raw.overrunMonths && raw.overrunMonths > 0 ? 'Official Target DOC' : 'Baseline Target DOC',
-    currentExpected: raw.overrunMonths && raw.overrunMonths > 0 ? `Anticipated (+${raw.overrunMonths} Months)` : 'On Schedule',
-    expectedDelta: raw.delay || `${raw.overrunMonths || 0} Months Delay`,
-    currentDelay: raw.delay || '0 Months',
-    aiConfidence: Math.min(94, Math.max(76, 100 - Math.round(raw.riskScore / 4))),
-    predictedDelay: raw.overrunMonths && raw.overrunMonths > 0 ? `+${raw.overrunMonths} Months` : '+0 Months',
-    predictedDelayConf: 82,
-    estFunding: `₹ ${overrunCr.toLocaleString('en-IN')} Cr`,
-    estFundingConf: 80,
-    overallRisk: `${raw.risk} (${raw.riskScore}/100)`,
-    overallRiskConf: 85,
-    bottleneck: raw.criticalIssue || 'Inter-agency clearance & vendor execution tracking',
-    bottleneckDesc: `Active monitoring flagged critical delays in statutory permits, state right-of-way permissions, and resource mobilization for ${raw.name}.`,
-    impact: raw.risk === 'High' ? 'High potential for further milestone slippage and escalation costs.' : 'Moderate timeline sensitivity.',
-    affectedActivity: 'Contractor site mobilization & structural milestones',
-    riskFurther: raw.risk === 'High' ? 'Likely further milestone slippage without inter-ministerial escalation.' : 'Low risk of additional budget overrun.',
-    bottleneckConf: 84,
-    rootCause: [
-      'Multi-agency clearance and utility relocation coordination',
-      'Contractor resource constraints and site handover synchronization',
-      'Right of way verification across regional jurisdictions'
-    ],
-    rootCauseConf: 81,
-    priority: raw.risk === 'High' ? 'CRITICAL' : raw.risk === 'Medium' ? 'HIGH' : 'MODERATE',
-    actionText: `Direct administrative escalation through the Cabinet Secretariat Pragati portal to expedite statutory permits and track contractor performance for ${raw.name}.`,
-    expectedImpact: [
-      'Reduces milestone delay risk by 30-45%',
-      'Prevents further fiscal overrun escalation',
-      'Streamlines on-ground vendor progress verification'
-    ],
-    actionConf: 86
-  }
+  return getUnifiedProjectById(id)
 }
 
 function AnalysisView({ 
@@ -1119,11 +1066,11 @@ function AnalysisView({
 
   const filtered = analysisProjects.filter((p) => {
     const query = search.trim().toLowerCase()
-    const haystack = [p.name, p.id, p.states, p.risk, p.status, p.ministry, p.sector, p.bottleneck, ...p.rootCause].join(' ').toLowerCase()
+    const haystack = [p.name, p.id, (p.state || (p as any).states || ''), p.risk, (p.type || (p as any).status || ''), p.ministry, p.sector, (p.flagshipDetails?.bottleneck || p.criticalIssue), ...(p.flagshipDetails?.rootCause || [])].join(' ').toLowerCase()
     if (query && !haystack.includes(query)) return false
-    if (selectedFilters.State !== 'All' && !p.states.includes(selectedFilters.State)) return false
+    if (selectedFilters.State !== 'All' && !((p.state || (p as any).states || '').includes(selectedFilters.State))) return false
     if (selectedFilters.Risk !== 'All' && p.risk !== selectedFilters.Risk) return false
-    if (selectedFilters.Type !== 'All' && p.status !== selectedFilters.Type) return false
+    if (selectedFilters.Type !== 'All' && (p.type || (p as any).status) !== selectedFilters.Type) return false
     if (groupValue !== 'All') {
       if (groupMode === 'Ministry' && p.ministry !== groupValue) return false
       if (groupMode === 'Sector' && p.sector !== groupValue) return false
@@ -1236,10 +1183,12 @@ function AnalysisView({
   )
 }
 
-function CompactAnalysisCard({ p, onOpen }: { p: AnalysisProject; onOpen: () => void }) {
-  const onTrack = p.status === 'On Schedule'
-  const statusClass = onTrack ? 'ca-status-ok' : p.status === 'High Risk' ? 'ca-status-risk' : 'ca-status-bad'
-  const riskTextClass = p.risk === 'High' ? 'pa-red' : p.risk === 'Medium' ? 'pa-orange' : 'pa-green'
+function CompactAnalysisCard({ p, onOpen }: { p: UnifiedProject; onOpen: () => void }) {
+  const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
+  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+  const budgets = p.budgets || getProjectBudgets(p)
+  const statusClass = onTrack ? 'ca-status-ok' : p.type === 'High Risk' ? 'ca-status-risk' : 'ca-status-bad'
+
   return (
     <article className="ca-card">
       <div className="ca-col ca-identity">
@@ -1253,29 +1202,65 @@ function CompactAnalysisCard({ p, onOpen }: { p: AnalysisProject; onOpen: () => 
         <div className="ca-meta">
           <div className="ca-meta-item"><Landmark size={14} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">{p.ministry}</span></div></div>
           <div className="ca-meta-item"><Share2 size={14} /><div><span className="ca-meta-label">Sector</span><span className="ca-meta-val">{p.sector}</span></div></div>
-          <div className="ca-meta-item"><MapPin size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">{p.states}</span></div></div>
+          <div className="ca-meta-item"><MapPin size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">{p.state}</span></div></div>
         </div>
       </div>
 
       <div className="ca-col ca-facts">
-        <div className="ca-fact"><span className="ca-fact-label">Approved Budget</span><strong className="ca-fact-val">{p.cost}</strong><small className="ca-fact-note">Approved</small></div>
-        <div className="ca-fact"><span className="ca-fact-label">Updated Cost</span><strong className="ca-fact-val">{p.revisedCost}</strong><small className="ca-fact-note pa-orange">{p.revisedPct}</small></div>
-        <div className="ca-fact ca-fact-progress"><span className="ca-fact-label">Progress</span><ProgressRing value={p.progress} /></div>
-        <div className="ca-fact"><span className="ca-fact-label">Expected Completion</span><strong className="ca-fact-val">{p.currentExpected}</strong><small className="ca-fact-note pa-red">{p.expectedDelta}</small></div>
-        <div className="ca-fact"><span className="ca-fact-label">Delay Running</span><strong className={`ca-fact-val ${onTrack ? 'pa-green' : 'pa-red'}`}>{p.currentDelay}</strong><small className="ca-fact-note">vs baseline</small></div>
+        <div className="ca-fact">
+          <span className="ca-fact-label">Original Sanctioned Cost</span>
+          <strong className="ca-fact-val">{budgets.sanctionedCost}</strong>
+          <small className="ca-fact-note">Approved Baseline</small>
+        </div>
+        <div className="ca-fact">
+          <span className="ca-fact-label">Anticipated/Revised Cost</span>
+          <strong className="ca-fact-val">{budgets.revisedCost}</strong>
+          <small className={`ca-fact-note ${budgets.hasOverrun ? 'pa-red' : 'pa-green'}`}>
+            {budgets.hasOverrun ? `+${budgets.costOverrunPct}% Escalation` : 'Protected (0% Escalation)'}
+          </small>
+        </div>
+        <div className="ca-fact">
+          <span className="ca-fact-label">Expenditure to Date</span>
+          <strong className="ca-fact-val pa-green">{budgets.spentCost}</strong>
+          <small className="ca-fact-note pa-green">{budgets.financialProgress}% Disbursed</small>
+        </div>
+        <div className="ca-fact ca-fact-progress">
+          <span className="ca-fact-label">Physical Progress</span>
+          <ProgressRing value={p.progress} />
+        </div>
+        <div className="ca-fact">
+          <span className="ca-fact-label">Target Completion</span>
+          <strong className="ca-fact-val">{p.anticipatedDoc || p.originalDoc}</strong>
+          <small className={`ca-fact-note ${onTrack ? 'pa-green' : 'pa-red'}`}>
+            {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mo Delay`}
+          </small>
+        </div>
       </div>
 
       <div className="ca-col ca-side">
         <div className="ca-side-top">
-          <span className={`ca-status ${statusClass}`}>{!onTrack && <AlertTriangle size={12} />} {p.status}</span>
-          <span className="ca-risk">Risk: <b className={riskTextClass}>{p.risk}</b></span>
+          <span className={`ca-status ${statusClass}`}>{!onTrack && <AlertTriangle size={12} />} {p.type}</span>
+          <MLTooltip title="PAMANA ML Risk Profile" text={riskProfile.explanation}>
+            <span className="ca-risk" style={{ cursor: 'help' }}>
+              Risk: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100) <Info size={11} className="ml-info-btn" />
+            </span>
+          </MLTooltip>
         </div>
         <div className="ca-ai">
           <div className="ca-ai-head"><Brain size={13} /> AI Prediction</div>
           <div className="ca-ai-grid">
-            <div className="ca-ai-item"><span className="ca-ai-label">Extra Delay Expected</span><strong className="pa-red">{p.predictedDelay}</strong></div>
-            <div className="ca-ai-item"><span className="ca-ai-label">Extra Budget Needed</span><strong className="pa-orange">{p.estFunding}</strong></div>
-            <div className="ca-ai-item"><span className="ca-ai-label">Overall Risk Level</span><strong className="pa-navy">{p.overallRisk}</strong></div>
+            <div className="ca-ai-item">
+              <span className="ca-ai-label">Schedule Slippage Expected</span>
+              <strong className={onTrack ? 'pa-green' : 'pa-red'}>{riskProfile.predictedExtraDelay}</strong>
+            </div>
+            <div className="ca-ai-item">
+              <span className="ca-ai-label">Anticipated Cost Variance</span>
+              <strong className={budgets.hasOverrun ? 'pa-orange' : 'pa-green'}>{riskProfile.estimatedExtraCost}</strong>
+            </div>
+            <div className="ca-ai-item">
+              <span className="ca-ai-label">Delay Probability</span>
+              <strong className="pa-navy">{riskProfile.delayProbability}%</strong>
+            </div>
           </div>
         </div>
         <button className="ca-view-btn" onClick={onOpen}>View Analysis &amp; Test Solutions <ArrowRight size={14} /></button>
@@ -1292,35 +1277,35 @@ function CompactPortfolioCard({ onOpen }: { onOpen: () => void }) {
           <span className="ca-icon"><LayoutGrid size={16} /></span>
           <div className="ca-idtext">
             <strong className="ca-name">India Infrastructure Portfolio Dashboard</strong>
-            <span className="ca-id">IND-PORTFOLIO-2026</span>
+            <span className="ca-id">NAT-PORTFOLIO-2026</span>
           </div>
         </div>
         <div className="ca-meta">
           <div className="ca-meta-item"><Landmark size={14} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">All Union Ministries</span></div></div>
-          <div className="ca-meta-item"><Gauge size={14} /><div><span className="ca-meta-label">Coverage</span><span className="ca-meta-val">1,775 Monitored Projects</span></div></div>
+          <div className="ca-meta-item"><Gauge size={14} /><div><span className="ca-meta-label">Coverage</span><span className="ca-meta-val">1,813 Monitored Projects</span></div></div>
           <div className="ca-meta-item"><Flag size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">All 28 States &amp; 8 UTs</span></div></div>
         </div>
       </div>
 
       <div className="ca-col ca-facts">
-        <div className="ca-fact"><span className="ca-fact-label">Sanctioned CapEx</span><strong className="ca-fact-val">₹ 18.94 Lakh Cr</strong><small className="ca-fact-note">Approved</small></div>
-        <div className="ca-fact"><span className="ca-fact-label">Disbursed to Date</span><strong className="ca-fact-val">₹ 11.48 Lakh Cr</strong><small className="ca-fact-note pa-green">60.6% Utilized</small></div>
-        <div className="ca-fact ca-fact-progress"><span className="ca-fact-label">Progress</span><ProgressRing value={68} /></div>
-        <div className="ca-fact"><span className="ca-fact-label">Avg Completion</span><strong className="ca-fact-val">Oct 2028</strong><small className="ca-fact-note pa-red">+22 months</small></div>
-        <div className="ca-fact"><span className="ca-fact-label">Average Delay</span><strong className="ca-fact-val pa-red">22 Months</strong><small className="ca-fact-note">across portfolio</small></div>
+        <div className="ca-fact"><span className="ca-fact-label">Original Sanctioned Cost</span><strong className="ca-fact-val">₹ 40.57 Lakh Cr</strong><small className="ca-fact-note">Approved Outlay</small></div>
+        <div className="ca-fact"><span className="ca-fact-label">Expenditure to Date</span><strong className="ca-fact-val pa-green">₹ 24.18 Lakh Cr</strong><small className="ca-fact-note pa-green">59.6% Disbursed</small></div>
+        <div className="ca-fact ca-fact-progress"><span className="ca-fact-label">Physical Progress</span><ProgressRing value={64} /></div>
+        <div className="ca-fact"><span className="ca-fact-label">Target Completion</span><strong className="ca-fact-val">FY 2026–2030</strong><small className="ca-fact-note pa-red">+24 mo avg delay</small></div>
+        <div className="ca-fact"><span className="ca-fact-label">Average Delay</span><strong className="ca-fact-val pa-red">24 Months</strong><small className="ca-fact-note">across portfolio</small></div>
       </div>
 
       <div className="ca-col ca-side">
         <div className="ca-side-top">
           <span className="ca-status ca-status-bad"><AlertTriangle size={12} /> Active Monitoring</span>
-          <span className="ca-risk">System Alert: <b className="pa-red">High Risk Projects: 142</b></span>
+          <span className="ca-risk">System Alert: <b className="pa-red">1,624 Delayed Projects</b></span>
         </div>
         <div className="ca-ai">
           <div className="ca-ai-head"><Brain size={13} /> Portfolio AI Prediction</div>
           <div className="ca-ai-grid">
             <div className="ca-ai-item"><span className="ca-ai-label">Predicted Extra Delay Expected</span><strong className="pa-red">+8 Months</strong></div>
-            <div className="ca-ai-item"><span className="ca-ai-label">Cumulative Cost Overrun</span><strong className="pa-orange">₹ 2.41 Lakh Cr</strong></div>
-            <div className="ca-ai-item"><span className="ca-ai-label">High-Risk Severity</span><strong className="pa-navy">Critical (84/100)</strong></div>
+            <div className="ca-ai-item"><span className="ca-ai-label">Cumulative Cost Overrun</span><strong className="pa-orange">₹ 4.86 Lakh Cr</strong></div>
+            <div className="ca-ai-item"><span className="ca-ai-label">Portfolio Risk Severity</span><strong className="pa-navy">High (84/100)</strong></div>
           </div>
         </div>
         <button className="ca-view-btn" onClick={onOpen}>Open National Portfolio Report <ArrowRight size={14} /></button>
@@ -1333,16 +1318,15 @@ function ProjectAnalysisCard({
   p, 
   onOpenBriefing 
 }: { 
-  p: AnalysisProject;
+  p: UnifiedProject;
   onOpenBriefing: () => void;
 }) {
-  const onTrack = p.status === 'On Schedule'
+  const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
+  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+  const budgets = p.budgets || getProjectBudgets(p)
+  const flagship = p.flagshipDetails || getFlagshipDetails(p)
   const statusClass = onTrack ? 'pa-status-ok' : 'pa-status-bad'
-  const riskTextClass = p.risk === 'High' ? 'pa-red' : p.risk === 'Medium' ? 'pa-orange' : 'pa-green'
-  const levelClass = p.priority === 'CRITICAL' ? 'pa-red' : p.priority === 'HIGH' ? 'pa-orange' : 'pa-amber'
-
-  // Look up expenditure from full ongoing_projects
-  const enriched = projects.find((x) => x.id === p.id)
+  const levelClass = flagship.priority === 'CRITICAL' ? 'pa-red' : flagship.priority === 'HIGH' ? 'pa-orange' : 'pa-amber'
 
   return (
     <article className="pa-card">
@@ -1356,59 +1340,102 @@ function ProjectAnalysisCard({
           <div style={{ display: 'flex', gap: '10px' }}>
             <button className="export-briefing-btn" onClick={onOpenBriefing}><Printer size={14} /> Export MoSPI Dossier</button>
           </div>
-          <span className={`pa-status ${statusClass}`}><AlertTriangle size={13} /> {p.status}</span>
-          <span className="pa-risk">Risk Rating: <b className={riskTextClass}>{p.risk}</b></span>
+          <span className={`pa-status ${statusClass}`}><AlertTriangle size={13} /> {p.type}</span>
+          <MLTooltip title="PAMANA ML Risk Engine" text={riskProfile.explanation}>
+            <span className="pa-risk" style={{ cursor: 'help' }}>
+              Risk Rating: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100) <Info size={11} className="ml-info-btn" />
+            </span>
+          </MLTooltip>
         </div>
       </div>
 
       <div className="pa-meta">
         <div className="pa-meta-item"><Landmark size={18} /><div><span className="pa-meta-label">Ministry</span><span className="pa-meta-val">{p.ministry}</span></div></div>
         <div className="pa-meta-item"><Share2 size={18} /><div><span className="pa-meta-label">Sector</span><span className="pa-meta-val">{p.sector}</span></div></div>
-        <div className="pa-meta-item"><MapPin size={18} /><div><span className="pa-meta-label">States</span><span className="pa-meta-val">{p.states}</span></div></div>
+        <div className="pa-meta-item"><MapPin size={18} /><div><span className="pa-meta-label">States</span><span className="pa-meta-val">{p.state}</span></div></div>
       </div>
 
+      {/* Explicit Budget 3-Column Visual Grid */}
+      <ProjectBudgetSummary budgets={budgets} />
+
       <div className="pa-band">
-        <div className="pa-band-item"><span className="pa-band-icon blue"><Coins size={16} /></span><div><div className="pa-band-label">Approved Budget</div><strong>{p.cost}</strong><small>(Approved)</small></div></div>
-        <div className="pa-band-item"><span className="pa-band-icon blue"><Coins size={16} /></span><div><div className="pa-band-label">Invested to Date</div><strong>{enriched?.spentCost || '₹ 72.26k Cr'}</strong><small className="pa-orange">(Disbursed)</small></div></div>
-        <div className="pa-band-item"><ProgressRing value={p.progress} /><div className="pa-band-progress"><div className="pa-band-label">Progress</div><strong>{p.progress}%</strong><div className="pa-band-bar"><span style={{ width: `${p.progress}%` }} /></div></div></div>
-        <div className="pa-band-item"><span className="pa-band-icon"><CalendarDays size={16} /></span><div><div className="pa-band-label">Original Completion</div><strong>{p.originalCompletion}</strong><div className="pa-band-label pa-band-gap">Current Expected</div><strong>{p.currentExpected}</strong><small className="pa-red">({p.expectedDelta})</small></div></div>
-        <div className="pa-band-item"><span className="pa-band-icon"><Clock3 size={16} /></span><div><div className="pa-band-label">Delay Running</div><strong className="pa-red">{p.currentDelay}</strong></div></div>
+        <div className="pa-band-item">
+          <span className="pa-band-icon blue"><Coins size={16} /></span>
+          <div>
+            <div className="pa-band-label">Original Sanctioned Cost</div>
+            <strong>{budgets.sanctionedCost}</strong>
+            <small>(Sanctioned Baseline)</small>
+          </div>
+        </div>
+        <div className="pa-band-item">
+          <span className="pa-band-icon blue"><Coins size={16} /></span>
+          <div>
+            <div className="pa-band-label">Expenditure to Date</div>
+            <strong>{budgets.spentCost}</strong>
+            <small className="pa-green">({budgets.financialProgress}% Disbursed)</small>
+          </div>
+        </div>
+        <div className="pa-band-item">
+          <ProgressRing value={p.progress} />
+          <div className="pa-band-progress">
+            <div className="pa-band-label">Physical Progress</div>
+            <strong>{p.progress}%</strong>
+            <div className="pa-band-bar"><span style={{ width: `${p.progress}%` }} /></div>
+          </div>
+        </div>
+        <div className="pa-band-item">
+          <span className="pa-band-icon"><CalendarDays size={16} /></span>
+          <div>
+            <div className="pa-band-label">Original Completion</div>
+            <strong>{p.originalDoc || 'Baseline DOC'}</strong>
+            <div className="pa-band-label pa-band-gap">Anticipated Target</div>
+            <strong style={{ color: onTrack ? '#159149' : '#df4036' }}>{p.anticipatedDoc || p.originalDoc}</strong>
+            <small className={onTrack ? 'pa-green' : 'pa-red'}>({onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mo Delay`})</small>
+          </div>
+        </div>
+        <div className="pa-band-item">
+          <span className="pa-band-icon"><Clock3 size={16} /></span>
+          <div>
+            <div className="pa-band-label">Schedule Delay Running</div>
+            <strong className={onTrack ? 'pa-green' : 'pa-red'}>{p.delay || (onTrack ? 'On Schedule (0 mo)' : '+0 Months')}</strong>
+          </div>
+        </div>
       </div>
 
       {/* User Feature: Expenditure & Budget Investment Breakdown */}
-      {enriched && enriched.expenditureBreakdown && (
+      {p.expenditureBreakdown && (
         <div className="pc-capex-container" style={{ marginTop: '16px' }}>
           <div className="capex-top">
             <div className="capex-title-group">
               <Coins size={18} color="#0c5c9d" />
               <strong>Where Has the Money Been Spent? (Audit Breakdown)</strong>
-              <span className="capex-ratio-pill">{enriched.financialProgress || 67}% Disbursed</span>
+              <span className="capex-ratio-pill">{budgets.financialProgress}% Disbursed</span>
             </div>
             <div className="capex-stats">
-              <div className="capex-stat-item"><span className="capex-stat-label">Total Budget:</span><span className="capex-stat-val">{enriched.cost}</span></div>
-              <div className="capex-stat-item"><span className="capex-stat-label">Money Spent Till Now:</span><span className="capex-stat-val" style={{ color: '#159149' }}>{enriched.spentCost}</span></div>
-              <div className="capex-stat-item"><span className="capex-stat-label">Money Left to Spend:</span><span className="capex-stat-val" style={{ color: '#7047eb' }}>{enriched.balanceCost}</span></div>
+              <div className="capex-stat-item"><span className="capex-stat-label">Total Sanctioned:</span><span className="capex-stat-val">{budgets.sanctionedCost}</span></div>
+              <div className="capex-stat-item"><span className="capex-stat-label">Money Spent Till Now:</span><span className="capex-stat-val" style={{ color: '#159149' }}>{budgets.spentCost}</span></div>
+              <div className="capex-stat-item"><span className="capex-stat-label">Money Left to Spend:</span><span className="capex-stat-val" style={{ color: '#7047eb' }}>{budgets.balanceCost}</span></div>
             </div>
           </div>
           <div className="capex-breakdown-grid">
             <div className="capex-chip">
               <div className="capex-chip-header">🏗️ Building &amp; Construction Work</div>
-              <div className="capex-chip-val">{enriched.expenditureBreakdown.civilWorks}</div>
+              <div className="capex-chip-val">{p.expenditureBreakdown.civilWorks}</div>
               <div className="capex-chip-sub">Pillars, Tunnels, Bridges &amp; Railway Tracks</div>
             </div>
             <div className="capex-chip">
               <div className="capex-chip-header">🗺️ Buying Land &amp; Paying Landowners &amp; R&amp;R</div>
-              <div className="capex-chip-val">{enriched.expenditureBreakdown.landAcquisition}</div>
+              <div className="capex-chip-val">{p.expenditureBreakdown.landAcquisition}</div>
               <div className="capex-chip-sub">Direct Money Paid to Farmers &amp; Landowners</div>
             </div>
             <div className="capex-chip">
               <div className="capex-chip-header">⚡ Moving Power Lines, Pipes &amp; Cables Integration</div>
-              <div className="capex-chip-val">{enriched.expenditureBreakdown.utilityAndSystems}</div>
+              <div className="capex-chip-val">{p.expenditureBreakdown.utilityAndSystems}</div>
               <div className="capex-chip-sub">High-Voltage Power Lines, Water Pipes &amp; Signals</div>
             </div>
             <div className="capex-chip">
               <div className="capex-chip-header">📋 Project Supervision &amp; Legal Approvals</div>
-              <div className="capex-chip-val">{enriched.expenditureBreakdown.contingencyAndPMC}</div>
+              <div className="capex-chip-val">{p.expenditureBreakdown.contingencyAndPMC}</div>
               <div className="capex-chip-sub">Quality Inspections, Safety Clearances &amp; Legal Work</div>
             </div>
           </div>
@@ -1416,15 +1443,40 @@ function ProjectAnalysisCard({
       )}
 
       {/* Winning Feature 1: What-If Solution Tester (What-If Simulator) */}
-      <WhatIfSimulator project={enriched || p} />
+      <WhatIfSimulator project={p} />
 
       <div className="pa-section pa-section-ai">
-        <div className="pa-section-head"><span className="pa-sec-icon blue"><Brain size={18} /></span><strong>PAMANA AI Prediction</strong><span className="pa-conf-pill">Confidence: {p.aiConfidence}%</span></div>
-        <p className="pa-section-desc">Based on historical project performance, current indicators and identified delay factors.</p>
+        <div className="pa-section-head">
+          <span className="pa-sec-icon blue"><Brain size={18} /></span>
+          <strong>PAMANA AI Prediction</strong>
+          <span className="pa-conf-pill">Confidence: {flagship.aiConfidence}%</span>
+        </div>
+        <p className="pa-section-desc">Based on historical project performance, current indicators, and MoSPI statutory milestones.</p>
         <div className="pa-pred-row">
-          <div className="pa-pred-box red"><span className="pa-pred-icon red"><CalendarDays size={16} /></span><div className="pa-pred-body"><strong className="pa-red">Predicted Extra Delay Expected</strong><div className="pa-pred-val">{p.predictedDelay}</div><span className="pa-conf-pill">Confidence: {p.predictedDelayConf}%</span></div></div>
-          <div className="pa-pred-box orange"><span className="pa-pred-icon orange"><Coins size={16} /></span><div className="pa-pred-body"><strong className="pa-orange">Estimated Extra Budget Needed</strong><div className="pa-pred-val">{p.estFunding}</div><span className="pa-conf-pill amber">Confidence: {p.estFundingConf}%</span></div></div>
-          <div className="pa-pred-box red"><span className="pa-pred-icon red"><Shield size={16} /></span><div className="pa-pred-body"><strong className="pa-navy">Overall Risk Level</strong><div className="pa-pred-val">{p.overallRisk}</div><span className="pa-conf-pill">Confidence: {p.overallRiskConf}%</span></div></div>
+          <div className="pa-pred-box red">
+            <span className="pa-pred-icon red"><CalendarDays size={16} /></span>
+            <div className="pa-pred-body">
+              <strong className="pa-red">Schedule Slippage Expected</strong>
+              <div className="pa-pred-val">{riskProfile.predictedExtraDelay}</div>
+              <span className="pa-conf-pill">Confidence: {Math.min(95, Math.max(78, 100 - Math.round((p.overrunMonths || 0) / 4)))}%</span>
+            </div>
+          </div>
+          <div className="pa-pred-box orange">
+            <span className="pa-pred-icon orange"><Coins size={16} /></span>
+            <div className="pa-pred-body">
+              <strong className="pa-orange">Anticipated Cost Variance</strong>
+              <div className="pa-pred-val">{riskProfile.estimatedExtraCost}</div>
+              <span className="pa-conf-pill amber">Confidence: 85%</span>
+            </div>
+          </div>
+          <div className="pa-pred-box red">
+            <span className="pa-pred-icon red"><Shield size={16} /></span>
+            <div className="pa-pred-body">
+              <strong className="pa-navy">Overall Risk Level</strong>
+              <div className="pa-pred-val">{riskProfile.tier} ({riskProfile.score}/100)</div>
+              <span className="pa-conf-pill">Confidence: 89%</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1436,28 +1488,28 @@ function ProjectAnalysisCard({
         <div className="pa-bottleneck-row">
           <div className="pa-bottleneck-left">
             <span className="pa-primary-pill">{onTrack ? 'Primary Watchlist Risk' : 'Biggest Blocker'}</span>
-            <h3 className="pa-bottleneck-title"><i className="pa-dot" /> {p.bottleneck}</h3>
-            <p className="pa-bottleneck-desc">{p.bottleneckDesc}</p>
+            <h3 className="pa-bottleneck-title"><i className="pa-dot" /> {flagship.bottleneck}</h3>
+            <p className="pa-bottleneck-desc">{flagship.bottleneckDesc}</p>
             <div className="pa-impact-row">
-              <div className="pa-impact"><AlertTriangle size={15} /><div><strong className="pa-red">{onTrack ? 'Potential Severity' : 'Damage Caused'}</strong><span>{p.impact}</span></div></div>
-              <div className="pa-impact"><Activity size={15} /><div><strong>{onTrack ? 'Vulnerable Activity' : 'Work Being Stopped'}</strong><span>{p.affectedActivity}</span></div></div>
-              <div className="pa-impact"><Flag size={15} /><div><strong className="pa-red">{onTrack ? 'Slippage Threat' : 'Chance of More Delay'}</strong><span>{p.riskFurther}</span></div></div>
+              <div className="pa-impact"><AlertTriangle size={15} /><div><strong className="pa-red">{onTrack ? 'Potential Severity' : 'Damage Caused'}</strong><span>{flagship.impact}</span></div></div>
+              <div className="pa-impact"><Activity size={15} /><div><strong>{onTrack ? 'Vulnerable Activity' : 'Work Being Stopped'}</strong><span>{flagship.affectedActivity}</span></div></div>
+              <div className="pa-impact"><Flag size={15} /><div><strong className="pa-red">{onTrack ? 'Slippage Threat' : 'Chance of More Delay'}</strong><span>{flagship.riskFurther}</span></div></div>
             </div>
-            <span className="pa-conf-pill">Confidence: {p.bottleneckConf}%</span>
+            <span className="pa-conf-pill">Confidence: {flagship.bottleneckConf}%</span>
           </div>
           <div className="pa-rootcause">
             <div className="pa-rootcause-title">{onTrack ? 'Key Factors Under Active Review' : 'Why Is It Delayed? (Root Causes)'}</div>
-            {p.rootCause.map((rc, i) => {
+            {flagship.rootCause.map((rc, i) => {
               const displayRc = (onTrack && rc.toLowerCase().includes('project delay')) ? 'Potential Schedule Slippage' : rc
               const Icon = rootCauseIcons[i % rootCauseIcons.length]
               return (
                 <Fragment key={rc}>
                   <div className="pa-rc-item"><span className="pa-rc-icon"><Icon size={14} /></span><span>{displayRc}</span></div>
-                  {i < p.rootCause.length - 1 && <div className="pa-rc-arrow">↓</div>}
+                  {i < flagship.rootCause.length - 1 && <div className="pa-rc-arrow">↓</div>}
                 </Fragment>
               )
             })}
-            <span className="pa-conf-pill">Confidence: {p.rootCauseConf}%</span>
+            <span className="pa-conf-pill">Confidence: {flagship.rootCauseConf}%</span>
           </div>
         </div>
       </div>
@@ -1466,13 +1518,13 @@ function ProjectAnalysisCard({
         <div className="pa-section-head"><span className="pa-sec-icon green"><Target size={18} /></span><strong>Recommended Action Plan (Who Fixes What)</strong></div>
         <div className="pa-action-row">
           <div className="pa-action-left">
-            <div className="pa-priority">Priority Level: <span className={`pa-priority-level ${levelClass}`}>{p.priority}</span></div>
-            <p className="pa-action-text">{p.actionText}</p>
+            <div className="pa-priority">Priority Level: <span className={`pa-priority-level ${levelClass}`}>{flagship.priority}</span></div>
+            <p className="pa-action-text">{flagship.actionText}</p>
           </div>
           <div className="pa-action-right">
             <div className="pa-eimpact-title"><TrendingUp size={14} /> Expected Results Once Fixed</div>
-            {p.expectedImpact.map((x) => <div key={x} className="pa-eimpact-item"><CheckCircle2 size={14} /><span>{x}</span></div>)}
-            <span className="pa-conf-pill">Confidence: {p.actionConf}%</span>
+            {flagship.expectedImpact.map((x) => <div key={x} className="pa-eimpact-item"><CheckCircle2 size={14} /><span>{x}</span></div>)}
+            <span className="pa-conf-pill">Confidence: {flagship.actionConf}%</span>
           </div>
         </div>
       </div>
@@ -1682,9 +1734,9 @@ function answerQuery(q: string): string {
           : `Breakdown: 55% civil infrastructure, 25% land compensation, 12% utility shifting, 8% PMC.`);
     }
     if (wantRisk) return `${p.name} (${p.id}) carries a ${p.risk} risk rating with a risk score of ${p.riskScore}/100. The AI model estimates a ${p.delayProbability}% probability of delay slippage. Primary bottleneck: ${p.criticalIssue}.`
-    if (wantDelay) return `${p.name} is currently ${p.delay === 'On Track' ? 'on track with no delay' : `delayed by ${p.delay}`}.${a ? ` Original baseline completion was ${a.originalCompletion}; current expected is ${a.currentExpected} (${a.expectedDelta}). Predicted additional delay: ${a.predictedDelay}.` : ''}`
+    if (wantDelay) return `${p.name} is currently ${p.delay === 'On Track' ? 'on track with no delay' : `delayed by ${p.delay}`}.${a ? ` Original baseline completion was ${a.originalDoc}; current expected is ${a.anticipatedDoc} (${a.delay}). Predicted additional delay: ${a.riskProfile?.predictedExtraDelay}.` : ''}`
     if (wantCost) return `${p.name} has a sanctioned budget of ${p.cost}, with ${pSpentText} invested so far. Unspent balance is ${pBalText}.`
-    if (wantBottleneck) return `The primary bottleneck for ${p.name} is ${p.criticalIssue}.${a ? ` ${a.bottleneckDesc} Impact: ${a.impact}; affected activity: ${a.affectedActivity}.` : ''}`
+    if (wantBottleneck) return `The primary bottleneck for ${p.name} is ${p.criticalIssue}.${a ? ` ${a.flagshipDetails?.bottleneckDesc} Impact: ${a.flagshipDetails?.impact}; affected activity: ${a.flagshipDetails?.affectedActivity}.` : ''}`
     if (wantProgress) return `${p.name} is ${p.progress}% complete physically, with a financial utilization rate of ${pFin}%. Status: "${p.type}".`
     return `${p.name} (${p.id})\nLocation: ${p.state}\nMinistry: ${p.ministry} · Sector: ${p.sector}\nApproved Budget: ${p.cost} | Invested to date: ${pSpentText}\nWork Completed on Ground: ${p.progress}% | Financial Progress: ${pFin}%\nStatus: ${p.type} · Risk: ${p.risk} (${p.riskScore}/100)\nKey Bottleneck: ${p.criticalIssue}`
   }
@@ -1831,16 +1883,15 @@ function ExecutiveDossierModal({
   project, 
   onClose 
 }: { 
-  project: Project | AnalysisProject; 
+  project: Project | UnifiedProject; 
   onClose: () => void;
 }) {
-  const p = projects.find((x) => x.id === project.id) || (project as Project)
-  const pFin = p.financialProgress ?? (('progress' in p && p.progress) ? Math.min(100, Math.round(p.progress * 0.95)) : 65)
-  const pCostNum = p.rawCost || parseFloat(p.cost.replace(/[^0-9.]/g, '')) || 5000
-  const pSpentNum = p.rawSpentCost || Math.round(pCostNum * (pFin / 100))
-  const pBalNum = Math.max(0, pCostNum - pSpentNum)
-  const pSpentDisplay = p.spentCost || `₹ ${pSpentNum.toLocaleString('en-IN')} Cr`
-  const pBalDisplay = p.balanceCost || `₹ ${pBalNum.toLocaleString('en-IN')} Cr`
+  const p = getUnifiedProjectById(project.id) || (project as UnifiedProject)
+  const budgets = p.budgets || getProjectBudgets(p)
+  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+  const pFin = budgets.financialProgress
+  const pSpentDisplay = budgets.spentCost
+  const pBalDisplay = budgets.balanceCost
   const formattedToday = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
