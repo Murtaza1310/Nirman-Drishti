@@ -265,11 +265,20 @@ export default function Page() {
     localStorage.setItem('nd-sidebar-collapsed', String(sidebarCollapsed))
   }, [sidebarCollapsed])
 
+  const [analysisSelectedId, setAnalysisSelectedId] = useState<string | null>(null)
+
   const [filters, setFilters] = useState({ State: 'All', Risk: 'All', Type: 'All' })
   const [groupMode, setGroupMode] = useState<'Ministry' | 'Sector'>('Sector')
   const [groupValue, setGroupValue] = useState('All')
   const [search, setSearch] = useState('')
   const [displayLimit, setDisplayLimit] = useState(24)
+
+  const resetAllFilters = () => {
+    setFilters({ State: 'All', Risk: 'All', Type: 'All' })
+    setGroupMode('Sector')
+    setGroupValue('All')
+    setSearch('')
+  }
 
   const setFilter = (label: keyof typeof filters, value: string) =>
     setFilters((current) => ({ ...current, [label]: value }))
@@ -300,6 +309,13 @@ export default function Page() {
 
   const handleNav = (nav: string) => {
     setActiveNav(nav)
+    setBriefingModalProject(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleOpenAnalysisForProject = (projectId: string) => {
+    setAnalysisSelectedId(projectId)
+    setActiveNav('Analysis')
     setBriefingModalProject(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -354,9 +370,19 @@ export default function Page() {
           {activeNav === 'Home' ? (
             <HomeView onNavigate={handleNav} />
           ) : activeNav === 'Analysis' ? (
-            <AnalysisView onOpenBriefing={(p) => setBriefingModalProject(p)} />
+            <AnalysisView 
+              initialSelectedId={analysisSelectedId} 
+              onClearInitialSelected={() => setAnalysisSelectedId(null)}
+              onOpenBriefing={(p) => setBriefingModalProject(p)} 
+            />
           ) : activeNav === 'Map' ? (
-            <MapView onSeeProject={() => handleNav('Projects')} />
+            <MapView onSeeProject={(proj) => {
+              if (proj) {
+                handleOpenAnalysisForProject(proj.id)
+              } else {
+                handleNav('Projects')
+              }
+            }} />
           ) : activeNav === 'AI' ? (
             <AIView />
           ) : (
@@ -366,6 +392,11 @@ export default function Page() {
                 <FilterSelect label="Risk" value={filters.Risk} onChange={(value) => setFilter('Risk', value)} />
                 <FilterSelect label="Type" value={filters.Type} onChange={(value) => setFilter('Type', value)} />
                 <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 1,012 projects by name, ID, sector, bottleneck..." aria-label="Search projects" /></label>
+                {projectFiltersActive && (
+                  <button className="map-reset" onClick={resetAllFilters} style={{ marginLeft: '4px' }}>
+                    Reset Filters
+                  </button>
+                )}
               </div>
               <div className="switch-row">
                 <div className="segmented" role="tablist" aria-label="Group projects by">
@@ -401,7 +432,7 @@ export default function Page() {
                       <ProjectCard 
                         key={`${project.id}-${idx}`} 
                         project={project} 
-                        onViewAnalysis={() => setActiveNav('Analysis')} 
+                        onViewAnalysis={() => handleOpenAnalysisForProject(project.id)} 
                         onOpenBriefing={() => setBriefingModalProject(project)}
                       />
                     ))}
@@ -419,7 +450,13 @@ export default function Page() {
                   )}
                 </>
               ) : (
-                <div className="project-empty"><Search size={20} /><span>No projects match your filters. Try resetting search criteria.</span></div>
+                <div className="project-empty">
+                  <Search size={20} />
+                  <span>No projects match your filters. Try resetting search criteria.</span>
+                  <button className="home-btn home-btn-primary" onClick={resetAllFilters} style={{ marginTop: '12px', padding: '8px 20px', fontSize: '12px' }}>
+                    Reset All Filters
+                  </button>
+                </div>
               )}
             </>
           )}
@@ -626,6 +663,11 @@ function ProjectCard({
   const riskClass = project.risk === 'High' ? 'badge-high' : project.risk === 'Medium' ? 'badge-medium' : 'badge-low'
   const typeClass = onTrack ? 'badge-ontrack' : 'badge-high'
   const finProgress = project.financialProgress ?? Math.min(100, Math.round(project.progress * 0.95))
+  const projectCostNum = project.rawCost || parseFloat(project.cost.replace(/[^0-9.]/g, '')) || 5000
+  const computedSpentNum = project.rawSpentCost || Math.round(projectCostNum * (finProgress / 100))
+  const computedBalanceNum = Math.max(0, projectCostNum - computedSpentNum)
+  const spentDisplay = project.spentCost || `₹ ${computedSpentNum.toLocaleString('en-IN')} Cr`
+  const balanceDisplay = project.balanceCost || `₹ ${computedBalanceNum.toLocaleString('en-IN')} Cr`
 
   return (
     <article className="project-card">
@@ -670,16 +712,16 @@ function ProjectCard({
             </div>
             <div className="capex-stat-item">
               <span className="capex-stat-label">Money Spent Till Now:</span>
-              <span className="capex-stat-val" style={{ color: '#159149' }}>{project.spentCost || '₹ 4,200 Cr'}</span>
+              <span className="capex-stat-val" style={{ color: '#159149' }}>{spentDisplay}</span>
             </div>
             <div className="capex-stat-item">
               <span className="capex-stat-label">Money Left to Spend:</span>
-              <span className="capex-stat-val" style={{ color: '#7047eb' }}>{project.balanceCost || '₹ 1,800 Cr'}</span>
+              <span className="capex-stat-val" style={{ color: '#7047eb' }}>{balanceDisplay}</span>
             </div>
           </div>
         </div>
 
-        <div className="capex-dual-bar" title={`Spent: ${project.spentCost} / Sanctioned: ${project.cost}`}>
+        <div className="capex-dual-bar" title={`Spent: ${spentDisplay} / Sanctioned: ${project.cost}`}>
           <div className="capex-fill-bar" style={{ width: `${Math.min(100, finProgress)}%` }} />
         </div>
 
@@ -865,22 +907,98 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
   )
 }
 
-function AnalysisView({ onOpenBriefing }: { onOpenBriefing: (p: Project | AnalysisProject) => void }) {
+function getAnalysisProjectById(id: string | null): AnalysisProject | null {
+  if (!id) return null
+  const found = analysisProjects.find((x) => x.id === id)
+  if (found) return found
+  const raw = projects.find((x) => x.id === id)
+  if (!raw) return null
+  const rawCostNum = raw.rawCost || parseFloat(raw.cost.replace(/[^0-9.]/g, '')) || 5000
+  const overrunCr = raw.costOverrunCr || Math.round(rawCostNum * (raw.riskScore / 500))
+  const revisedCostVal = raw.revisedCost || `₹ ${(rawCostNum + overrunCr).toLocaleString('en-IN')} Cr`
+  const overrunPct = Math.round((overrunCr / rawCostNum) * 100)
+
+  return {
+    id: raw.id,
+    name: raw.name,
+    status: raw.type,
+    risk: raw.risk,
+    ministry: raw.ministry,
+    sector: raw.sector,
+    states: raw.state,
+    cost: raw.cost,
+    revisedCost: revisedCostVal,
+    revisedPct: `+${overrunPct}%`,
+    progress: raw.progress,
+    originalCompletion: 'Dec 2026',
+    currentExpected: raw.overrunMonths && raw.overrunMonths > 0 ? `+${raw.overrunMonths} Months` : 'On Schedule',
+    expectedDelta: raw.delay || `${raw.overrunMonths || 0} Months Delay`,
+    currentDelay: raw.delay || '0 Months',
+    aiConfidence: Math.min(94, Math.max(76, 100 - Math.round(raw.riskScore / 4))),
+    predictedDelay: raw.overrunMonths && raw.overrunMonths > 0 ? `+${raw.overrunMonths} Months` : '+0 Months',
+    predictedDelayConf: 82,
+    estFunding: `₹ ${overrunCr.toLocaleString('en-IN')} Cr`,
+    estFundingConf: 80,
+    overallRisk: `${raw.risk} (${raw.riskScore}/100)`,
+    overallRiskConf: 85,
+    bottleneck: raw.criticalIssue || 'Inter-agency clearance & vendor execution tracking',
+    bottleneckDesc: `Active monitoring flagged critical delays in statutory permits, state right-of-way permissions, and resource mobilization for ${raw.name}.`,
+    impact: raw.risk === 'High' ? 'High potential for further milestone slippage and escalation costs.' : 'Moderate timeline sensitivity.',
+    affectedActivity: 'Contractor site mobilization & structural milestones',
+    riskFurther: raw.risk === 'High' ? 'Likely further milestone slippage without inter-ministerial escalation.' : 'Low risk of additional budget overrun.',
+    bottleneckConf: 84,
+    rootCause: [
+      'Multi-agency clearance and utility relocation coordination',
+      'Contractor resource constraints and site handover synchronization',
+      'Right of way verification across regional jurisdictions'
+    ],
+    rootCauseConf: 81,
+    priority: raw.risk === 'High' ? 'CRITICAL' : raw.risk === 'Medium' ? 'HIGH' : 'MODERATE',
+    actionText: `Direct administrative escalation through the Cabinet Secretariat Pragati portal to expedite statutory permits and track contractor performance for ${raw.name}.`,
+    expectedImpact: [
+      'Reduces milestone delay risk by 30-45%',
+      'Prevents further fiscal overrun escalation',
+      'Streamlines on-ground vendor progress verification'
+    ],
+    actionConf: 86
+  }
+}
+
+function AnalysisView({ 
+  initialSelectedId, 
+  onClearInitialSelected, 
+  onOpenBriefing 
+}: { 
+  initialSelectedId?: string | null;
+  onClearInitialSelected?: () => void;
+  onOpenBriefing: (p: Project | AnalysisProject) => void 
+}) {
   const [selectedFilters, setSelectedFilters] = useState({ State: 'All', Risk: 'All', Type: 'All' })
   const [groupMode, setGroupMode] = useState<'Ministry' | 'Sector'>('Sector')
   const [groupValue, setGroupValue] = useState('All')
   const [search, setSearch] = useState('')
-  const [openId, setOpenId] = useState<string | null>(null)
+  const [openId, setOpenId] = useState<string | null>(initialSelectedId || null)
   const [portfolioOpen, setPortfolioOpen] = useState(false)
 
-  const openProject = openId ? analysisProjects.find((x) => x.id === openId) ?? null : null
+  const handleCloseModal = () => {
+    setOpenId(null)
+    onClearInitialSelected?.()
+  }
+
+  useEffect(() => {
+    if (initialSelectedId) {
+      setOpenId(initialSelectedId)
+    }
+  }, [initialSelectedId])
+
+  const openProject = getAnalysisProjectById(openId)
   const anyModalOpen = openId !== null || portfolioOpen
 
   useEffect(() => {
     if (!anyModalOpen) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setOpenId(null)
+        handleCloseModal()
         setPortfolioOpen(false)
       }
     }
@@ -892,6 +1010,13 @@ function AnalysisView({ onOpenBriefing }: { onOpenBriefing: (p: Project | Analys
       document.body.style.overflow = previousOverflow
     }
   }, [anyModalOpen])
+
+  const resetFilters = () => {
+    setSelectedFilters({ State: 'All', Risk: 'All', Type: 'All' })
+    setGroupMode('Sector')
+    setGroupValue('All')
+    setSearch('')
+  }
 
   const groupOptions = groupMode === 'Ministry' ? ministryOptions : sectorOptions
   const switchGroupMode = (mode: 'Ministry' | 'Sector') => {
@@ -995,13 +1120,19 @@ function AnalysisView({ onOpenBriefing }: { onOpenBriefing: (p: Project | Analys
           {filtered.map((p, idx) => <CompactAnalysisCard key={`${p.id}-${idx}`} p={p} onOpen={() => setOpenId(p.id)} />)}
         </div>
       ) : (
-        <div className="project-empty"><Search size={20} /><span>No projects match your filters.</span></div>
+        <div className="project-empty">
+          <Search size={20} />
+          <span>No projects match your filters.</span>
+          <button className="home-btn home-btn-primary" onClick={resetFilters} style={{ marginTop: '12px', padding: '8px 20px', fontSize: '12px' }}>
+            Reset All Filters
+          </button>
+        </div>
       )}
 
       {openProject && (
-        <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label={`${openProject.name} detailed analysis`} onClick={() => setOpenId(null)}>
+        <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label={`${openProject.name} detailed analysis`} onClick={handleCloseModal}>
           <div className="ca-modal" onClick={(event) => event.stopPropagation()}>
-            <button className="ca-modal-close" onClick={() => setOpenId(null)} aria-label="Close detailed analysis"><X size={18} /></button>
+            <button className="ca-modal-close" onClick={handleCloseModal} aria-label="Close detailed analysis"><X size={18} /></button>
             <div className="ca-modal-body">
               <ProjectAnalysisCard p={openProject} onOpenBriefing={() => onOpenBriefing(openProject)} />
             </div>
@@ -1252,7 +1383,7 @@ function ProjectAnalysisCard({
   )
 }
 
-function MapView({ onSeeProject }: { onSeeProject: () => void }) {
+function MapView({ onSeeProject }: { onSeeProject: (p: Project | null) => void }) {
   const [filters, setFilters] = useState({ State: 'All', Risk: 'All', Type: 'All' })
   const [groupMode, setGroupMode] = useState<'Ministry' | 'Sector'>('Sector')
   const [groupValue, setGroupValue] = useState('All')
@@ -1379,7 +1510,7 @@ function MapView({ onSeeProject }: { onSeeProject: () => void }) {
                   <div className="map-card-row"><Coins size={14} /><span>Sanctioned</span><b>{selected.cost}</b></div>
                   <div className="map-card-row"><CalendarDays size={14} /><span>Delay</span><b className={selected.type === 'On Schedule' ? 'note-green' : 'note-red'}>{selected.delay}</b></div>
                 </div>
-                <button className="map-card-btn" onClick={onSeeProject}>See Full Project <ArrowRight size={14} /></button>
+                <button className="map-card-btn" onClick={() => onSeeProject(selected)}>See Full Project <ArrowRight size={14} /></button>
               </div>
             )}
           </div>
@@ -1400,10 +1531,10 @@ type ChatMsg = { role: 'user' | 'bot'; text: string }
 
 const projectAliases: { id: string; words: string[] }[] = [
   { id: 'N22000463', words: ['bullet', 'ahmedabad', 'mumbai', 'train', 'mahsr', 'nhsrcl', 'high speed'] },
-  { id: 'N11000101', words: ['delhi', 'expressway', 'dme', 'nhai'] },
-  { id: 'N22000464', words: ['char', 'dham', 'uttarakhand'] },
-  { id: 'N22000465', words: ['navi', 'mumbai', 'airport', 'nmia'] },
-  { id: 'N22000466', words: ['ken', 'betwa', 'river', 'link', 'irrigation'] },
+  { id: 'N11000101', words: ['delhi', 'expressway', 'dme', 'nhai', 'mumbai expressway'] },
+  { id: 'N22000464', words: ['char', 'dham', 'uttarakhand', 'kedarnath', 'badrinath'] },
+  { id: 'N22000465', words: ['navi', 'mumbai', 'airport', 'nmia', 'cidco'] },
+  { id: 'N22000466', words: ['ken', 'betwa', 'river', 'link', 'irrigation', 'water'] },
 ]
 
 function matchProject(q: string): Project | null {
@@ -1433,30 +1564,37 @@ function answerQuery(q: string): string {
 
   if (p) {
     const a = analysisProjects.find((x) => x.id === p.id)
+    const pFin = p.financialProgress ?? Math.min(100, Math.round(p.progress * 0.95))
+    const pCostNum = p.rawCost || parseFloat(p.cost.replace(/[^0-9.]/g, '')) || 5000
+    const pSpentNum = p.rawSpentCost || Math.round(pCostNum * (pFin / 100))
+    const pBalNum = Math.max(0, pCostNum - pSpentNum)
+    const pSpentText = p.spentCost || `₹ ${pSpentNum.toLocaleString('en-IN')} Cr`
+    const pBalText = p.balanceCost || `₹ ${pBalNum.toLocaleString('en-IN')} Cr`
+
     if (wantMoneySpent || (wantCost && /(spent|how much)/.test(ql))) {
       return `📊 Financial & Expenditure Audit for ${p.name} (${p.id}):\n` +
-        `• Approved Total Approved Budget: ${p.cost}\n` +
-        `• Cumulative Invested/Spent: ${p.spentCost || '₹ 72.26k Cr'} (${p.financialProgress || 66.9}% utilized)\n` +
-        `• Remaining Money Left to Spend: ${p.balanceCost || '₹ 35.74k Cr'}\n\n` +
+        `• Total Sanctioned Budget: ${p.cost}\n` +
+        `• Cumulative Invested/Spent: ${pSpentText} (${pFin}% utilized)\n` +
+        `• Remaining Money Left to Spend: ${pBalText}\n\n` +
         (p.expenditureBreakdown ? 
           `Component Breakdown of Invested Capital:\n` +
           `  🏗️ Civil & Physical Works: ${p.expenditureBreakdown.civilWorks}\n` +
-          `  🗺️ Buying Land &amp; Paying Landowners & R&R: ${p.expenditureBreakdown.landAcquisition}\n` +
+          `  🗺️ Buying Land & Compensating Landowners (R&R): ${p.expenditureBreakdown.landAcquisition}\n` +
           `  ⚡ Utility Relocation & Systems: ${p.expenditureBreakdown.utilityAndSystems}\n` +
           `  📋 PMC, Supervision & Statutory: ${p.expenditureBreakdown.contingencyAndPMC}`
           : `Breakdown: 55% civil infrastructure, 25% land compensation, 12% utility shifting, 8% PMC.`);
     }
     if (wantRisk) return `${p.name} (${p.id}) carries a ${p.risk} risk rating with a risk score of ${p.riskScore}/100. The AI model estimates a ${p.delayProbability}% probability of delay slippage. Primary bottleneck: ${p.criticalIssue}.`
     if (wantDelay) return `${p.name} is currently ${p.delay === 'On Track' ? 'on track with no delay' : `delayed by ${p.delay}`}.${a ? ` Original baseline completion was ${a.originalCompletion}; current expected is ${a.currentExpected} (${a.expectedDelta}). Predicted additional delay: ${a.predictedDelay}.` : ''}`
-    if (wantCost) return `${p.name} has a sanctioned budget of ${p.cost}, with ${p.spentCost || '₹ 72.26k Cr'} invested so far. Unspent balance is ${p.balanceCost || '₹ 35.74k Cr'}.`
+    if (wantCost) return `${p.name} has a sanctioned budget of ${p.cost}, with ${pSpentText} invested so far. Unspent balance is ${pBalText}.`
     if (wantBottleneck) return `The primary bottleneck for ${p.name} is ${p.criticalIssue}.${a ? ` ${a.bottleneckDesc} Impact: ${a.impact}; affected activity: ${a.affectedActivity}.` : ''}`
-    if (wantProgress) return `${p.name} is ${p.progress}% complete physically, with a financial utilization rate of ${p.financialProgress || 67}%. Status: "${p.type}".`
-    return `${p.name} (${p.id})\nLocation: ${p.state}\nMinistry: ${p.ministry} · Sector: ${p.sector}\nApproved Budget: ${p.cost} | Invested to date: ${p.spentCost || '₹ 72.26k Cr'}\nWork Completed on Ground: ${p.progress}% | Financial Progress: ${p.financialProgress || 67}%\nStatus: ${p.type} · Risk: ${p.risk} (${p.riskScore}/100)\nKey Bottleneck: ${p.criticalIssue}`
+    if (wantProgress) return `${p.name} is ${p.progress}% complete physically, with a financial utilization rate of ${pFin}%. Status: "${p.type}".`
+    return `${p.name} (${p.id})\nLocation: ${p.state}\nMinistry: ${p.ministry} · Sector: ${p.sector}\nApproved Budget: ${p.cost} | Invested to date: ${pSpentText}\nWork Completed on Ground: ${p.progress}% | Financial Progress: ${pFin}%\nStatus: ${p.type} · Risk: ${p.risk} (${p.riskScore}/100)\nKey Bottleneck: ${p.criticalIssue}`
   }
 
   if (/(money invested|how much money|total spent|expenditure|utilized)/.test(ql)) {
     return `💰 National Portfolio Expenditure Audit (MoSPI IPMD):\n` +
-      `• Total Approved Approved Budget: ₹ 18.94 Lakh Crore across 1,012 projects\n` +
+      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,012 projects\n` +
       `• Cumulative Capital Invested/Spent: ₹ 11.48 Lakh Crore (60.6% utilization)\n` +
       `• Largest Single Investment: Mumbai–Ahmedabad High Speed Rail (₹ 72,257 Cr spent of ₹ 1.08 Lakh Cr budget, with ₹ 18,064 Cr invested in land acquisition alone).\n` +
       `• Cumulative Cost Overrun Recorded: ₹ 2.41 Lakh Crore.`
@@ -1600,6 +1738,13 @@ function ExecutiveDossierModal({
   onClose: () => void;
 }) {
   const p = projects.find((x) => x.id === project.id) || (project as Project)
+  const pFin = p.financialProgress ?? (('progress' in p && p.progress) ? Math.min(100, Math.round(p.progress * 0.95)) : 65)
+  const pCostNum = p.rawCost || parseFloat(p.cost.replace(/[^0-9.]/g, '')) || 5000
+  const pSpentNum = p.rawSpentCost || Math.round(pCostNum * (pFin / 100))
+  const pBalNum = Math.max(0, pCostNum - pSpentNum)
+  const pSpentDisplay = p.spentCost || `₹ ${pSpentNum.toLocaleString('en-IN')} Cr`
+  const pBalDisplay = p.balanceCost || `₹ ${pBalNum.toLocaleString('en-IN')} Cr`
+  const formattedToday = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
     <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label="MoSPI Executive Flash Briefing" onClick={onClose}>
@@ -1619,7 +1764,7 @@ function ExecutiveDossierModal({
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#103f6d' }}>REF: MoSPI/IPMD/2026/EWS-{p.id}</div>
-              <div style={{ fontSize: '11px', color: '#72869d' }}>Date: 11 September 2026</div>
+              <div style={{ fontSize: '11px', color: '#72869d' }}>Date: {formattedToday}</div>
               <span className="badge badge-high" style={{ marginTop: '4px' }}>CONFIDENTIAL / CABINET BRIEFING</span>
             </div>
           </div>
@@ -1644,13 +1789,13 @@ function ExecutiveDossierModal({
                   <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Total Approved Budget</td>
                   <td style={{ padding: '10px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.cost}</td>
                   <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Money Spent Till Now</td>
-                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#159149', width: '25%' }}>{p.spentCost || '₹ 72,257 Cr'} ({p.financialProgress || 67}%)</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#159149', width: '25%' }}>{pSpentDisplay} ({pFin}%)</td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #dce7f1' }}>
                   <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Work Completed on Ground</td>
                   <td style={{ padding: '10px 14px', fontWeight: 800, color: '#0b3157' }}>{p.progress}% Achieved</td>
                   <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Money Left to Spend</td>
-                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#7047eb' }}>{p.balanceCost || '₹ 35,743 Cr'}</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#7047eb' }}>{pBalDisplay}</td>
                 </tr>
                 <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
                   <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>AI Delay Risk Rating</td>
@@ -1673,7 +1818,7 @@ function ExecutiveDossierModal({
                   <div className="capex-chip-sub">Procurement, Physical Structures</div>
                 </div>
                 <div className="capex-chip">
-                  <div className="capex-chip-header">🗺️ Buying Land &amp; Paying Landowners &amp; R&amp;R</div>
+                  <div className="capex-chip-header">🗺️ Buying Land &amp; Paying Landowners (R&amp;R)</div>
                   <div className="capex-chip-val">{p.expenditureBreakdown.landAcquisition}</div>
                   <div className="capex-chip-sub">Direct Compensation &amp; Resettlement</div>
                 </div>
