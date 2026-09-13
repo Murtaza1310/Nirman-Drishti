@@ -71,14 +71,20 @@ const metrics = [
   { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
 ]
 
+const projects: Project[] = rawProjects as unknown as Project[]
+
+const allUniqueStates = Array.from(new Set(projects.map(p => p.state).filter(Boolean))).sort((a, b) => a.localeCompare(b))
+const allUniqueMinistries = Array.from(new Set(projects.map(p => p.ministry).filter(Boolean))).sort((a, b) => a.localeCompare(b))
+const allUniqueSectors = Array.from(new Set(projects.map(p => p.sector).filter(Boolean))).sort((a, b) => a.localeCompare(b))
+
 const filterOptions: Record<string, string[]> = {
-  State: ['All', 'Maharashtra', 'Gujarat', 'Rajasthan', 'Uttar Pradesh', 'Delhi & NCR', 'Karnataka', 'Tamil Nadu', 'Madhya Pradesh', 'Assam', 'West Bengal', 'Bihar', 'Odisha', 'Andhra Pradesh', 'Punjab', 'Haryana', 'Kerala', 'Jammu & Kashmir'],
+  State: ['All', ...allUniqueStates],
   Risk: ['All', 'High', 'Medium', 'Low'],
-  Type: ['All', 'On Schedule', 'Delayed', 'High Risk'],
+  Type: ['All', 'On Schedule', 'Delayed'],
 }
 
-const ministryOptions = ['All', 'MoRTH', 'Railways', 'Power', 'MoHUA', 'Jal Shakti', 'Petroleum', 'NHAI', 'PGCIL', 'NTPC']
-const sectorOptions = ['All', 'Road Transport & Highways', 'Railways', 'Power & Renewable Energy', 'Petroleum & Natural Gas', 'Coal & Mines', 'Civil Aviation', 'Ports & Shipping', 'Water Resources & Irrigation', 'Other Infrastructure']
+const ministryOptions = ['All', ...allUniqueMinistries]
+const sectorOptions = ['All', ...allUniqueSectors]
 
 type Project = {
   id: string
@@ -118,7 +124,7 @@ type Project = {
   reportPeriod?: string
 }
 
-const projects: Project[] = rawProjects as unknown as Project[]
+
 
 const NATIONAL_PORTFOLIO_DOSSIER: Project = {
   id: 'NAT-PORTFOLIO-2026',
@@ -283,7 +289,14 @@ export default function Page() {
   const [groupMode, setGroupMode] = useState<'Ministry' | 'Sector'>('Sector')
   const [groupValue, setGroupValue] = useState('All')
   const [search, setSearch] = useState('')
-  const [displayLimit, setDisplayLimit] = useState(24)
+  const [displayLimit, setDisplayLimit] = useState(36)
+
+  // Reset display limit when filter criteria change
+  useEffect(() => {
+    setDisplayLimit(36)
+  }, [filters.State, filters.Risk, filters.Type, groupValue, groupMode, search])
+
+
 
   const resetAllFilters = () => {
     setFilters({ State: 'All', Risk: 'All', Type: 'All' })
@@ -315,6 +328,17 @@ export default function Page() {
     }
     return true
   })
+
+  // Infinite scroll listener for seamless scrolling through all 1,775 projects
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500) {
+        setDisplayLimit((prev) => (prev < filteredProjects.length ? Math.min(filteredProjects.length, prev + 36) : prev))
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [filteredProjects.length])
 
   const projectFiltersActive =
     filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || groupValue !== 'All' || search.trim() !== ''
@@ -450,13 +474,20 @@ export default function Page() {
                     ))}
                   </div>
                   {displayLimit < filteredProjects.length && (
-                    <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <div style={{ textAlign: 'center', marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
                       <button
                         className="home-btn home-btn-primary"
-                        onClick={() => setDisplayLimit((prev) => prev + 30)}
-                        style={{ padding: '12px 28px', fontSize: '13px', margin: '0 auto', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                        onClick={() => setDisplayLimit((prev) => prev + 48)}
+                        style={{ padding: '12px 24px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
                       >
-                        Load More Projects ({filteredProjects.length - displayLimit} remaining) <ChevronDown size={16} />
+                        Load More ({filteredProjects.length - displayLimit} remaining) <ChevronDown size={16} />
+                      </button>
+                      <button
+                        className="home-btn home-btn-outline"
+                        onClick={() => setDisplayLimit(filteredProjects.length)}
+                        style={{ padding: '12px 24px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#eef6fc', border: '1px solid #b8d5ed', color: '#0c5c9d', fontWeight: 700 }}
+                      >
+                        Show All {filteredProjects.length} Projects <LayoutGrid size={16} />
                       </button>
                     </div>
                   )}
