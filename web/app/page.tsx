@@ -112,6 +112,35 @@ type Project = {
 
 const projects: Project[] = rawProjects as unknown as Project[]
 
+const NATIONAL_PORTFOLIO_DOSSIER: Project = {
+  id: 'NAT-PORTFOLIO-2026',
+  name: 'National Infrastructure Portfolio (1,012 Projects Overview)',
+  state: 'All 28 States & 8 Union Territories',
+  risk: 'High',
+  type: 'Delayed',
+  ministry: 'Cabinet Secretariat / PMO / MoSPI',
+  sector: 'Multi-Sector National Infrastructure',
+  cost: '₹ 18,94,280 Cr (₹ 18.94 Lakh Cr)',
+  rawCost: 1894280,
+  spentCost: '₹ 11,47,933 Cr (₹ 11.48 Lakh Cr)',
+  rawSpentCost: 1147933,
+  balanceCost: '₹ 7,46,347 Cr (₹ 7.46 Lakh Cr)',
+  financialProgress: 60.6,
+  progress: 68,
+  delay: '22 Months Average Portfolio Delay',
+  overrunMonths: 22,
+  riskScore: 84,
+  delayProbability: 78,
+  criticalIssue: 'Inter-state land acquisition, forest stage-II clearances & contractor capital liquidity',
+  costOverrunCr: 241000,
+  expenditureBreakdown: {
+    civilWorks: '₹ 6,31,363 Cr (55%)',
+    landAcquisition: '₹ 2,86,983 Cr (25%)',
+    utilityAndSystems: '₹ 1,37,752 Cr (12%)',
+    contingencyAndPMC: '₹ 91,835 Cr (8%)',
+  },
+}
+
 type AnalysisProject = {
   id: string
   name: string
@@ -269,6 +298,12 @@ export default function Page() {
   const projectFiltersActive =
     filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || groupValue !== 'All' || search.trim() !== ''
 
+  const handleNav = (nav: string) => {
+    setActiveNav(nav)
+    setBriefingModalProject(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <main className={`app-shell ${sidebarCollapsed ? 'collapsed' : ''}`}>
       <header className="topbar">
@@ -282,10 +317,10 @@ export default function Page() {
         <div className="top-actions">
           <button 
             className="export-briefing-btn" 
-            onClick={() => setBriefingModalProject(projects[0])}
-            title="Generate Official MoSPI Flash Dossier"
+            onClick={() => setBriefingModalProject(NATIONAL_PORTFOLIO_DOSSIER)}
+            title="Generate Official MoSPI National Portfolio Briefing"
           >
-            <FileText size={14} /> Official Project Report (PDF)
+            <FileText size={14} /> Official Portfolio Report (PDF)
           </button>
           <span className="updated"><i /> Live MoSPI IPMD Feed: 2026</span>
           <button className="avatar" aria-label="Profile">R</button>
@@ -307,7 +342,7 @@ export default function Page() {
           </div>
           <nav>
             {navItems.map(({ label, icon: Icon, active, badge }) => (
-              <button key={label} className={`nav-item ${activeNav === label || active && activeNav === 'Projects' ? 'active' : ''}`} onClick={() => setActiveNav(label)}>
+              <button key={label} className={`nav-item ${activeNav === label || (active && activeNav === 'Projects') ? 'active' : ''}`} onClick={() => handleNav(label)}>
                 <Icon size={16} strokeWidth={1.8} />
                 <span>{label}</span>
                 {badge && <small className="count-badge">{badge}</small>}
@@ -317,11 +352,11 @@ export default function Page() {
         </aside>
         <section className="content">
           {activeNav === 'Home' ? (
-            <HomeView onNavigate={setActiveNav} />
+            <HomeView onNavigate={handleNav} />
           ) : activeNav === 'Analysis' ? (
             <AnalysisView onOpenBriefing={(p) => setBriefingModalProject(p)} />
           ) : activeNav === 'Map' ? (
-            <MapView onSeeProject={() => setActiveNav('Projects')} />
+            <MapView onSeeProject={() => handleNav('Projects')} />
           ) : activeNav === 'AI' ? (
             <AIView />
           ) : (
@@ -390,6 +425,24 @@ export default function Page() {
           )}
         </section>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (<768px touch devices) */}
+      <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
+        {navItems.map(({ label, icon: Icon, badge }) => (
+          <button
+            key={label}
+            className={`mobile-bottom-nav-item ${activeNav === label ? 'active' : ''}`}
+            onClick={() => handleNav(label)}
+            aria-label={`Go to ${label}`}
+          >
+            <div className="mobile-bottom-nav-icon-wrap">
+              <Icon size={20} strokeWidth={activeNav === label ? 2.3 : 1.8} />
+              {badge && <span className="mobile-bottom-nav-badge">{badge}</span>}
+            </div>
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
 
       {briefingModalProject && (
         <ExecutiveDossierModal 
@@ -882,9 +935,10 @@ function AnalysisView({ onOpenBriefing }: { onOpenBriefing: (p: Project | Analys
         <button 
           className="export-briefing-btn" 
           style={{ marginLeft: 'auto' }}
-          onClick={() => onOpenBriefing(analysisProjects[0])}
+          onClick={() => onOpenBriefing(NATIONAL_PORTFOLIO_DOSSIER)}
+          title="Print official Cabinet portfolio briefing for 1,012 projects"
         >
-          <Printer size={14} /> Print Official Report (PDF)
+          <Printer size={14} /> Official Portfolio Report (PDF)
         </button>
       </div>
 
@@ -1570,7 +1624,7 @@ function ExecutiveDossierModal({
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
+          <div className="dossier-header-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
             <div>
               <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0b2f52', margin: 0 }}>{p.name}</h2>
               <div style={{ fontSize: '13px', color: '#4b6580', marginTop: '4px' }}>
@@ -1583,28 +1637,30 @@ function ExecutiveDossierModal({
           </div>
 
           {/* KPI Matrix Table */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px' }}>
-            <tbody>
-              <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Total Approved Budget</td>
-                <td style={{ padding: '10px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.cost}</td>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Money Spent Till Now</td>
-                <td style={{ padding: '10px 14px', fontWeight: 800, color: '#159149', width: '25%' }}>{p.spentCost || '₹ 72,257 Cr'} ({p.financialProgress || 67}%)</td>
-              </tr>
-              <tr style={{ borderBottom: '1px solid #dce7f1' }}>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Work Completed on Ground</td>
-                <td style={{ padding: '10px 14px', fontWeight: 800, color: '#0b3157' }}>{p.progress}% Achieved</td>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Money Left to Spend</td>
-                <td style={{ padding: '10px 14px', fontWeight: 800, color: '#7047eb' }}>{p.balanceCost || '₹ 35,743 Cr'}</td>
-              </tr>
-              <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>AI Delay Risk Rating</td>
-                <td style={{ padding: '10px 14px', fontWeight: 800, color: p.risk === 'High' ? '#df4036' : '#ed7b11' }}>{p.risk} ({p.riskScore}/100)</td>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Extra Cost Beyond Budget</td>
-                <td style={{ padding: '10px 14px', fontWeight: 800, color: '#df4036' }}>{p.costOverrunCr ? `₹ ${p.costOverrunCr.toLocaleString()} Cr` : '₹ 0 Cr (Protected)'}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="ca-table-responsive">
+            <table style={{ width: '100%', minWidth: '580px', borderCollapse: 'collapse', marginBottom: '24px', fontSize: '13px' }}>
+              <tbody>
+                <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
+                  <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Total Approved Budget</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.cost}</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Money Spent Till Now</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#159149', width: '25%' }}>{p.spentCost || '₹ 72,257 Cr'} ({p.financialProgress || 67}%)</td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid #dce7f1' }}>
+                  <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Work Completed on Ground</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#0b3157' }}>{p.progress}% Achieved</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Money Left to Spend</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#7047eb' }}>{p.balanceCost || '₹ 35,743 Cr'}</td>
+                </tr>
+                <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
+                  <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>AI Delay Risk Rating</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: p.risk === 'High' ? '#df4036' : '#ed7b11' }}>{p.risk} ({p.riskScore}/100)</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 600, color: '#526e89' }}>Extra Cost Beyond Budget</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 800, color: '#df4036' }}>{p.costOverrunCr ? `₹ ${p.costOverrunCr.toLocaleString()} Cr` : '₹ 0 Cr (Protected)'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           {/* Component Breakdown Table */}
           {p.expenditureBreakdown && (
