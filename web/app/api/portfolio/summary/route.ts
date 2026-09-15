@@ -47,7 +47,7 @@ export async function GET() {
         {
           label: 'HIGH RISK / PREDICTED DELAY',
           value: highRiskProjects.toLocaleString(),
-          note: 'AI early warning alerts (MoSPI IPMD)',
+          note: 'AI early warning alerts (National Portfolio)',
           tag: 'Urgent Action',
           tone: 'red',
           count: highRiskProjects

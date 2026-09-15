@@ -14,9 +14,12 @@ export interface Project {
   sector: string
   agency?: string
   approvalDate?: string
+  announcedDate?: string
+  workStartDate?: string
   yearsActive?: string
   originalDoc?: string
   anticipatedDoc?: string
+  targetCompletion?: string
   cost: string
   rawCost?: number
   spentCost?: string
@@ -144,8 +147,8 @@ export function getProjectRiskProfile(project: Project): ProjectRiskProfile {
     : '₹ 0 Cr (Protected)'
 
   const explanation = isOnTrack
-    ? `PAMANA ML Risk Engine: Score ${score}/100. Project is operating on schedule (0 mo delay) within sanctioned baseline (${project.cost}). Physical progress (${project.progress}%) is under active milestone surveillance.`
-    : `PAMANA ML Risk Engine: Score ${score}/100 derived from schedule slippage (+${overrun} mos delay), cost variance (${estimatedExtraCost}), and physical progress (${project.progress}%) relative to MoSPI S-curve baseline.`
+    ? `Drishti AI ML Risk Engine: Score ${score}/100. Project is operating on schedule (0 mo delay) within sanctioned baseline (${project.cost}). Physical progress (${project.progress}%) is under active milestone surveillance.`
+    : `Drishti AI ML Risk Engine: Score ${score}/100 derived from schedule slippage (+${overrun} mos delay), cost variance (${estimatedExtraCost}), and physical progress (${project.progress}%) relative to execution baseline.`
 
   return {
     tier,

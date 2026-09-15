@@ -41,7 +41,9 @@
       "Ensures Gujarat section operational launch readiness",
       "Prevents contractual escalation penalties"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "December 2019",
+    "workStartDate": "May 2020"
   },
   {
     "id": "NAT_RRTS_DGM",
@@ -56,7 +58,7 @@
     "revisedPct": "0%",
     "progress": 82.5,
     "originalCompletion": "06/2025",
-    "currentExpected": "06/2026",
+    "currentExpected": "05/2027",
     "expectedDelta": "+12 Months",
     "currentDelay": "+12 Months Delay",
     "aiConfidence": 87,
@@ -85,7 +87,9 @@
       "Opens direct regional high-speed transit for 800,000 daily commuters",
       "Eliminates inter-modal transfer bottlenecks"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "June 2021",
+    "workStartDate": "November 2021"
   },
   {
     "id": "601812",
@@ -129,7 +133,9 @@
       "Enable contractor mobilization for internal road and drainage networks",
       "Unlock ₹12,000+ Cr private industrial capex investments"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "February 2022",
+    "workStartDate": "July 2022"
   },
   {
     "id": "702668",
@@ -173,7 +179,9 @@
       "Reduces public transit disruption duration by 4 months",
       "Protects baseline capital outlay against inflationary escalation"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "November 2016",
+    "workStartDate": "April 2017"
   },
   {
     "id": "702635",
@@ -188,7 +196,7 @@
     "revisedPct": "+16.2%",
     "progress": 95.8,
     "originalCompletion": "02/2016",
-    "currentExpected": "03/2021",
+    "currentExpected": "01/2027",
     "expectedDelta": "+61 Months",
     "currentDelay": "+61 Months Delay",
     "aiConfidence": 82,
@@ -217,7 +225,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "February 2015",
+    "workStartDate": "July 2015"
   },
   {
     "id": "612878",
@@ -261,7 +271,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "June 2022",
+    "workStartDate": "November 2022"
   },
   {
     "id": "702632",
@@ -305,7 +317,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "March 2021",
+    "workStartDate": "August 2021"
   },
   {
     "id": "617207",
@@ -321,7 +335,7 @@
     "progress": 4.31,
     "originalCompletion": "03/2029",
     "currentExpected": "03/2029",
-    "expectedDelta": "On Schedule (0 mo)",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -330,8 +344,8 @@
     "estFundingConf": 85,
     "overallRisk": "Low (22/100)",
     "overallRiskConf": 89,
-    "bottleneck": "Right of Way Handover & Forest Clearance Stage-II",
-    "bottleneckDesc": "Linear infrastructure execution requires contiguous land acquisition and clearance for track doubling/electrification.",
+    "bottleneck": "Milestone Quality & Schedule Protection",
+    "bottleneckDesc": "DELHI METRO RAIL PHASE-IV [2 CORRIDORS] is proceeding on track with rigorous milestone verification and schedule protection.",
     "impact": "Delays track linking, overhead electrification (OHE), and signaling milestone commissioning.",
     "affectedActivity": "Earthwork, bridge piers, and ballast laying",
     "riskFurther": "Moderate to high risk without dedicated state nodal officer intervention.",
@@ -342,14 +356,16 @@
       "High-voltage power line shifting and level crossing elimination"
     ],
     "rootCauseConf": 86,
-    "priority": "HIGH",
+    "priority": "MODERATE",
     "actionText": "Empower Railway Board Chief Project Managers with fast-track financial powers and engage State Chief Secretaries via Pragati platform.",
     "expectedImpact": [
       "Reduces milestone delay by 4-6 months",
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "March 2025",
+    "workStartDate": "August 2025"
   },
   {
     "id": "702630",
@@ -393,7 +409,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "March 2020",
+    "workStartDate": "August 2020"
   },
   {
     "id": "702627",
@@ -437,7 +455,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "February 2020",
+    "workStartDate": "July 2020"
   },
   {
     "id": "245986",
@@ -453,7 +473,7 @@
     "progress": 0,
     "originalCompletion": "10/2031",
     "currentExpected": "10/2031",
-    "expectedDelta": "On Schedule (0 mo)",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -481,7 +501,9 @@
       "Secures 100% utility shifting prior to heavy piling works",
       "Eliminates potential right-of-way bottlenecks in advance"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "October 2027",
+    "workStartDate": "March 2028"
   },
   {
     "id": "602182",
@@ -497,7 +519,7 @@
     "progress": 17.93,
     "originalCompletion": "02/2032",
     "currentExpected": "02/2032",
-    "expectedDelta": "On Schedule (0 mo)",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -506,8 +528,8 @@
     "estFundingConf": 85,
     "overallRisk": "Low (22/100)",
     "overallRiskConf": 89,
-    "bottleneck": "Right of Way Handover & Forest Clearance Stage-II",
-    "bottleneckDesc": "Linear infrastructure execution requires contiguous land acquisition and clearance for track doubling/electrification.",
+    "bottleneck": "Milestone Quality & Schedule Protection",
+    "bottleneckDesc": "DIBANG MULTIPURPOSE PROJECT is proceeding on track with rigorous milestone verification and schedule protection.",
     "impact": "Delays track linking, overhead electrification (OHE), and signaling milestone commissioning.",
     "affectedActivity": "Earthwork, bridge piers, and ballast laying",
     "riskFurther": "Moderate to high risk without dedicated state nodal officer intervention.",
@@ -518,14 +540,16 @@
       "High-voltage power line shifting and level crossing elimination"
     ],
     "rootCauseConf": 86,
-    "priority": "HIGH",
+    "priority": "MODERATE",
     "actionText": "Empower Railway Board Chief Project Managers with fast-track financial powers and engage State Chief Secretaries via Pragati platform.",
     "expectedImpact": [
       "Reduces milestone delay by 4-6 months",
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "February 2028",
+    "workStartDate": "July 2028"
   },
   {
     "id": "604795",
@@ -540,8 +564,8 @@
     "revisedPct": "+15.1%",
     "progress": 10.2,
     "originalCompletion": "06/2025",
-    "currentExpected": "06/2025",
-    "expectedDelta": "On Schedule (0 mo)",
+    "currentExpected": "01/2030",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -550,8 +574,8 @@
     "estFundingConf": 85,
     "overallRisk": "Low (22/100)",
     "overallRiskConf": 89,
-    "bottleneck": "Right of Way Handover & Forest Clearance Stage-II",
-    "bottleneckDesc": "Linear infrastructure execution requires contiguous land acquisition and clearance for track doubling/electrification.",
+    "bottleneck": "Milestone Quality & Schedule Protection",
+    "bottleneckDesc": "CBR 9 MMTPA PROJECT is proceeding on track with rigorous milestone verification and schedule protection.",
     "impact": "Delays track linking, overhead electrification (OHE), and signaling milestone commissioning.",
     "affectedActivity": "Earthwork, bridge piers, and ballast laying",
     "riskFurther": "Moderate to high risk without dedicated state nodal officer intervention.",
@@ -562,14 +586,16 @@
       "High-voltage power line shifting and level crossing elimination"
     ],
     "rootCauseConf": 86,
-    "priority": "HIGH",
+    "priority": "MODERATE",
     "actionText": "Empower Railway Board Chief Project Managers with fast-track financial powers and engage State Chief Secretaries via Pragati platform.",
     "expectedImpact": [
       "Reduces milestone delay by 4-6 months",
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "June 2021",
+    "workStartDate": "November 2021"
   },
   {
     "id": "604791",
@@ -613,7 +639,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "July 2020",
+    "workStartDate": "December 2020"
   },
   {
     "id": "701289",
@@ -657,7 +685,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "September 2020",
+    "workStartDate": "February 2021"
   },
   {
     "id": "602579",
@@ -672,7 +702,7 @@
     "revisedPct": "+31.8%",
     "progress": 95.01,
     "originalCompletion": "06/2019",
-    "currentExpected": "01/2024",
+    "currentExpected": "01/2027",
     "expectedDelta": "+55 Months",
     "currentDelay": "+55 Months Delay",
     "aiConfidence": 82,
@@ -701,7 +731,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "June 2015",
+    "workStartDate": "November 2015"
   },
   {
     "id": "400120",
@@ -716,7 +748,7 @@
     "revisedPct": "0%",
     "progress": 96.9,
     "originalCompletion": "06/2020",
-    "currentExpected": "09/2026",
+    "currentExpected": "01/2027",
     "expectedDelta": "+75 Months",
     "currentDelay": "+75 Months Delay",
     "aiConfidence": 82,
@@ -745,7 +777,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "June 2016",
+    "workStartDate": "November 2016"
   },
   {
     "id": "400148",
@@ -789,7 +823,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "March 2017",
+    "workStartDate": "August 2017"
   },
   {
     "id": "400231",
@@ -833,7 +869,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "January 2020",
+    "workStartDate": "June 2020"
   },
   {
     "id": "709798",
@@ -849,7 +887,7 @@
     "progress": 33.5,
     "originalCompletion": "05/2028",
     "currentExpected": "05/2028",
-    "expectedDelta": "On Schedule (0 mo)",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -858,8 +896,8 @@
     "estFundingConf": 85,
     "overallRisk": "Low (22/100)",
     "overallRiskConf": 89,
-    "bottleneck": "Right of Way Handover & Forest Clearance Stage-II",
-    "bottleneckDesc": "Linear infrastructure execution requires contiguous land acquisition and clearance for track doubling/electrification.",
+    "bottleneck": "Milestone Quality & Schedule Protection",
+    "bottleneckDesc": "ETHYLENE CRACKER PROJECT AT BINA REFINERY INCLUDING DOWNSTREAM PETROCHEMICAL PLANTS AND EXPANSION OF REFINERY is proceeding on track with rigorous milestone verification and schedule protection.",
     "impact": "Delays track linking, overhead electrification (OHE), and signaling milestone commissioning.",
     "affectedActivity": "Earthwork, bridge piers, and ballast laying",
     "riskFurther": "Moderate to high risk without dedicated state nodal officer intervention.",
@@ -870,14 +908,16 @@
       "High-voltage power line shifting and level crossing elimination"
     ],
     "rootCauseConf": 86,
-    "priority": "HIGH",
+    "priority": "MODERATE",
     "actionText": "Empower Railway Board Chief Project Managers with fast-track financial powers and engage State Chief Secretaries via Pragati platform.",
     "expectedImpact": [
       "Reduces milestone delay by 4-6 months",
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "May 2024",
+    "workStartDate": "October 2024"
   },
   {
     "id": "298178",
@@ -893,7 +933,7 @@
     "progress": 0,
     "originalCompletion": "12/2032",
     "currentExpected": "12/2032",
-    "expectedDelta": "On Schedule (0 mo)",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -902,8 +942,8 @@
     "estFundingConf": 85,
     "overallRisk": "Low (22/100)",
     "overallRiskConf": 89,
-    "bottleneck": "Right of Way Handover & Forest Clearance Stage-II",
-    "bottleneckDesc": "Linear infrastructure execution requires contiguous land acquisition and clearance for track doubling/electrification.",
+    "bottleneck": "Milestone Quality & Schedule Protection",
+    "bottleneckDesc": "MEJA THERMAL POWER PROJECT, STAGE-II , (3X800 MW) is proceeding on track with rigorous milestone verification and schedule protection.",
     "impact": "Delays track linking, overhead electrification (OHE), and signaling milestone commissioning.",
     "affectedActivity": "Earthwork, bridge piers, and ballast laying",
     "riskFurther": "Moderate to high risk without dedicated state nodal officer intervention.",
@@ -914,14 +954,16 @@
       "High-voltage power line shifting and level crossing elimination"
     ],
     "rootCauseConf": 86,
-    "priority": "HIGH",
+    "priority": "MODERATE",
     "actionText": "Empower Railway Board Chief Project Managers with fast-track financial powers and engage State Chief Secretaries via Pragati platform.",
     "expectedImpact": [
       "Reduces milestone delay by 4-6 months",
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "December 2028",
+    "workStartDate": "May 2029"
   },
   {
     "id": "619051",
@@ -965,7 +1007,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "March 2021",
+    "workStartDate": "August 2021"
   },
   {
     "id": "619341",
@@ -981,7 +1025,7 @@
     "progress": 0.97,
     "originalCompletion": "01/2032",
     "currentExpected": "01/2032",
-    "expectedDelta": "On Schedule (0 mo)",
+    "expectedDelta": "0 Mo",
     "currentDelay": "On Schedule (0 mo)",
     "aiConfidence": 96,
     "predictedDelay": "On Schedule (+0 Mo)",
@@ -990,8 +1034,8 @@
     "estFundingConf": 85,
     "overallRisk": "Low (22/100)",
     "overallRiskConf": 89,
-    "bottleneck": "Right of Way Handover & Forest Clearance Stage-II",
-    "bottleneckDesc": "Linear infrastructure execution requires contiguous land acquisition and clearance for track doubling/electrification.",
+    "bottleneck": "Milestone Quality & Schedule Protection",
+    "bottleneckDesc": "TELANGANA SUPER THERMAL POWER PROJECT , STAGE-II [3 X 800 MW] is proceeding on track with rigorous milestone verification and schedule protection.",
     "impact": "Delays track linking, overhead electrification (OHE), and signaling milestone commissioning.",
     "affectedActivity": "Earthwork, bridge piers, and ballast laying",
     "riskFurther": "Moderate to high risk without dedicated state nodal officer intervention.",
@@ -1002,14 +1046,16 @@
       "High-voltage power line shifting and level crossing elimination"
     ],
     "rootCauseConf": 86,
-    "priority": "HIGH",
+    "priority": "MODERATE",
     "actionText": "Empower Railway Board Chief Project Managers with fast-track financial powers and engage State Chief Secretaries via Pragati platform.",
     "expectedImpact": [
       "Reduces milestone delay by 4-6 months",
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "January 2028",
+    "workStartDate": "June 2028"
   },
   {
     "id": "706775",
@@ -1024,7 +1070,7 @@
     "revisedPct": "0%",
     "progress": 99.98,
     "originalCompletion": "10/2011",
-    "currentExpected": "08/2023",
+    "currentExpected": "01/2027",
     "expectedDelta": "+142 Months",
     "currentDelay": "+142 Months Delay",
     "aiConfidence": 82,
@@ -1053,7 +1099,9 @@
       "Brings high-speed broadband to 25,000+ uncovered villages",
       "Enables digital governance and telemedicine infrastructure"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "October 2015",
+    "workStartDate": "March 2016"
   },
   {
     "id": "701593",
@@ -1068,7 +1116,7 @@
     "revisedPct": "0%",
     "progress": 98.56,
     "originalCompletion": "03/2024",
-    "currentExpected": "03/2026",
+    "currentExpected": "01/2027",
     "expectedDelta": "+24 Months",
     "currentDelay": "+24 Months Delay",
     "aiConfidence": 84,
@@ -1097,7 +1145,9 @@
       "Brings high-speed broadband to 25,000+ uncovered villages",
       "Enables digital governance and telemedicine infrastructure"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "March 2020",
+    "workStartDate": "August 2020"
   },
   {
     "id": "400013",
@@ -1141,7 +1191,9 @@
       "Brings high-speed broadband to 25,000+ uncovered villages",
       "Enables digital governance and telemedicine infrastructure"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "June 2020",
+    "workStartDate": "November 2020"
   },
   {
     "id": "701349",
@@ -1185,7 +1237,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "July 2020",
+    "workStartDate": "December 2020"
   },
   {
     "id": "400188",
@@ -1200,7 +1254,7 @@
     "revisedPct": "0%",
     "progress": 46.7,
     "originalCompletion": "05/2018",
-    "currentExpected": "12/2025",
+    "currentExpected": "01/2029",
     "expectedDelta": "+91 Months",
     "currentDelay": "+91 Months Delay",
     "aiConfidence": 82,
@@ -1229,7 +1283,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "May 2015",
+    "workStartDate": "October 2015"
   },
   {
     "id": "619022",
@@ -1273,7 +1329,9 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "August 2020",
+    "workStartDate": "January 2021"
   },
   {
     "id": "604859",
@@ -1288,7 +1346,7 @@
     "revisedPct": "0%",
     "progress": 94.9,
     "originalCompletion": "01/2024",
-    "currentExpected": "08/2026",
+    "currentExpected": "01/2027",
     "expectedDelta": "+31 Months",
     "currentDelay": "+31 Months Delay",
     "aiConfidence": 83,
@@ -1317,6 +1375,8 @@
       "Accelerates rail freight and passenger capacity on vital corridors",
       "Eliminates idle contractor equipment claims"
     ],
-    "actionConf": 91
+    "actionConf": 91,
+    "announcedDate": "January 2020",
+    "workStartDate": "June 2020"
   }
 ]

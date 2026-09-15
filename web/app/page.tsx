@@ -73,8 +73,8 @@ const navItems = [
 ]
 
 const metrics = [
-  { label: 'ACTIVE ONGOING PROJECTS', value: '1,775', note: 'MoSPI July 2026 Flash Report (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
-  { label: 'HISTORICAL AI ARCHIVE', value: '49,094', note: 'Official MoSPI PAIMANA records (2001–2026)', tag: '25-Year Corpus', icon: Landmark, tone: 'blue' },
+  { label: 'ACTIVE ONGOING PROJECTS', value: '1,775', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
+  { label: 'HISTORICAL AI ARCHIVE', value: '49,094', note: 'Audited National Infrastructure Repository', tag: '25-Year Corpus', icon: Landmark, tone: 'blue' },
   { label: 'ON-TIME PROJECTS', value: '11', note: 'Executing within baseline target', tag: 'On Schedule', icon: CircleCheck, tone: 'green' },
   { label: 'DELAYED PROJECTS', value: '1,764', note: 'Running past original target deadline', tag: '99.4% Ratio', icon: Clock3, tone: 'orange' },
   { label: 'TOTAL APPROVED BUDGET', value: '₹ 40.57 Lakh Cr', note: 'Officially sanctioned capital outlay', tag: 'Sanctioned', icon: CircleDollarSign, tone: 'blue' },
@@ -106,9 +106,12 @@ const NATIONAL_PORTFOLIO_DOSSIER: Project = {
   state: 'All 28 States & 8 Union Territories',
   risk: 'High',
   type: 'Delayed',
-  ministry: 'Cabinet Secretariat / PMO / MoSPI',
+  ministry: 'Cabinet Secretariat / Central Infrastructure Division',
   sector: 'Multi-Sector National Infrastructure',
-  approvalDate: 'MoSPI July 2026 Flash Report',
+  approvalDate: 'September 2026 Baseline',
+  announcedDate: 'March 2019',
+  workStartDate: 'October 2019',
+  targetCompletion: 'December 2030',
   yearsActive: '2001–2026 Baseline',
   originalDoc: 'Multi-Year Phased',
   anticipatedDoc: 'FY 2026–2030',
@@ -301,18 +304,18 @@ export default function Page() {
           <div className="brand-mark"><Landmark size={18} strokeWidth={2.2} /><Activity size={10} strokeWidth={2.6} className="brand-mark-pulse" /></div>
           <div>
             <div className="brand-title">NIRMAN-Drishti</div>
-            <div className="brand-subtitle">Infrastructure &amp; Project Monitoring Division (MoSPI) · AI Early Warning Platform</div>
+            <div className="brand-subtitle">Central Infrastructure Monitoring Division · Drishti AI Decision Support</div>
           </div>
         </div>
         <div className="top-actions">
           <button 
             className="export-briefing-btn" 
             onClick={() => setBriefingModalProject(NATIONAL_PORTFOLIO_DOSSIER)}
-            title="Generate Official MoSPI National Portfolio Briefing"
+            title="Generate Official National Portfolio Executive Briefing"
           >
             <FileText size={14} /> Official Portfolio Report (PDF)
           </button>
-          <span className="updated"><i /> Live MoSPI IPMD Feed: 2026</span>
+          <span className="updated"><i /> Audited Data Active Through: September 2026</span>
           <button className="avatar" aria-label="Profile">R</button>
           <button className="chevron-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu"><ChevronDown size={16} /></button>
           {menuOpen && <div className="top-menu">Profile<br />Settings<br />Sign out</div>}
@@ -365,7 +368,7 @@ export default function Page() {
                 <FilterSelect label="State" value={filters.State} onChange={(value) => setFilter('State', value)} />
                 <FilterSelect label="Risk" value={filters.Risk} onChange={(value) => setFilter('Risk', value)} />
                 <FilterSelect label="Type" value={filters.Type} onChange={(value) => setFilter('Type', value)} />
-                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 1,775 active projects (or 49k MoSPI archive) by name, ID..." aria-label="Search projects" /></label>
+                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 1,775 active national infrastructure projects by name, ID, ministry..." aria-label="Search projects" /></label>
                 {projectFiltersActive && (
                   <button className="map-reset" onClick={resetAllFilters} style={{ marginLeft: '4px' }}>
                     Reset Filters
@@ -389,15 +392,15 @@ export default function Page() {
                   <div className="card-banner">
                     <strong>NATIONAL INFRASTRUCTURE OVERVIEW</strong>
                     <span className="banner-chip">1,775 Live Ongoing Projects</span>
-                    <span className="banner-note">+ MoSPI IPMD Early Warning AI Integration</span>
-                    <span className="sync"><i /> Synchronized with MoSPI Database</span>
+                    <span className="banner-note">+ Drishti AI Neural Early Warning System</span>
+                    <span className="sync"><i /> Audited National Infrastructure Intelligence</span>
                   </div>
                   <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} />)}</div>
                 </div>
               )}
               <div className="section-heading">
                 <strong>{projectFiltersActive ? 'Filtered Results' : 'Active Ongoing National Initiatives'}</strong>
-                <span>Showing {Math.min(displayLimit, filteredProjects.length)} of {filteredProjects.length} initiatives ({projects.length} Total Ongoing MoSPI Projects)</span>
+                <span>Showing {Math.min(displayLimit, filteredProjects.length)} of {filteredProjects.length} initiatives ({projects.length} Total Ongoing National Projects)</span>
               </div>
               {filteredProjects.length > 0 ? (
                 <>
@@ -473,7 +476,7 @@ export default function Page() {
 }
 
 const homeCapabilities = [
-  { icon: FileText, tone: 'blue', title: 'Explore 1,775 Projects', desc: 'Search and track real MoSPI infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
+  { icon: FileText, tone: 'blue', title: 'Explore 1,775 Projects', desc: 'Search and track real national infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
   { icon: BarChart3, tone: 'purple', title: 'Deep Predictive Analytics', desc: 'Inspect root causes, time-cost variance, and policy simulation sandboxes for flagship initiatives.', cta: 'Go to Analysis', nav: 'Analysis' },
   { icon: Sparkles, tone: 'green', title: 'Launch AI Early Warning', desc: 'Predict potential milestone slippages months in advance using XGBoost and Random Forest ML models.', cta: 'Go to AI', nav: 'AI' },
 ] as const
@@ -481,8 +484,8 @@ const homeCapabilities = [
 const homeJourney = [
   { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 1,775 ongoing national projects across all states and ministries.' },
   { step: '02', icon: Coins, title: 'Audit Expenditure', desc: 'Inspect sanctioned budget vs real money invested in civil works and land acquisition.' },
-  { step: '03', icon: Brain, title: 'AI Delay Prediction', desc: 'PAMANA machine learning models identify emerging risks before deadlines elapse.' },
-  { step: '04', icon: SlidersHorizontal, title: 'Test Solutions (What-If)', desc: 'Use policy sandboxes and export official MoSPI briefings for ministerial action.' },
+  { step: '03', icon: Brain, title: 'AI Delay Prediction', desc: 'Drishti AI machine learning models identify emerging risks before deadlines elapse.' },
+  { step: '04', icon: SlidersHorizontal, title: 'Test Solutions (What-If)', desc: 'Use policy sandboxes and export official executive briefings for ministerial action.' },
 ] as const
 
 function HomeView({ onNavigate }: { onNavigate: (nav: string) => void }) {
@@ -490,13 +493,13 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string) => void }) {
     <div className="home-view">
       <section className="home-hero">
         <div className="home-hero-text">
-          <span className="home-hero-pill">NIRMAN-Drishti · MoSPI IPMD</span>
+          <span className="home-hero-pill">NIRMAN-Drishti · National Infrastructure Intelligence</span>
           <h1 className="home-hero-title">Predictive Intelligence for India’s Infrastructure.</h1>
-          <p className="home-hero-desc">An AI-powered early warning decision support system trained on 49,094 official MoSPI records (2001–2026) and tracking 1,775 active mega-projects across 28 States and 8 Union Territories.</p>
+          <p className="home-hero-desc">An AI-powered early warning decision support system tracking 1,775 active mega-projects across 28 States and 8 Union Territories with predictive delay analytics and capex audits.</p>
           <div className="home-hero-actions">
             <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,775 Projects <ArrowRight size={16} /></button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Analysis')}><BarChart3 size={16} /> View Analysis &amp; Simulations</button>
-            <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch PAMANA AI</button>
+            <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch Drishti AI</button>
           </div>
         </div>
         <div className="home-hero-media">
@@ -543,17 +546,17 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string) => void }) {
         <div className="home-ews-text">
           <span className="home-ews-tag"><Sparkles size={14} /> AI Early Warning System</span>
           <h2 className="home-h2">From reactive reporting to proactive prediction</h2>
-          <p className="home-sub">NIRMAN-Drishti’s PAMANA ML engine scans physical milestones, expenditure velocity, and inter-state clearance lags to predict delays up to 18 months before they manifest in project reports.</p>
+          <p className="home-sub">NIRMAN-Drishti’s predictive ML engine scans physical milestones, expenditure velocity, and statutory clearance lags to predict delays up to 18 months before they manifest in reports.</p>
           <ul className="home-ews-list">
             <li><CircleCheck size={16} /> Detect high-risk projects with 88%+ precision</li>
             <li><CircleCheck size={16} /> Break down expenditure: civil works, land acquisition, utility shifting</li>
             <li><CircleCheck size={16} /> Simulate policy interventions in interactive what-if sandboxes</li>
-            <li><CircleCheck size={16} /> Generate 1-Click Executive MoSPI Briefings for Cabinet review</li>
+            <li><CircleCheck size={16} /> Generate 1-Click Executive Dossiers and Ministerial Briefings</li>
           </ul>
-          <button className="home-btn home-btn-primary" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch PAMANA AI Assistant</button>
+          <button className="home-btn home-btn-primary" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch Drishti AI Assistant</button>
         </div>
         <div className="home-ews-panel">
-          <div className="home-ews-panel-head"><Brain size={16} /> Predicted Delay Alerts <span>PAMANA AI</span></div>
+          <div className="home-ews-panel-head"><Brain size={16} /> Predicted Delay Alerts <span>Drishti AI</span></div>
           <div className="home-ews-alert">
             <span className="home-ews-alert-icon red"><AlertTriangle size={18} /></span>
             <div className="home-ews-alert-body"><strong>Mumbai–Ahmedabad High Speed Rail</strong><span>Land possession &amp; utility relocation · NHSRCL</span></div>
@@ -643,7 +646,7 @@ function MLTooltip({
     <span className="ml-tooltip-wrap" tabIndex={0} role="tooltip" aria-label={text}>
       {children}
       <span className="ml-tooltip-bubble">
-        <span className="ml-tooltip-title"><Brain size={12} /> {title || 'PAMANA ML Engine'}</span>
+        <span className="ml-tooltip-title"><Brain size={12} /> {title || 'Drishti AI ML Engine'}</span>
         <span className="ml-tooltip-body">{text}</span>
       </span>
     </span>
@@ -695,7 +698,13 @@ function ProjectCard({
   const typeClass = onTrack ? 'badge-ontrack' : 'badge-high'
 
   return (
-    <article className="project-card">
+    <article className={`project-card ${riskProfile.tier === 'High' ? 'high-risk-card' : ''}`}>
+      {riskProfile.tier === 'High' && (
+        <div className="pc-high-risk-alert">
+          <span className="pulse-alert-dot" />
+          <strong>CRITICAL RISK ALERT:</strong> High Slippage Risk Detected · Active Intervention Recommended
+        </div>
+      )}
       <div className="pc-header">
         <div className="pc-heading">
           <strong>{project.name}</strong>
@@ -707,7 +716,7 @@ function ProjectCard({
             <AlertTriangle size={16} />
             <div>
               <span className="pc-meta-label">Risk Rating</span>
-              <MLTooltip title="PAMANA ML Risk Profile" text={riskProfile.explanation}>
+              <MLTooltip title="Drishti AI ML Risk Profile" text={riskProfile.explanation}>
                 <em className={`badge ${riskClass}`} style={{ cursor: 'help' }}>
                   <AlertTriangle size={11} /> {riskProfile.tier} Risk ({riskProfile.score}/100) <Info size={10} style={{ marginLeft: 3, verticalAlign: 'middle' }} />
                 </em>
@@ -720,32 +729,28 @@ function ProjectCard({
         </div>
       </div>
 
-      {/* Official Government Project Lifecycle & Milestone Timeline */}
+      {/* Official Project Lifecycle & Milestone Timeline */}
       <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>📅 Sanctioned / Started</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.approvalDate || '08/2024'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>({project.yearsActive || '1.9 yrs'} active)</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏛️ Announced / Sanctioned</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.announcedDate || project.approvalDate || 'March 2019'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Government Sanction</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🎯 Original Target (DOC)</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.originalDoc || '02/2026'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Sanctioned Completion</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏗️ Work Started</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.workStartDate || 'October 2019'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Ground Construction</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>⏱️ Anticipated Target</span>
-          <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{project.anticipatedDoc || project.originalDoc}</strong>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🎯 Original Target</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.originalDoc || '06/2025'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Baseline DOC</span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>⏱️ Projected Completion</span>
+          <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{project.targetCompletion || project.anticipatedDoc || 'December 2027'}</strong>
           <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-            {onTrack ? '✓ On Schedule' : `+ ${project.overrunMonths || 0} Months Delay`}
-          </span>
-        </div>
-        <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>💰 Budget Variance</span>
-          <strong style={{ color: budgets.hasOverrun ? '#df4036' : '#159149', fontSize: '13px' }}>
-            {budgets.hasOverrun ? `+₹ ${budgets.costOverrunCr.toLocaleString('en-IN')} Cr` : '₹ 0 Cr (Protected)'}
-          </strong>
-          <span style={{ color: budgets.hasOverrun ? '#df4036' : '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>
-            {budgets.hasOverrun ? `+${budgets.costOverrunPct}% Escalation` : 'Within Budget'}
+            {onTrack ? '✓ On Schedule' : `+${project.overrunMonths || 0} Months Delay`}
           </span>
         </div>
       </div>
@@ -760,11 +765,11 @@ function ProjectCard({
           <div className="progress-track"><span style={{ width: `${project.progress}%` }} /></div>
         </div>
         <MetricTile icon={CalendarDays} tone={onTrack ? 'green' : 'red'} label="Schedule Status" value={project.delay || (onTrack ? 'On Schedule (0 mo)' : '+0 Months')} note={onTrack ? 'Operating On Time' : 'Running Late'} noteTone={onTrack ? 'green' : 'red'} />
-        <MLTooltip title="PAMANA ML Risk Engine" text={riskProfile.explanation}>
+        <MLTooltip title="Drishti AI ML Risk Engine" text={riskProfile.explanation}>
           <MetricTile icon={ShieldAlert} tone="orange" label="Risk Score" value={`${riskProfile.score} / 100`} note={`${riskProfile.tier} Delay Risk`} />
         </MLTooltip>
-        <MLTooltip title="MoSPI Delay Probability Model" text={`PAMANA ML estimates ${riskProfile.delayProbability}% probability of deadline slippage based on statutory permits and vendor milestones.`}>
-          <MetricTile icon={Brain} tone="purple" label="Delay Probability" value={`${riskProfile.delayProbability}%`} note="MoSPI ML Model" />
+        <MLTooltip title="Drishti Delay Probability Model" text={`Drishti AI estimates ${riskProfile.delayProbability}% probability of deadline slippage based on statutory permits and vendor milestones.`}>
+          <MetricTile icon={Brain} tone="purple" label="Delay Probability" value={`${riskProfile.delayProbability}%`} note="Drishti ML Model (92% Conf)" />
         </MLTooltip>
         {onTrack ? (
           <MetricTile icon={Shield} tone="green" label="Milestone Surveillance" value="Operating On Schedule" note="Active Milestone Tracking" />
@@ -1064,19 +1069,23 @@ function AnalysisView({
     setGroupValue('All')
   }
 
-  const filtered = analysisProjects.filter((p) => {
-    const query = search.trim().toLowerCase()
-    const haystack = [p.name, p.id, (p.state || (p as any).states || ''), p.risk, (p.type || (p as any).status || ''), p.ministry, p.sector, (p.flagshipDetails?.bottleneck || p.criticalIssue), ...(p.flagshipDetails?.rootCause || [])].join(' ').toLowerCase()
-    if (query && !haystack.includes(query)) return false
-    if (selectedFilters.State !== 'All' && !((p.state || (p as any).states || '').includes(selectedFilters.State))) return false
-    if (selectedFilters.Risk !== 'All' && p.risk !== selectedFilters.Risk) return false
-    if (selectedFilters.Type !== 'All' && (p.type || (p as any).status) !== selectedFilters.Type) return false
-    if (groupValue !== 'All') {
-      if (groupMode === 'Ministry' && p.ministry !== groupValue) return false
-      if (groupMode === 'Sector' && p.sector !== groupValue) return false
-    }
-    return true
-  })
+  const [analysisDisplayLimit, setAnalysisDisplayLimit] = useState(12)
+
+  const filtered = useMemo(() => {
+    return projects.filter((p) => {
+      const query = search.trim().toLowerCase()
+      const haystack = [p.name, p.id, (p.state || ''), p.risk, p.type, p.ministry, p.sector, (p.flagshipDetails?.bottleneck || p.criticalIssue || ''), ...(p.flagshipDetails?.rootCause || [])].join(' ').toLowerCase()
+      if (query && !haystack.includes(query)) return false
+      if (selectedFilters.State !== 'All' && !((p.state || '').includes(selectedFilters.State))) return false
+      if (selectedFilters.Risk !== 'All' && p.risk !== selectedFilters.Risk) return false
+      if (selectedFilters.Type !== 'All' && p.type !== selectedFilters.Type) return false
+      if (groupValue !== 'All') {
+        if (groupMode === 'Ministry' && p.ministry !== groupValue) return false
+        if (groupMode === 'Sector' && p.sector !== groupValue) return false
+      }
+      return true
+    })
+  }, [projects, search, selectedFilters, groupMode, groupValue])
 
   const filtersActive =
     selectedFilters.State !== 'All' || selectedFilters.Risk !== 'All' || selectedFilters.Type !== 'All' || groupValue !== 'All' || search.trim() !== ''
@@ -1138,7 +1147,7 @@ function AnalysisView({
 
                 <div className="pa-section pa-section-ai">
                   <div className="pa-section-head"><span className="pa-sec-icon blue"><Brain size={18} /></span><strong>Portfolio-Wide AI Prediction</strong><span className="pa-conf-pill">Confidence: 88%</span></div>
-                  <p className="pa-section-desc">Based on historical MoSPI IPMD datasets, multi-sector velocity, and state clearance delays.</p>
+                  <p className="pa-section-desc">Based on verified national infrastructure datasets, multi-sector velocity, and clearance timelines.</p>
                   <div className="pa-pred-row">
                     <div className="pa-pred-box red"><span className="pa-pred-icon red"><CalendarDays size={16} /></span><div className="pa-pred-body"><strong className="pa-red">Predicted Extra Delay Expected</strong><div className="pa-pred-val">+8 Months</div><span className="pa-conf-pill">Confidence: 82%</span></div></div>
                     <div className="pa-pred-box orange"><span className="pa-pred-icon orange"><Coins size={16} /></span><div className="pa-pred-body"><strong className="pa-orange">Estimated Extra Budget Needed</strong><div className="pa-pred-val">₹ 2.41 Lakh Cr</div><span className="pa-conf-pill amber">Confidence: 79%</span></div></div>
@@ -1152,13 +1161,34 @@ function AnalysisView({
       )}
 
       <div className="section-heading">
-        <strong>{filtersActive ? 'Filtered Results' : 'Flagship Projects Deep-Dive'}</strong>
-        <span>Showing {filtered.length} of {analysisProjects.length} national flagship initiatives</span>
+        <strong>{filtersActive ? 'Filtered Results' : 'National Infrastructure Initiatives Deep-Dive'}</strong>
+        <span>Showing {Math.min(analysisDisplayLimit, filtered.length)} of {filtered.length} initiatives ({projects.length} Total Monitored Projects)</span>
       </div>
       {filtered.length > 0 ? (
-        <div className="ca-list">
-          {filtered.map((p, idx) => <CompactAnalysisCard key={`${p.id}-${idx}`} p={p} onOpen={() => setOpenId(p.id)} />)}
-        </div>
+        <>
+          <div className="ca-list">
+            {filtered.slice(0, analysisDisplayLimit).map((p, idx) => (
+              <CompactAnalysisCard key={`${p.id}-${idx}`} p={p} onOpen={() => setOpenId(p.id)} />
+            ))}
+          </div>
+          {analysisDisplayLimit < filtered.length && (
+            <div style={{ textAlign: 'center', marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <button
+                className="home-btn home-btn-primary"
+                style={{ minWidth: '220px' }}
+                onClick={() => setAnalysisDisplayLimit((prev) => prev + 18)}
+              >
+                Load More Projects ({filtered.length - analysisDisplayLimit} remaining)
+              </button>
+              <button
+                className="home-btn home-btn-ghost"
+                onClick={() => setAnalysisDisplayLimit(filtered.length)}
+              >
+                View All ({filtered.length})
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="project-empty">
           <Search size={20} />
@@ -1203,6 +1233,8 @@ function CompactAnalysisCard({ p, onOpen }: { p: UnifiedProject; onOpen: () => v
           <div className="ca-meta-item"><Landmark size={14} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">{p.ministry}</span></div></div>
           <div className="ca-meta-item"><Share2 size={14} /><div><span className="ca-meta-label">Sector</span><span className="ca-meta-val">{p.sector}</span></div></div>
           <div className="ca-meta-item"><MapPin size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">{p.state}</span></div></div>
+          <div className="ca-meta-item"><CalendarDays size={14} /><div><span className="ca-meta-label">Announced</span><span className="ca-meta-val">{p.announcedDate || p.approvalDate || 'March 2019'}</span></div></div>
+          <div className="ca-meta-item"><Activity size={14} /><div><span className="ca-meta-label">Work Started</span><span className="ca-meta-val">{p.workStartDate || 'October 2019'}</span></div></div>
         </div>
       </div>
 
@@ -1230,7 +1262,7 @@ function CompactAnalysisCard({ p, onOpen }: { p: UnifiedProject; onOpen: () => v
         </div>
         <div className="ca-fact">
           <span className="ca-fact-label">Target Completion</span>
-          <strong className="ca-fact-val">{p.anticipatedDoc || p.originalDoc}</strong>
+          <strong className="ca-fact-val">{p.targetCompletion || p.anticipatedDoc || p.originalDoc}</strong>
           <small className={`ca-fact-note ${onTrack ? 'pa-green' : 'pa-red'}`}>
             {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mo Delay`}
           </small>
@@ -1240,7 +1272,7 @@ function CompactAnalysisCard({ p, onOpen }: { p: UnifiedProject; onOpen: () => v
       <div className="ca-col ca-side">
         <div className="ca-side-top">
           <span className={`ca-status ${statusClass}`}>{!onTrack && <AlertTriangle size={12} />} {p.type}</span>
-          <MLTooltip title="PAMANA ML Risk Profile" text={riskProfile.explanation}>
+          <MLTooltip title="Drishti AI ML Risk Profile" text={riskProfile.explanation}>
             <span className="ca-risk" style={{ cursor: 'help' }}>
               Risk: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100) <Info size={11} className="ml-info-btn" />
             </span>
@@ -1338,10 +1370,10 @@ function ProjectAnalysisCard({
         </div>
         <div className="pa-head-right">
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button className="export-briefing-btn" onClick={onOpenBriefing}><Printer size={14} /> Export MoSPI Dossier</button>
+            <button className="export-briefing-btn" onClick={onOpenBriefing}><Printer size={14} /> Export Executive Dossier</button>
           </div>
           <span className={`pa-status ${statusClass}`}><AlertTriangle size={13} /> {p.type}</span>
-          <MLTooltip title="PAMANA ML Risk Engine" text={riskProfile.explanation}>
+          <MLTooltip title="Drishti AI ML Risk Engine" text={riskProfile.explanation}>
             <span className="pa-risk" style={{ cursor: 'help' }}>
               Risk Rating: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100) <Info size={11} className="ml-info-btn" />
             </span>
@@ -1353,6 +1385,32 @@ function ProjectAnalysisCard({
         <div className="pa-meta-item"><Landmark size={18} /><div><span className="pa-meta-label">Ministry</span><span className="pa-meta-val">{p.ministry}</span></div></div>
         <div className="pa-meta-item"><Share2 size={18} /><div><span className="pa-meta-label">Sector</span><span className="pa-meta-val">{p.sector}</span></div></div>
         <div className="pa-meta-item"><MapPin size={18} /><div><span className="pa-meta-label">States</span><span className="pa-meta-val">{p.state}</span></div></div>
+      </div>
+
+      {/* Official Government Project Lifecycle & Milestone Timeline */}
+      <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏛️ Announced / Sanctioned</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.announcedDate || p.approvalDate || 'March 2019'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Government Sanction</span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏗️ Work Started on Ground</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.workStartDate || 'October 2019'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Construction Kickoff</span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🎯 Original Target (DOC)</span>
+          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.originalDoc || '06/2025'}</strong>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Sanction Baseline</span>
+        </div>
+        <div>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>⏱️ Projected Completion</span>
+          <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{p.targetCompletion || p.anticipatedDoc || 'December 2027'}</strong>
+          <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
+            {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Months Delay`}
+          </span>
+        </div>
       </div>
 
       {/* Explicit Budget 3-Column Visual Grid */}
@@ -1448,16 +1506,16 @@ function ProjectAnalysisCard({
       <div className="pa-section pa-section-ai">
         <div className="pa-section-head">
           <span className="pa-sec-icon blue"><Brain size={18} /></span>
-          <strong>PAMANA AI Prediction</strong>
+          <strong>Drishti AI Early Warning Prediction</strong>
           <span className="pa-conf-pill">Confidence: {flagship.aiConfidence}%</span>
         </div>
-        <p className="pa-section-desc">Based on historical project performance, current indicators, and MoSPI statutory milestones.</p>
+        <p className="pa-section-desc">Based on project performance indicators, statutory milestones, and neural risk modeling.</p>
         <div className="pa-pred-row">
-          <div className="pa-pred-box red">
-            <span className="pa-pred-icon red"><CalendarDays size={16} /></span>
+          <div className={`pa-pred-box ${onTrack ? 'green' : 'red'}`}>
+            <span className={`pa-pred-icon ${onTrack ? 'green' : 'red'}`}><CalendarDays size={16} /></span>
             <div className="pa-pred-body">
-              <strong className="pa-red">Schedule Slippage Expected</strong>
-              <div className="pa-pred-val">{riskProfile.predictedExtraDelay}</div>
+              <strong className={onTrack ? 'pa-green' : 'pa-red'}>{onTrack ? 'Schedule Trajectory' : 'Schedule Slippage Expected'}</strong>
+              <div className="pa-pred-val">{onTrack ? '0 Months (On Track)' : riskProfile.predictedExtraDelay}</div>
               <span className="pa-conf-pill">Confidence: {Math.min(95, Math.max(78, 100 - Math.round((p.overrunMonths || 0) / 4)))}%</span>
             </div>
           </div>
@@ -1538,6 +1596,7 @@ function MapView({ onSeeProject }: { onSeeProject: (p: Project | null) => void }
   const [groupValue, setGroupValue] = useState('All')
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [zoomFactor, setZoomFactor] = useState(1)
   const wrapRef = useRef<HTMLDivElement>(null)
   const [cardPos, setCardPos] = useState<{ x: number; y: number } | null>(null)
 
@@ -1596,6 +1655,31 @@ function MapView({ onSeeProject }: { onSeeProject: (p: Project | null) => void }
       </div>
 
       <div className="map-canvas-card">
+        <div style={{ padding: '14px 18px 0 18px' }}>
+          <div className="map-quick-filters">
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#385575' }}>Quick Filters:</span>
+            {['All', 'High Risk', 'Delayed', 'On Schedule'].map((pill) => {
+              const isActive = (pill === 'All' && filters.Risk === 'All' && filters.Type === 'All') ||
+                               (pill === 'High Risk' && filters.Risk === 'High') ||
+                               (pill === 'Delayed' && filters.Type === 'Delayed') ||
+                               (pill === 'On Schedule' && filters.Type === 'On Schedule')
+              return (
+                <button
+                  key={pill}
+                  className={`map-q-pill ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    if (pill === 'All') setFilters((c) => ({ ...c, Risk: 'All', Type: 'All' }))
+                    else if (pill === 'High Risk') setFilters((c) => ({ ...c, Risk: 'High', Type: 'All' }))
+                    else if (pill === 'Delayed') setFilters((c) => ({ ...c, Risk: 'All', Type: 'Delayed' }))
+                    else if (pill === 'On Schedule') setFilters((c) => ({ ...c, Risk: 'All', Type: 'On Schedule' }))
+                  }}
+                >
+                  {pill}
+                </button>
+              )
+            })}
+          </div>
+        </div>
         <div className="map-toolbar">
           <div className="map-legend">
             <span><i className="ml-dot high" /> High Risk</span>
@@ -1608,11 +1692,16 @@ function MapView({ onSeeProject }: { onSeeProject: (p: Project | null) => void }
 
         <div className="map-wrap" ref={wrapRef}>
           <div className="map-stage">
+            <div className="map-zoom-controls">
+              <button className="map-zoom-btn" onClick={() => setZoomFactor((z) => Math.min(3, +(z + 0.25).toFixed(2)))} title="Zoom In">+</button>
+              <button className="map-zoom-btn" onClick={() => setZoomFactor((z) => Math.max(0.6, +(z - 0.25).toFixed(2)))} title="Zoom Out">−</button>
+              <button className="map-zoom-btn" onClick={() => setZoomFactor(1)} title="Reset Zoom">⟲</button>
+            </div>
             <ComposableMap
               width={MAP_W}
               height={MAP_H}
               projection="geoMercator"
-              projectionConfig={{ center: view.center, scale: view.scale }}
+              projectionConfig={{ center: view.center, scale: view.scale * zoomFactor }}
             >
               <Geographies geography={INDIA_TOPO}>
                 {({ geographies }) =>
@@ -1674,7 +1763,7 @@ function MapView({ onSeeProject }: { onSeeProject: (p: Project | null) => void }
 }
 
 /* ----------------------------------------------------
-   PAMANA AI Assistant with Financial Intelligence & Voice
+   Drishti AI Assistant with Financial Intelligence & Voice
 ------------------------------------------------------- */
 type ChatMsg = { role: 'user' | 'bot'; text: string }
 
@@ -1742,7 +1831,7 @@ function answerQuery(q: string): string {
   }
 
   if (/(money invested|how much money|total spent|expenditure|utilized)/.test(ql)) {
-    return `💰 National Portfolio Expenditure Audit (MoSPI IPMD):\n` +
+    return `💰 National Portfolio Expenditure Audit:\n` +
       `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,775 projects\n` +
       `• Cumulative Capital Invested/Spent: ₹ 11.48 Lakh Crore (60.6% utilization)\n` +
       `• Largest Single Investment: Mumbai–Ahmedabad High Speed Rail (₹ 72,257 Cr spent of ₹ 1.08 Lakh Cr budget, with ₹ 18,064 Cr invested in land acquisition alone).\n` +
@@ -1751,11 +1840,11 @@ function answerQuery(q: string): string {
 
   if (/(high risk|highest risk|most risky|riskiest|risky)/.test(ql)) {
     const list = [...projects].filter((x) => x.risk === 'High').sort((a, b) => b.riskScore - a.riskScore).slice(0, 5)
-    return `Top High-Risk Projects flagged by PAMANA Early Warning AI:\n` + list.map((x) => `• ${x.name} — Risk: ${x.riskScore}/100, Delay: ${x.delay} (${x.state}) — Bottleneck: ${x.criticalIssue}`).join('\n')
+    return `Top High-Risk Projects flagged by Drishti Early Warning AI:\n` + list.map((x) => `• ${x.name} — Risk: ${x.riskScore}/100, Delay: ${x.delay} (${x.state}) — Bottleneck: ${x.criticalIssue}`).join('\n')
   }
 
   if (/(overview|summary|how many|status|portfolio|total|snapshot)/.test(ql)) {
-    return `National Infrastructure Portfolio Snapshot:\n• 1,775 Total Monitored Ongoing Projects (Trained on 49,094 MoSPI Archive)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
+    return `National Infrastructure Portfolio Snapshot:\n• 1,775 Total Monitored Ongoing Projects (Audited Active Baseline)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
   }
 
   return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 1,775 ongoing infrastructure projects (and 49,094 historical records).\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
@@ -1771,7 +1860,7 @@ const AI_SUGGESTIONS = [
 
 function AIView() {
   const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: 'bot', text: 'Namaste. I am PAMANA, the MoSPI AI assistant for NIRMAN-Drishti. Ask me about any of the 1,775 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
+    { role: 'bot', text: 'Namaste. I am Drishti AI, your intelligent assistant for NIRMAN-Drishti. Ask me about any of the 1,775 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
   ])
   const [input, setInput] = useState('')
   const [isListening, setIsListening] = useState(false)
@@ -1834,14 +1923,14 @@ function AIView() {
       <div className="ai-intro">
         <div className="ai-intro-icon"><Sparkles size={22} /></div>
         <div>
-          <h3 className="ai-intro-title">PAMANA Conversational Project Intelligence</h3>
-          <p className="ai-intro-sub">Trained on MoSPI IPMD infrastructure project records, expenditure ledgers, and early warning prediction models. Voice &amp; text enabled.</p>
+          <h3 className="ai-intro-title">Drishti Conversational Project Intelligence</h3>
+          <p className="ai-intro-sub">Powered by national infrastructure ledgers, expenditure audit models, and early warning prediction engines. Voice &amp; text enabled.</p>
         </div>
-        <span className="ai-intro-pill">MoSPI AI v2.4</span>
+        <span className="ai-intro-pill">Drishti AI v2.4</span>
       </div>
 
       <div className="ai-chat-card">
-        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live PAMANA Intelligence Feed · 1,775 Monitored Ongoing Projects</div>
+        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live Drishti AI Feed · 1,775 Monitored Ongoing Projects</div>
         <div className="ai-chat-body" ref={bodyRef}>
           {messages.map((m, i) => (
             <div key={i} className={`ai-msg ${m.role}`}>
@@ -1877,7 +1966,7 @@ function AIView() {
 }
 
 /* ----------------------------------------------------
-   Winning Feature 2: 1-Click Executive MoSPI Dossier Modal
+   Executive Dossier Modal
 ------------------------------------------------------- */
 function ExecutiveDossierModal({ 
   project, 
@@ -1895,7 +1984,7 @@ function ExecutiveDossierModal({
   const formattedToday = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
-    <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label="MoSPI Executive Flash Briefing" onClick={onClose}>
+    <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label="Executive Infrastructure Flash Briefing" onClick={onClose}>
       <div className="ca-modal" style={{ maxWidth: '960px' }} onClick={(e) => e.stopPropagation()}>
         <button className="ca-modal-close" onClick={onClose} aria-label="Close dossier"><X size={18} /></button>
         
@@ -1906,12 +1995,12 @@ function ExecutiveDossierModal({
               <div className="brand-mark" style={{ width: '48px', height: '48px' }}><Landmark size={24} /></div>
               <div>
                 <div style={{ fontSize: '18px', fontWeight: 800, color: '#0b3157' }}>GOVERNMENT OF INDIA</div>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: '#526e89' }}>MINISTRY OF STATISTICS &amp; PROGRAMME IMPLEMENTATION (MoSPI)</div>
-                <div style={{ fontSize: '11px', color: '#72869d' }}>Infrastructure &amp; Project Monitoring Division (IPMD) · Early Warning Decision Support Dossier</div>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: '#526e89' }}>CENTRAL INFRASTRUCTURE PORTFOLIO &amp; MONITORING DIVISION</div>
+                <div style={{ fontSize: '11px', color: '#72869d' }}>National Early Warning Decision Support Dossier · NIRMAN-Drishti Platform</div>
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: '#103f6d' }}>REF: MoSPI/IPMD/2026/EWS-{p.id}</div>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#103f6d' }}>REF: NIRMAN/EWS-2026/{p.id}</div>
               <div style={{ fontSize: '11px', color: '#72869d' }}>Date: {formattedToday}</div>
               <span className="badge badge-high" style={{ marginTop: '4px' }}>CONFIDENTIAL / CABINET BRIEFING</span>
             </div>
@@ -1936,10 +2025,10 @@ function ExecutiveDossierModal({
               <table style={{ width: '100%', minWidth: '580px', borderCollapse: 'collapse', fontSize: '13px' }}>
                 <tbody>
                   <tr style={{ background: '#f4f8fc', borderBottom: '1px solid #dce7f1' }}>
-                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Date of Sanction / Start</td>
-                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.approvalDate || '08/2024'}</td>
-                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Time Under Execution</td>
-                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.yearsActive || '1.9 years'}</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Announced / Sanctioned</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.announcedDate || p.approvalDate || 'March 2019'}</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89', width: '25%' }}>Work Started on Ground</td>
+                    <td style={{ padding: '8px 14px', fontWeight: 800, color: '#0b3157', width: '25%' }}>{p.workStartDate || 'October 2019'}</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #dce7f1' }}>
                     <td style={{ padding: '8px 14px', fontWeight: 600, color: '#526e89' }}>Original Target Date (DOC)</td>

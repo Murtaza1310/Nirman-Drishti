@@ -83,7 +83,7 @@ export async function runPythonPrediction(input: ProjectPredictionInput): Promis
           ],
           escalation_matrix: {
             level_1_immediate: 'Implementing Agency Chief Project Manager',
-            level_2_interministerial: 'MoSPI IPMD Oversight Committee',
+            level_2_interministerial: 'Central Infrastructure Oversight Committee',
             level_3_apex: 'PMO PRAGATI Review'
           }
         }
