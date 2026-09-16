@@ -109,8 +109,8 @@ const navItems = [
 
 const metrics = [
   { label: 'ACTIVE ONGOING PROJECTS', value: '1,813', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
-  { label: 'ON-TIME PROJECTS', value: '187', note: 'Executing within baseline target', tag: 'On Schedule (10.3%)', icon: CircleCheck, tone: 'green' },
-  { label: 'DELAYED PROJECTS', value: '1,626', note: 'Running past original target deadline', tag: '89.7% Ratio', icon: Clock3, tone: 'orange' },
+  { label: 'ON-TIME PROJECTS', value: '164', note: 'Executing within baseline target', tag: 'On Schedule (9.0%)', icon: CircleCheck, tone: 'green' },
+  { label: 'DELAYED PROJECTS', value: '1,649', note: 'Running past original target deadline', tag: '91.0% Ratio', icon: Clock3, tone: 'orange' },
   { label: 'TOTAL APPROVED BUDGET', value: '₹ 40.57 Lakh Cr', note: 'Officially sanctioned capital outlay', tag: 'Sanctioned', icon: CircleDollarSign, tone: 'blue' },
   { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
 ]
@@ -872,7 +872,7 @@ const DEMO_TOUR_STEPS = [
   {
     act: 'Act 1 of 5 · The Platform Mission',
     title: 'Autonomous Infrastructure Intelligence & Macro Surveillance',
-    desc: '"An AI-powered infrastructure intelligence platform that detects emerging project risks, explains their causes, predicts future delays and cost escalation, and supports evidence-based intervention." Actively tracking ₹ 40.57 Lakh Crore across 1,775 projects.',
+    desc: '"An AI-powered infrastructure intelligence platform that detects emerging project risks, explains their causes, predicts future delays and cost escalation, and supports evidence-based intervention." Actively tracking ₹ 40.57 Lakh Crore across 1,813 projects.',
     highlight: 'Platform Core: Multi-source intelligence combining official field reports, weather anomalies, and procurement telemetry.',
     targetNav: 'Projects',
   },
@@ -1586,13 +1586,13 @@ export default function Page() {
 }
 
 const homeCapabilities = [
-  { icon: FileText, tone: 'blue', title: 'Explore 1,775 Projects', desc: 'Search and track real national infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
+  { icon: FileText, tone: 'blue', title: 'Explore 1,813 Projects', desc: 'Search and track real national infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
   { icon: BarChart3, tone: 'purple', title: 'Deep Predictive Analytics', desc: 'Inspect root causes, time-cost variance, and policy simulation sandboxes for flagship initiatives.', cta: 'Go to Analysis', nav: 'Analysis' },
   { icon: Sparkles, tone: 'green', title: 'Launch AI Early Warning', desc: 'Predict potential milestone slippages months in advance using XGBoost and Random Forest ML models.', cta: 'Go to AI', nav: 'AI' },
 ] as const
 
 const homeJourney = [
-  { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 1,775 ongoing national projects across all states and ministries.' },
+  { step: '01', icon: Search, title: 'Discover & Track', desc: 'Filter through 1,813 ongoing national projects across all states and ministries.' },
   { step: '02', icon: Coins, title: 'Audit Expenditure', desc: 'Inspect sanctioned budget vs real money invested in civil works and land acquisition.' },
   { step: '03', icon: Brain, title: 'AI Delay Prediction', desc: 'Drishti AI machine learning models identify emerging risks before deadlines elapse.' },
   { step: '04', icon: SlidersHorizontal, title: 'Test Solutions (What-If)', desc: 'Use policy sandboxes and export official executive briefings for ministerial action.' },
@@ -1612,7 +1612,7 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string) => void }) {
             <PresenterMissionBar />
           </div>
           <div className="home-hero-actions">
-            <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,775 Projects <ArrowRight size={16} /></button>
+            <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,813 Projects <ArrowRight size={16} /></button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Analysis')}><BarChart3 size={16} /> View Analysis &amp; Simulations</button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch Drishti AI</button>
           </div>
@@ -2657,7 +2657,7 @@ function AnalysisView({
           className="export-briefing-btn"  
           style={{ marginLeft: 'auto' }}
           onClick={() => onOpenBriefing(NATIONAL_PORTFOLIO_DOSSIER)}
-          title="Print official Cabinet portfolio briefing for 1,775 projects"
+          title="Print official Cabinet portfolio briefing for 1,813 projects"
         >
           <Printer size={14} /> Official Portfolio Report (PDF)
         </button>
@@ -3422,7 +3422,7 @@ function answerQuery(q: string): string {
 
   if (/(money invested|how much money|total spent|expenditure|utilized)/.test(ql)) {
     return `💰 National Portfolio Expenditure Audit:\n` +
-      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,775 projects\n` +
+      `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,813 projects\n` +
       `• Cumulative Capital Invested/Spent: ₹ 11.48 Lakh Crore (60.6% utilization)\n` +
       `• Largest Single Investment: Mumbai–Ahmedabad High Speed Rail (₹ 72,257 Cr spent of ₹ 1.08 Lakh Cr budget, with ₹ 18,064 Cr invested in land acquisition alone).\n` +
       `• Cumulative Cost Overrun Recorded: ₹ 2.41 Lakh Crore.`
@@ -3434,10 +3434,10 @@ function answerQuery(q: string): string {
   }
 
   if (/(overview|summary|how many|status|portfolio|total|snapshot)/.test(ql)) {
-    return `National Infrastructure Portfolio Snapshot:\n• 1,775 Total Monitored Ongoing Projects (Audited Active Baseline)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
+    return `National Infrastructure Portfolio Snapshot:\n• 1,813 Total Monitored Ongoing Projects (Audited Active Baseline)\n• 684 Projects on Schedule (67.6%)\n• 328 Delayed Projects (32.4%)\n• 142 High Risk / Predicted Delay alerts\n• Total Approved Budget: ₹ 18.94 Lakh Cr (₹ 11.48 Lakh Cr expended to date)\n• Total Cost Overrun: ₹ 2.41 Lakh Cr`
   }
 
-  return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 1,775 ongoing infrastructure projects (and 49,094 historical records).\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
+  return `Namaste! I can answer any question about project investments, expenditure breakdowns, delays, risks and bottlenecks across India's 1,813 ongoing infrastructure projects (and 49,094 historical records).\n\nTry asking:\n• "How much money has been invested in the Mumbai Ahmedabad bullet train?"\n• "Show expenditure breakdown on land acquisition for railways"\n• "Which projects carry the highest delay risk?"\n• "What is the primary bottleneck for the Delhi Mumbai Expressway?"`
 }
 
 const AI_SUGGESTIONS = [
@@ -3785,150 +3785,126 @@ function ExecutiveDossierModal({
    ========================================================================= */
 
 function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
-  const [activeTab, setActiveTab] = useState<'backtest' | 'pipeline' | 'closed_loop' | 'leakage'>('backtest')
-  const [selectedYear, setSelectedYear] = useState<number | 'all'>('all')
+  const [activeMode, setActiveMode] = useState<'timemachine' | 'pipeline'>('timemachine')
   const [selectedSector, setSelectedSector] = useState<string>('All')
   const [simLog, setSimLog] = useState<string[]>([])
   const [simulating, setSimulating] = useState(false)
   const [simRetrainLog, setSimRetrainLog] = useState<string[]>([])
   const [retraining, setRetraining] = useState(false)
 
-  const metrics = useMemo(() => getHistoricalValidationMetrics(), [])
-
   const filteredCases = useMemo(() => {
     return HISTORICAL_VALIDATION_CASES.filter((c) => {
-      if (selectedYear !== 'all' && c.snapshotYear !== selectedYear) return false
       if (selectedSector !== 'All' && c.sector !== selectedSector) return false
       return true
     })
-  }, [selectedYear, selectedSector])
+  }, [selectedSector])
 
   const handleSimulateIngest = () => {
     setSimulating(true)
     setSimLog([
-      '[14:32:01] ⚡ Webhook Trigger: New Project Sanctioned in MoSPI PAIMANA...',
-      '[14:32:01] Ingesting: NH-930D 6-Lane Expressway Corridor (Surat–Navsari Bypass)',
-      '[14:32:02] Schema Validation: Passed (14 Mandatory MoSPI Fields, Sanctioned: ₹ 2,450 Cr)',
-      '[14:32:02] Entity Resolution: Harmonized to MoRTH / NHAI Western Division',
-      '[14:32:02] Feature Engine: Computed 17 temporal features (Burn Ratio: 0.0, Gap: 0%)',
-      '[14:32:03] Drishti AI Neural Model: Risk Score 74/100 (Medium), Predicted Extra Delay: +14 Mo',
-      '[14:32:03] ✓ Project dynamically added to NIRMAN-Drishti live monitoring catalog in 1.8 seconds!',
+      '⚡ [LIVE SYNC] Change Data Capture (CDC) detected new project in MoSPI PAIMANA...',
+      '📥 Ingesting: NH-930D 6-Lane Expressway Corridor (Surat–Navsari Bypass)',
+      '✓ Schema validation passed: Sanctioned budget ₹ 2,450 Cr | Timeline: 36 Months',
+      '🧠 Drishti AI Neural Model evaluated 17 indicators: Risk Tier: Medium (68/100) | Predicted Delay: +14 Months',
+      '🚀 Project instantly available in NIRMAN-Drishti live catalog within 1.8 seconds!',
     ])
-    setTimeout(() => setSimulating(false), 800)
+    setTimeout(() => setSimulating(false), 600)
   }
 
   const handleSimulateRetrain = () => {
     setRetraining(true)
     setSimRetrainLog([
-      '[14:33:10] 🎯 Commercial Operation Date (COD) verified: Mumbai Metro Line 3 reaches 100% physical completion',
-      '[14:33:10] Archiving: Project transferred from Active Monitoring to Audited Ground Truth Historical Corpus',
-      '[14:33:11] 🔒 Data Leakage Check: Verified strict time-lock. No post-event variables leaked',
-      '[14:33:12] Continuous Retraining Trigger: Nightly ML Worker invoked with updated historical corpus (N=49,095)',
-      '[14:33:13] Retraining XGBoost Risk Classifier & Gradient Boosted Delay Regressor across 5-Fold GroupKFold',
-      '[14:33:14] Model Benchmark: Champion (Old Accuracy: 91.8%) vs Challenger (New Accuracy: 92.2% - +0.4% Lift)',
-      '[14:33:14] 🚀 Champion-Challenger validation passed! Live model weights hot-swapped seamlessly with zero downtime.',
+      '🎯 [COMPLETION EVENT] Commercial Operation Date (COD) verified for Mumbai Metro Line 3',
+      '📦 Project automatically archived to Audited Ground Truth Dataset (Total Projects: 49,095)',
+      '🔒 Data Leakage Check: Verified time-lock. No post-completion features leaked into training',
+      '⚙️ Nightly Retraining Worker launched: Recalibrating XGBoost & Random Forest models',
+      '📊 Champion-Challenger validation passed (+0.4% accuracy improvement across 5-fold GroupKFold)',
+      '✨ Live model updated in production seamlessly with zero downtime!',
     ])
-    setTimeout(() => setRetraining(false), 900)
+    setTimeout(() => setRetraining(false), 700)
   }
 
   return (
-    <div className="validation-view-container" style={{ paddingBottom: '40px' }}>
-      {/* Top Banner */}
-      <div className="val-hero-banner">
-        <div className="val-hero-content">
-          <div className="val-hero-pill">
-            <ShieldCheck size={14} /> Official MoSPI Empirical Verification &amp; Data Pipeline
-          </div>
-          <h1 className="val-hero-title">Historical Predictive Validation &amp; Engineering Architecture</h1>
-          <p className="val-hero-desc">
-            Empirical proof of predictive accuracy: <b>"Here is what Drishti AI predicted at Date X vs what actually happened by 2026."</b> Built upon an audited 25-year MoSPI PAIMANA data engineering pipeline with strict mathematical protection against temporal data leakage.
-          </p>
+    <div className="clean-val-container">
+      {/* Header Banner */}
+      <div className="clean-val-header">
+        <div className="clean-val-badge">
+          <ShieldCheck size={15} /> EMPIRICAL PROOF OF AI ACCURACY
+        </div>
+        <h1 className="clean-val-title">Historical Time-Machine: Did AI Predict Delays Accurately?</h1>
+        <p className="clean-val-desc">
+          Compare what contractors claimed years ago, what Drishti AI predicted, and what actually happened by 2026. See ground-truth proof of how our early warning system detected multi-year delays years before official records acknowledged them.
+        </p>
 
-          <div className="val-tabs-bar">
-            <button
-              className={`val-tab-btn ${activeTab === 'backtest' ? 'active' : ''}`}
-              onClick={() => setActiveTab('backtest')}
-            >
-              <History size={15} /> ⏳ Time-Machine Backtesting
-            </button>
-            <button
-              className={`val-tab-btn ${activeTab === 'pipeline' ? 'active' : ''}`}
-              onClick={() => setActiveTab('pipeline')}
-            >
-              <Workflow size={15} /> ⚙️ PAIMANA Ingestion Pipeline
-            </button>
-            <button
-              className={`val-tab-btn ${activeTab === 'closed_loop' ? 'active' : ''}`}
-              onClick={() => setActiveTab('closed_loop')}
-            >
-              <RefreshCw size={15} /> 🔄 Live Sync &amp; Closed-Loop Retraining
-            </button>
-            <button
-              className={`val-tab-btn ${activeTab === 'leakage' ? 'active' : ''}`}
-              onClick={() => setActiveTab('leakage')}
-            >
-              <Lock size={15} /> 🛡️ Data Leakage Prevention Protocol
-            </button>
-          </div>
+        {/* Top 2-Pill Mode Switcher */}
+        <div className="clean-val-toggle-bar">
+          <button
+            className={`clean-val-toggle-btn ${activeMode === 'timemachine' ? 'active' : ''}`}
+            onClick={() => setActiveMode('timemachine')}
+          >
+            <History size={16} /> ⏳ Time-Machine (Past Claims vs AI vs Reality)
+          </button>
+          <button
+            className={`clean-val-toggle-btn ${activeMode === 'pipeline' ? 'active' : ''}`}
+            onClick={() => setActiveMode('pipeline')}
+          >
+            <Workflow size={16} /> ⚙️ Data Pipeline &amp; Live PAIMANA Integration
+          </button>
         </div>
       </div>
 
-      {/* TAB 1: TIME-MACHINE HISTORICAL BACKTESTING */}
-      {activeTab === 'backtest' && (
-        <div className="val-tab-content">
-          {/* Validation Metrics Strip */}
-          <div className="val-metrics-grid">
-            <div className="val-metric-card">
-              <span className="val-metric-label">Mean Prediction Accuracy</span>
-              <strong className="val-metric-val pa-green">94.6%</strong>
-              <small className="val-metric-sub">Backtested across 4-year horizons</small>
+      {activeMode === 'timemachine' && (
+        <div className="clean-val-body">
+          {/* Quick Scorecards */}
+          <div className="clean-val-stats">
+            <div className="clean-val-stat-card">
+              <span className="clean-stat-label">Overall Prediction Accuracy</span>
+              <strong className="clean-stat-val text-green">94.6%</strong>
+              <span className="clean-stat-note">Backtested across 4-year predictive horizons</span>
             </div>
-            <div className="val-metric-card">
-              <span className="val-metric-label">Horizon Delay MAE</span>
-              <strong className="val-metric-val pa-blue">1.5 Months</strong>
-              <small className="val-metric-sub">Precision: ±45 days on 36-mo forecasts</small>
+            <div className="clean-val-stat-card">
+              <span className="clean-stat-label">Average Prediction Error</span>
+              <strong className="clean-stat-val text-blue">±1.5 Months</strong>
+              <span className="clean-stat-note">Margin of error on 36-month delay forecasts</span>
             </div>
-            <div className="val-metric-card">
-              <span className="val-metric-label">Cost Overrun Variance</span>
-              <strong className="val-metric-val pa-orange">±4.5%</strong>
-              <small className="val-metric-sub">Protected vs escalated capital outlay</small>
+            <div className="clean-val-stat-card">
+              <span className="clean-stat-label">Early Warning Success</span>
+              <strong className="clean-stat-val text-green">100% (6 of 6)</strong>
+              <span className="clean-stat-note">Detected multi-year delays 2–4 years ahead</span>
             </div>
-            <div className="val-metric-card">
-              <span className="val-metric-label">Root-Cause F1-Score</span>
-              <strong className="val-metric-val pa-navy">88.6%</strong>
-              <small className="val-metric-sub">Isolated primary roadblock years prior</small>
-            </div>
-            <div className="val-metric-card">
-              <span className="val-metric-label">Temporal Data Leakage</span>
-              <strong className="val-metric-val pa-green">0.0%</strong>
-              <small className="val-metric-sub">Strict Point-in-Time Out-of-Time Splits</small>
+            <div className="clean-val-stat-card">
+              <span className="clean-stat-label">Data Leakage Prevention</span>
+              <strong className="clean-stat-val text-green">0.0% Peeking</strong>
+              <span className="clean-stat-note">Strict Out-of-Time temporal boundaries</span>
             </div>
           </div>
 
-          {/* Filter Toolbar */}
-          <div className="val-filter-row">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Snapshot Year:</span>
-              {(['all', 2020, 2021, 2022] as const).map((yr) => (
-                <button
-                  key={yr}
-                  className={`val-pill-btn ${selectedYear === yr ? 'active' : ''}`}
-                  onClick={() => setSelectedYear(yr)}
-                >
-                  {yr === 'all' ? 'All Benchmark Years (6)' : `Year ${yr}`}
-                </button>
-              ))}
+          {/* Simple How to Read Bar */}
+          <div className="clean-val-guide-bar">
+            <span className="clean-guide-title">How the Time-Machine Works:</span>
+            <div className="clean-guide-steps">
+              <span className="clean-guide-step step-claim">1. Past Official Claim</span>
+              <span className="clean-guide-arrow">➔</span>
+              <span className="clean-guide-step step-ai">2. Drishti AI Early Warning</span>
+              <span className="clean-guide-arrow">➔</span>
+              <span className="clean-guide-step step-reality">3. Ground Reality Today</span>
             </div>
+          </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Sector:</span>
+          {/* Filter Bar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#475569' }}>
+              Showing {filteredCases.length} Ground-Truth Verified Historical Mega-Projects:
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: '#64748b' }}>Filter by Sector:</span>
               <select
                 className="uf-select"
-                style={{ height: '32px', fontSize: '12px', padding: '0 12px' }}
+                style={{ height: '32px', fontSize: '12px', padding: '0 10px', minWidth: '180px' }}
                 value={selectedSector}
                 onChange={(e) => setSelectedSector(e.target.value)}
               >
-                <option value="All">All National Sectors</option>
+                <option value="All">All Sectors</option>
                 <option value="Railways">Railways</option>
                 <option value="Road Transport & Highways">Road Transport &amp; Highways</option>
                 <option value="Power & Renewable Energy">Power &amp; Renewable Energy</option>
@@ -3938,125 +3914,111 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
             </div>
           </div>
 
-          {/* Benchmark Cases List */}
-          <div className="val-cases-list">
+          {/* Project Comparison Cards */}
+          <div className="clean-val-cards-list">
             {filteredCases.map((c) => (
-              <article key={c.id} className="val-case-card">
-                <div className="val-case-head">
-                  <div className="val-case-identity">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span className="val-case-id">{c.id}</span>
-                      <span className="val-case-year">{c.snapshotDate} Benchmark Snapshot</span>
-                      <span className="val-case-state">{c.state}</span>
+              <article key={c.id} className="tm-project-card">
+                {/* Header */}
+                <div className="tm-card-header">
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <span className="tm-tag-id">{c.id}</span>
+                      <span className="tm-tag-snapshot">Snapshot: {c.snapshotDate}</span>
+                      <span className="tm-tag-state">{c.state}</span>
                     </div>
-                    <h2 className="val-case-title">{c.projectName}</h2>
-                    <div className="val-case-meta">
-                      <span><b>Ministry:</b> {c.ministry}</span>
-                      <span><b>Sector:</b> {c.sector}</span>
-                      <span><b>Sanctioned Cost:</b> ₹ {c.sanctionedCostCr.toLocaleString()} Cr</span>
-                      <span><b>Progress at Snapshot:</b> {c.physicalProgressAtSnapshot}%</span>
+                    <h3 className="tm-project-title">{c.projectName}</h3>
+                    <div className="tm-project-meta">
+                      <span>Ministry: <b>{c.ministry}</b></span> · 
+                      <span>Sector: <b>{c.sector}</b></span> · 
+                      <span>Sanctioned Budget: <b>₹ {c.sanctionedCostCr.toLocaleString()} Cr</b></span>
                     </div>
                   </div>
 
-                  <div className="val-case-score-badge">
-                    <div className="val-score-num">{c.validationScore.accuracyPct}%</div>
-                    <div className="val-score-text">Model Accuracy</div>
-                    <div className="val-score-delta">Delta: {c.validationScore.delayErrorMonths} Mo Error</div>
+                  <div className="tm-accuracy-badge">
+                    <span className="tm-accuracy-score">{c.validationScore.accuracyPct}%</span>
+                    <span className="tm-accuracy-label">Model Accuracy</span>
+                    <small className="tm-accuracy-delta">Δ {c.validationScore.delayErrorMonths} Mo Margin</small>
                   </div>
                 </div>
 
-                {/* The 3-Way Comparison Grid */}
-                <div className="val-comparison-grid">
-                  {/* Col 1: Official Claim at Snapshot */}
-                  <div className="val-comp-col val-claim-col">
-                    <div className="val-col-header">
-                      <FileText size={15} color="#64748b" />
-                      <strong>Official Contractor Claim at {c.snapshotDate}</strong>
+                {/* 3-Box Flow */}
+                <div className="tm-story-grid">
+                  {/* Step 1: Claim */}
+                  <div className="tm-story-box box-claim">
+                    <div className="tm-box-head">
+                      <span className="tm-box-step">Step 1</span>
+                      <strong>Official Contractor Claim (in {c.snapshotDate})</strong>
                     </div>
-                    <div className="val-col-body">
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Claimed Completion</span>
-                        <strong className="val-stat-val">{c.officialClaimAtSnapshot.claimedCompletion}</strong>
+                    <div className="tm-box-content">
+                      <div className="tm-metric-row">
+                        <span>Claimed Completion:</span>
+                        <b>{c.officialClaimAtSnapshot.claimedCompletion}</b>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Claimed Status</span>
-                        <span className="val-stat-pill green">{c.officialClaimAtSnapshot.claimedStatus}</span>
+                      <div className="tm-metric-row">
+                        <span>Reported Delay:</span>
+                        <span className="tm-pill-claim">{c.officialClaimAtSnapshot.claimedDelayMonths} Months Delay</span>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Anticipated Delay Reported</span>
-                        <strong className="val-stat-val">{c.officialClaimAtSnapshot.claimedDelayMonths} Months</strong>
-                      </div>
-                      <p className="val-col-note">
-                        ⚠️ <i>Contractor self-reported minimal or zero delay despite major on-ground geological and utility roadblocks.</i>
+                      <p className="tm-box-desc">
+                        Official contractor filings claimed everything was on schedule with minimal or zero slippage.
                       </p>
                     </div>
                   </div>
 
-                  {/* Col 2: What Drishti AI Predicted */}
-                  <div className="val-comp-col val-ai-col">
-                    <div className="val-col-header">
-                      <Brain size={15} color="#0284c7" />
-                      <strong>Drishti AI Neural Prediction at {c.snapshotDate}</strong>
+                  {/* Step 2: AI Prediction */}
+                  <div className="tm-story-box box-ai">
+                    <div className="tm-box-head">
+                      <span className="tm-box-step" style={{ background: '#0284c7', color: '#fff' }}>Step 2</span>
+                      <strong style={{ color: '#0369a1' }}>Drishti AI Neural Early Warning</strong>
                     </div>
-                    <div className="val-col-body">
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Predicted Completion Date</span>
-                        <strong className="val-stat-val pa-red">{c.drishtiPredictionAtSnapshot.predictedCompletion}</strong>
+                    <div className="tm-box-content">
+                      <div className="tm-metric-row">
+                        <span>AI Predicted Date:</span>
+                        <b style={{ color: '#dc2626' }}>{c.drishtiPredictionAtSnapshot.predictedCompletion}</b>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Predicted Slippage</span>
-                        <strong className="val-stat-val pa-red">+{c.drishtiPredictionAtSnapshot.predictedDelayMonths} Months Delay</strong>
+                      <div className="tm-metric-row">
+                        <span>AI Predicted Delay:</span>
+                        <span className="tm-pill-delay">+{c.drishtiPredictionAtSnapshot.predictedDelayMonths} Months Slippage</span>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Predicted Cost Escalation</span>
-                        <strong className="val-stat-val pa-orange">+₹ {c.drishtiPredictionAtSnapshot.predictedCostOverrunCr.toLocaleString()} Cr</strong>
+                      <div className="tm-metric-row">
+                        <span>Identified Cause:</span>
+                        <b style={{ fontSize: '11.5px', color: '#0f172a' }}>{c.drishtiPredictionAtSnapshot.predictedRootCause}</b>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Predicted Root Cause</span>
-                        <span className="val-stat-pill red">{c.drishtiPredictionAtSnapshot.predictedRootCause}</span>
-                      </div>
-                      <div className="val-ai-evidence-box">
-                        <ShieldAlert size={14} color="#dc2626" style={{ flexShrink: 0, marginTop: '2px' }} />
-                        <span><b>Evidence Flagged:</b> {c.drishtiPredictionAtSnapshot.keyEvidenceFlagged}</span>
+                      <div className="tm-ai-evidence">
+                        <b>Evidence AI Flagged:</b> {c.drishtiPredictionAtSnapshot.keyEvidenceFlagged}
                       </div>
                     </div>
                   </div>
 
-                  {/* Col 3: Ground Truth Actuals by 2026 */}
-                  <div className="val-comp-col val-actual-col">
-                    <div className="val-col-header">
-                      <CheckCheck size={15} color="#16a34a" />
-                      <strong>Ground Reality Actual by 2026</strong>
+                  {/* Step 3: Reality */}
+                  <div className="tm-story-box box-reality">
+                    <div className="tm-box-head">
+                      <span className="tm-box-step" style={{ background: '#16a34a', color: '#fff' }}>Step 3</span>
+                      <strong style={{ color: '#15803d' }}>Ground Reality Actual (by 2026)</strong>
                     </div>
-                    <div className="val-col-body">
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Actual Completion Date</span>
-                        <strong className="val-stat-val pa-green">{c.groundTruthActual.actualCompletion}</strong>
+                    <div className="tm-box-content">
+                      <div className="tm-metric-row">
+                        <span>Actual Commissioning:</span>
+                        <b style={{ color: '#15803d' }}>{c.groundTruthActual.actualCompletion}</b>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Actual Delay Encountered</span>
-                        <strong className="val-stat-val pa-navy">+{c.groundTruthActual.actualDelayMonths} Months</strong>
+                      <div className="tm-metric-row">
+                        <span>Actual Total Delay:</span>
+                        <span className="tm-pill-actual">+{c.groundTruthActual.actualDelayMonths} Months Delay</span>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Actual Final Cost Overrun</span>
-                        <strong className="val-stat-val">₹ {c.groundTruthActual.actualCostOverrunCr.toLocaleString()} Cr</strong>
+                      <div className="tm-metric-row">
+                        <span>Verified Cause:</span>
+                        <span style={{ fontSize: '11px', color: '#334155' }}>{c.groundTruthActual.actualPrimaryCause}</span>
                       </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Primary Audited Cause</span>
-                        <span className="val-stat-pill navy">{c.groundTruthActual.actualPrimaryCause}</span>
-                      </div>
-                      <div className="val-stat-item">
-                        <span className="val-stat-label">Current Commissioning Status</span>
-                        <span className="val-stat-pill green">✓ {c.groundTruthActual.status}</span>
+                      <div className="tm-reality-badge">
+                        ✓ Status: {c.groundTruthActual.status}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Verdict Footer Bar */}
-                <div className="val-case-verdict">
-                  <span className="val-verdict-tag">VERIFICATION VERDICT</span>
-                  <span className="val-verdict-text">{c.validationScore.verdict}</span>
+                {/* Verdict Footer */}
+                <div className="tm-verdict-footer">
+                  <span className="tm-verdict-chip">VERIFICATION RESULT</span>
+                  <span className="tm-verdict-text">{c.validationScore.verdict}</span>
                 </div>
               </article>
             ))}
@@ -4064,261 +4026,150 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
         </div>
       )}
 
-      {/* TAB 2: DATA ENGINEERING & INGESTION PIPELINE */}
-      {activeTab === 'pipeline' && (
-        <div className="val-tab-content">
-          <div className="pipe-arch-card">
-            <div className="pipe-arch-head">
-              <Database size={18} color="#0284c7" />
-              <div>
-                <h3 style={{ margin: 0, fontSize: '15px', color: '#0b3157' }}>25-Year MoSPI Longitudinal Ingestion Architecture</h3>
-                <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748b' }}>
-                  How NIRMAN-Drishti ingests, harmonizes, and structures 49,094 historical monthly records from raw MoSPI Flash Reports (1999–2024).
-                </p>
+      {activeMode === 'pipeline' && (
+        <div className="clean-val-body">
+          <div className="pipe-overview-cards">
+            {/* 1. Data Engineering Ingestion */}
+            <div className="pipe-feature-card">
+              <div className="pipe-card-icon-wrap" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                <Database size={20} />
               </div>
-            </div>
-
-            <div className="pipe-stages-grid">
-              <div className="pipe-stage-box">
-                <div className="pipe-stage-num">01</div>
-                <h4>Raw Document Ingestion &amp; Parsing</h4>
+              <div className="pipe-card-content">
+                <h3>1. Ingestion of 25-Year MoSPI PAIMANA Corpus</h3>
                 <p>
-                  Monthly MoSPI Flash Reports are published as PDF tables and semi-structured spreadsheets. Our automated data crawler extracts tabular records across:
+                  How we constructed the longitudinal infrastructure intelligence dataset:
                 </p>
-                <ul>
-                  <li>Original vs Anticipated Outlay</li>
-                  <li>Cumulative Financial Disbursement</li>
-                  <li>Physical Progress (%) milestone tracking</li>
-                  <li>Agency delay narratives &amp; administrative remarks</li>
-                </ul>
-              </div>
-
-              <div className="pipe-stage-box">
-                <div className="pipe-stage-num">02</div>
-                <h4>Corridor Entity Resolution &amp; Fuzzy Harmonization</h4>
-                <p>
-                  Central agencies (MoRTH, NHAI, RVNL, IOCL) frequently use varying nomenclature across years (e.g. <i>"Project NHAI_84"</i> vs <i>"NH-482 4-Laning"</i>).
-                </p>
-                <ul>
-                  <li>Regex-based state and sector domain entity resolver</li>
-                  <li>Multi-phase package unification (e.g. Dwarka Expressway Pkg 1–4)</li>
-                  <li>Cross-referencing agency project IDs with central budget codes</li>
-                </ul>
-              </div>
-
-              <div className="pipe-stage-box">
-                <div className="pipe-stage-num">03</div>
-                <h4>Longitudinal S-Curve Trajectory Reconstruction</h4>
-                <p>
-                  Raw snapshots are stitched together month-by-month across 25 years to build a dynamic S-curve trajectory for each project:
-                </p>
-                <ul>
-                  <li>Monthly physical completion velocity (Δ% physical progress / month)</li>
-                  <li>Capex burn acceleration vs milestone completion</li>
-                  <li>Quantifying the divergence between financial and physical progress</li>
-                </ul>
-              </div>
-
-              <div className="pipe-stage-box">
-                <div className="pipe-stage-num">04</div>
-                <h4>17 Domain Features (Zero-Leakage Feature Store)</h4>
-                <p>
-                  Every record is transformed into the canonical 17 machine-learning features strictly frozen to the month of observation:
-                </p>
-                <ul>
-                  <li><b>Financial–Physical Gap (%):</b> S-Curve divergence metric</li>
-                  <li><b>Capex Burn Ratio:</b> Disbursement relative to sanctioned cost</li>
-                  <li><b>Fund Drain Anomaly Flag:</b> Expenditure outpaces physical work &gt; 15%</li>
-                  <li><b>Forest &amp; Environmental Sensitivity:</b> State terrain risk index</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Code Pipeline Snippet */}
-            <div className="pipe-code-preview">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#38bdf8' }}>
-                  <FileSpreadsheet size={13} style={{ marginRight: '6px' }} />
-                  data_preprocessing.py (Core Ingestion Transform)
-                </span>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Python 3.11 / Pandas / Scikit-Learn</span>
-              </div>
-              <pre style={{ margin: 0, fontSize: '11.5px', color: '#e2e8f0', lineHeight: '1.6', overflowX: 'auto' }}>
-{`# Excerpt from ml/src/data_preprocessing.py
-# 1. Compute MoSPI S-Curve Divergence Metric
-df["financial_vs_physical_gap_pct"] = (
-    df["financial_progress_pct"] - df["physical_progress_pct"]
-).round(2)
-
-# 2. Capital Escalation & Burn Velocity
-df["cost_escalation_ratio"] = (df["anticipated_cost_cr"] / (df["original_cost_cr"] + 1e-3)).clip(0.5, 10.0)
-df["fund_drain_anomaly_flag"] = (df["financial_vs_physical_gap_pct"] > 15.0).astype(int)
-
-# 3. Grounded Root Cause Synthesis (Grounded in Domain Heuristics)
-if cost_overrun_pct > 30 and gap_pct > 15:
-    return "Fund Constraint & Financial Stress"
-if state in FOREST_HIGH_RISK_STATES and delay > 12:
-    return "Forest & Environmental Clearances"`}
-              </pre>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: LIVE SYNC & CLOSED-LOOP RETRAINING ARCHITECTURE */}
-      {activeTab === 'closed_loop' && (
-        <div className="val-tab-content">
-          <div className="pipe-arch-card">
-            <div className="pipe-arch-head">
-              <RefreshCw size={18} color="#16a34a" />
-              <div>
-                <h3 style={{ margin: 0, fontSize: '15px', color: '#0b3157' }}>Live Closed-Loop Retraining &amp; PAIMANA Synchronization</h3>
-                <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748b' }}>
-                  How NIRMAN-Drishti connects directly to MoSPI PAIMANA for automated real-time ingestion and continuous feedback learning.
-                </p>
-              </div>
-            </div>
-
-            {/* Closed-Loop Architecture Infographic */}
-            <div className="closed-loop-diagram">
-              <div className="cld-step">
-                <div className="cld-icon blue"><Database size={16} /></div>
-                <strong>1. Direct PAIMANA Connector</strong>
-                <p>Change Data Capture (CDC) webhook polls PAIMANA API every hour for newly sanctioned or updated projects.</p>
-              </div>
-              <div className="cld-arrow">➔</div>
-              <div className="cld-step">
-                <div className="cld-icon yellow"><Cpu size={16} /></div>
-                <strong>2. Instant Drishti AI Scoring</strong>
-                <p>Newly added projects are parsed, 17 features engineered, and scored by /api/predict in &lt; 2 seconds.</p>
-              </div>
-              <div className="cld-arrow">➔</div>
-              <div className="cld-step">
-                <div className="cld-icon red"><CheckCheck size={16} /></div>
-                <strong>3. Project Completion (COD)</strong>
-                <p>When physical progress reaches 100%, project transitions from active monitoring to Ground Truth Archive.</p>
-              </div>
-              <div className="cld-arrow">➔</div>
-              <div className="cld-step">
-                <div className="cld-icon green"><RefreshCw size={16} /></div>
-                <strong>4. Automated Retraining</strong>
-                <p>Completed actuals feed the Nightly Retraining Queue. Champion-Challenger validation ensures continuous learning.</p>
-              </div>
-            </div>
-
-            {/* Interactive Live Simulation Sandbox */}
-            <div className="sim-sandbox-wrap" style={{ marginTop: '24px', padding: '20px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
-                <div>
-                  <strong style={{ fontSize: '14px', color: '#0f172a' }}>Live Pipeline Demonstration Sandbox</strong>
-                  <div style={{ fontSize: '12px', color: '#64748b' }}>Click the actions below to simulate real-time PAIMANA synchronization and closed-loop retraining:</div>
-                </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    className="home-btn home-btn-primary"
-                    style={{ padding: '7px 14px', fontSize: '12px' }}
-                    onClick={handleSimulateIngest}
-                    disabled={simulating}
-                  >
-                    <Zap size={14} /> {simulating ? 'Ingesting...' : '⚡ Ingest New PAIMANA Project'}
-                  </button>
-                  <button
-                    className="home-btn"
-                    style={{ padding: '7px 14px', fontSize: '12px', background: '#0f172a', color: '#ffffff' }}
-                    onClick={handleSimulateRetrain}
-                    disabled={retraining}
-                  >
-                    <RefreshCw size={14} /> {retraining ? 'Retraining...' : '🔄 Trigger Completion & Retrain'}
-                  </button>
+                <div className="pipe-bullet-grid">
+                  <div className="pipe-bullet">
+                    <strong>49,094 Audited Historical Records</strong>
+                    <span>Ingested from semi-structured monthly MoSPI Flash Reports (1999–2024).</span>
+                  </div>
+                  <div className="pipe-bullet">
+                    <strong>Corridor Entity Harmonization</strong>
+                    <span>Standardized agency project names (MoRTH, NHAI, RVNL) into authentic highway corridors.</span>
+                  </div>
+                  <div className="pipe-bullet">
+                    <strong>Dynamic S-Curve Trajectory</strong>
+                    <span>Tracks month-over-month physical progress velocity against cumulative capital expenditure.</span>
+                  </div>
+                  <div className="pipe-bullet">
+                    <strong>17 Point-in-Time Features</strong>
+                    <span>Calculates the critical Financial–Physical Divergence Gap (%) without peeking into the future.</span>
+                  </div>
                 </div>
               </div>
-
-              {simLog.length > 0 && (
-                <div className="sim-terminal" style={{ background: '#0f172a', color: '#38bdf8', padding: '12px 14px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '11.5px', marginBottom: '12px' }}>
-                  <div style={{ color: '#94a3b8', marginBottom: '6px', fontWeight: 700 }}>LOG: Real-time Ingestion Stream</div>
-                  {simLog.map((l, i) => (
-                    <div key={i} style={{ color: i === simLog.length - 1 ? '#4ade80' : '#38bdf8' }}>{l}</div>
-                  ))}
-                </div>
-              )}
-
-              {simRetrainLog.length > 0 && (
-                <div className="sim-terminal" style={{ background: '#0f172a', color: '#f59e0b', padding: '12px 14px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '11.5px' }}>
-                  <div style={{ color: '#94a3b8', marginBottom: '6px', fontWeight: 700 }}>LOG: Continuous Learning Retraining Engine</div>
-                  {simRetrainLog.map((l, i) => (
-                    <div key={i} style={{ color: i === simRetrainLog.length - 1 ? '#4ade80' : '#fcd34d' }}>{l}</div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: DATA LEAKAGE PREVENTION PROTOCOL */}
-      {activeTab === 'leakage' && (
-        <div className="val-tab-content">
-          <div className="pipe-arch-card">
-            <div className="pipe-arch-head">
-              <Lock size={18} color="#dc2626" />
-              <div>
-                <h3 style={{ margin: 0, fontSize: '15px', color: '#0b3157' }}>Strict Data Leakage Prevention Framework</h3>
-                <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748b' }}>
-                  How NIRMAN-Drishti guarantees mathematical integrity, ensuring the AI model never "cheats" by peeking at future outcomes.
-                </p>
-              </div>
             </div>
 
-            <div className="leakage-rules-grid">
-              <div className="leakage-rule-card">
-                <div className="leakage-rule-badge">Defense Layer 1</div>
-                <h4>Strict Out-of-Time (OOT) Temporal Splitting</h4>
+            {/* 2. Direct PAIMANA Integration & Closed Loop Retraining */}
+            <div className="pipe-feature-card">
+              <div className="pipe-card-icon-wrap" style={{ background: '#fef3c7', color: '#d97706' }}>
+                <RefreshCw size={20} />
+              </div>
+              <div className="pipe-card-content">
+                <h3>2. Real-Time PAIMANA Sync &amp; Closed-Loop Retraining</h3>
                 <p>
-                  Standard random K-Fold splits cause catastrophic future leakage in time-series data. Drishti AI enforces strict temporal boundaries:
+                  NIRMAN-Drishti connects directly to MoSPI PAIMANA to continuously learn and update:
                 </p>
-                <div className="leakage-formula-box">
-                  Training Partition: T &le; Dec 2021 (31,420 historical records)<br />
-                  Validation Partition: T &isin; [2022, 2023] (9,840 records)<br />
-                  Holdout Test Set: T &ge; 2024 (7,834 records)
+                
+                <div className="pipe-workflow-diagram">
+                  <div className="wf-step">
+                    <span className="wf-badge">1</span>
+                    <b>New Project Ingested</b>
+                    <small>When added to PAIMANA, parsed and scored by /api/predict in &lt;2s.</small>
+                  </div>
+                  <span className="wf-arrow">➔</span>
+                  <div className="wf-step">
+                    <span className="wf-badge">2</span>
+                    <b>Active Monitoring</b>
+                    <small>Monitored with satellite ground reality cross-checks and risk alerts.</small>
+                  </div>
+                  <span className="wf-arrow">➔</span>
+                  <div className="wf-step">
+                    <span className="wf-badge">3</span>
+                    <b>100% Completion (COD)</b>
+                    <small>Upon final commissioning, project transitions to training dataset.</small>
+                  </div>
+                  <span className="wf-arrow">➔</span>
+                  <div className="wf-step">
+                    <span className="wf-badge">4</span>
+                    <b>Continuous Retraining</b>
+                    <small>Nightly worker retrains models with champion-challenger testing.</small>
+                  </div>
                 </div>
-                <small>The model never trains on records dated after the evaluation cutoff date.</small>
-              </div>
 
-              <div className="leakage-rule-card">
-                <div className="leakage-rule-badge">Defense Layer 2</div>
-                <h4>Project UUID GroupKFold Isolation</h4>
-                <p>
-                  Because a single mega-project has up to 48 monthly report snapshots over its lifecycle, random splits might place Month 12 in train and Month 14 in test.
-                </p>
-                <div className="leakage-formula-box">
-                  <code>GroupKFold(groups=df['project_uuid'])</code>
+                {/* Interactive Simulator */}
+                <div className="live-demo-interactive-box">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                    <strong>Try the Live Ingestion &amp; Retraining Pipeline:</strong>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button 
+                        className="home-btn home-btn-primary" 
+                        style={{ padding: '6px 12px', fontSize: '11.5px' }}
+                        onClick={handleSimulateIngest}
+                        disabled={simulating}
+                      >
+                        <Zap size={13} /> {simulating ? 'Ingesting...' : '⚡ Ingest New PAIMANA Project'}
+                      </button>
+                      <button 
+                        className="home-btn" 
+                        style={{ padding: '6px 12px', fontSize: '11.5px', background: '#0f172a', color: '#fff' }}
+                        onClick={handleSimulateRetrain}
+                        disabled={retraining}
+                      >
+                        <RefreshCw size={13} /> {retraining ? 'Retraining...' : '🔄 Complete Project & Retrain'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {simLog.length > 0 && (
+                    <div className="clean-terminal-box">
+                      <div className="terminal-title">LIVE INGESTION STREAM</div>
+                      {simLog.map((l, i) => (
+                        <div key={i} className="terminal-line">{l}</div>
+                      ))}
+                    </div>
+                  )}
+
+                  {simRetrainLog.length > 0 && (
+                    <div className="clean-terminal-box retrain">
+                      <div className="terminal-title" style={{ color: '#f59e0b' }}>CONTINUOUS LEARNING WORKER</div>
+                      {simRetrainLog.map((l, i) => (
+                        <div key={i} className="terminal-line" style={{ color: '#fef08a' }}>{l}</div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <small>Every project and all of its monthly snapshots are grouped atomically into either train OR test, preventing cross-month entity memorization.</small>
               </div>
+            </div>
 
-              <div className="leakage-rule-card">
-                <div className="leakage-rule-badge">Defense Layer 3</div>
-                <h4>Point-in-Time Feature Freezing</h4>
-                <p>
-                  Features must only represent information that was officially documented on or before the snapshot day:
-                </p>
-                <ul>
-                  <li>Cumulative expenditure reflects strictly what was disbursed by Month $T$.</li>
-                  <li>Physical progress reflects only signed-off engineer inspection reports.</li>
-                  <li>No retroactively revised baseline dates are allowed into historical snapshots.</li>
-                </ul>
+            {/* 3. Strict Data Leakage Prevention */}
+            <div className="pipe-feature-card">
+              <div className="pipe-card-icon-wrap" style={{ background: '#fee2e2', color: '#dc2626' }}>
+                <Lock size={20} />
               </div>
-
-              <div className="leakage-rule-card">
-                <div className="leakage-rule-badge">Defense Layer 4</div>
-                <h4>Target Variable &amp; Post-Event Isolation</h4>
+              <div className="pipe-card-content">
+                <h3>3. Strict Data Leakage Prevention Framework</h3>
                 <p>
-                  Target variables (`actual_completion_date`, `final_cost_escalation`, `arbitration_awards`) are strictly quarantined and never entered into the feature column transformer:
+                  How NIRMAN-Drishti guarantees mathematical integrity so the AI model never "cheats":
                 </p>
-                <ul>
-                  <li>Post-award court settlements masked during feature generation.</li>
-                  <li>StandardScalers &amp; OneHotEncoders are fit <b>strictly on training sets</b>, preventing test set distribution leakage.</li>
-                </ul>
+                <div className="leakage-cards-row">
+                  <div className="leakage-mini-card">
+                    <strong>1. Out-of-Time (OOT) Splits</strong>
+                    <p>The model is trained strictly on historical dates (T &le; 2021) and evaluated on unseen future dates (T &ge; 2022). No future data can ever leak into the training partition.</p>
+                  </div>
+                  <div className="leakage-mini-card">
+                    <strong>2. Project-Level Group Isolation</strong>
+                    <p>All monthly snapshots of a project are grouped together into either training or testing. Month 12 and Month 14 of the same project are never split across train and test.</p>
+                  </div>
+                  <div className="leakage-mini-card">
+                    <strong>3. Point-in-Time Freezing</strong>
+                    <p>Every feature represents strictly what was documented on that exact day. Post-award legal disputes or revised completion dates are masked at inference.</p>
+                  </div>
+                  <div className="leakage-mini-card">
+                    <strong>4. Fit-on-Train Preprocessing</strong>
+                    <p>StandardScalers and categorical encoders are fit strictly on training splits, eliminating statistical distribution leakage.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
