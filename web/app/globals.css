@@ -7426,3 +7426,828 @@ body.dark-theme .step-reality {
   background: #0c331a !important;
   color: #4ade80 !important;
 }
+
+/* =========================================================================
+   MoSPI PS-26103: ML vs Conventional Stats & Missing Data Gap Deep-Dives
+   ========================================================================= */
+
+/* Analysis Top 3-Way Sub-Navigation */
+.analysis-subtab-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.analysis-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  white-space: nowrap;
+}
+
+.analysis-subtab-btn:hover {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.analysis-subtab-btn.active {
+  background: #1e293b;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Common Deep-Dive Layout */
+.dd-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.dd-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  padding: 26px 28px;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1);
+}
+
+.dd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  margin-bottom: 12px;
+}
+
+.dd-badge.amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.dd-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.dd-desc {
+  font-size: 14px;
+  color: #94a3b8;
+  max-width: 900px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Scorecards Row */
+.dd-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.dd-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.dd-stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dd-stat-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.dd-stat-val.text-green { color: #16a34a; }
+.dd-stat-val.text-blue { color: #0284c7; }
+.dd-stat-val.text-amber { color: #d97706; }
+.dd-stat-val.text-red { color: #dc2626; }
+
+.dd-stat-note {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Head-to-Head Table */
+.benchmark-table-wrap {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.benchmark-table th {
+  background: #f8fafc;
+  padding: 14px 16px;
+  font-weight: 700;
+  color: #334155;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.benchmark-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.benchmark-table tr:hover td {
+  background: #f8fafc;
+}
+
+.benchmark-table tr.highlight-ai td {
+  background: #f0fdf4;
+  border-bottom: 1px solid #bbf7d0;
+  font-weight: 600;
+}
+
+.benchmark-method-title {
+  font-weight: 700;
+  color: #0f172a;
+  display: block;
+}
+
+.benchmark-method-desc {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.badge-pill-good {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.badge-pill-poor {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.badge-pill-mid {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef3c7;
+  color: #b45309;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* Insight Cards Grid */
+.dd-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.dd-info-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dd-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dd-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #1e293b;
+  flex-shrink: 0;
+}
+
+.dd-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.dd-card-body {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Interactive Method Simulator Box */
+.method-sim-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.method-sim-selector {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.method-sim-btn {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.method-sim-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+.method-comp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.method-comp-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.method-comp-card.highlight {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.method-comp-card.ground-truth {
+  border-color: #0f172a;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.method-comp-card.ground-truth .method-comp-title {
+  color: #38bdf8;
+}
+
+.method-comp-card.ground-truth .method-comp-pred {
+  color: #ffffff;
+}
+
+.method-comp-card.ground-truth .method-comp-note {
+  color: #94a3b8;
+}
+
+.method-comp-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #64748b;
+}
+
+.method-comp-pred {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.method-comp-note {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* =========================================================================
+   MoSPI Missing Data Gap Styles
+   ========================================================================= */
+
+/* Variance Visual Decomposition Bar */
+.variance-bar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.variance-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.variance-bar-track {
+  height: 38px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  background: #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.variance-slice-captured {
+  background: #0284c7;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  transition: width 0.3s ease;
+}
+
+.variance-slice-missing {
+  background: #d97706;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  transition: width 0.3s ease;
+}
+
+.variance-legend-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #475569;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.variance-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* Missing Factor Cards */
+.dark-factor-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #d97706;
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.dark-factor-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.dark-factor-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dark-factor-pct {
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.dark-factor-desc {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.dark-factor-impact {
+  font-size: 11.5px;
+  color: #b45309;
+  background: #fffbeb;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #fef3c7;
+}
+
+/* Policy Reform Box */
+.proforma-proposal-box {
+  background: #f8fafc;
+  border: 2px dashed #0284c7;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.proforma-proposal-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.proforma-proposal-head h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.proforma-proposal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.proforma-item {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proforma-item-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 7px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.proforma-item-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.proforma-item-desc {
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* Statistical Imbalance Notice Banner */
+.imbalance-notice-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 5px solid #2563eb;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.imbalance-notice-icon {
+  color: #2563eb;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.imbalance-notice-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 4px;
+}
+
+.imbalance-notice-desc {
+  font-size: 12px;
+  color: #1e40af;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Home Spotlight Section */
+.home-spotlight-section {
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+.home-spotlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.home-spotlight-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.home-spotlight-card:hover {
+  transform: translateY(-2px);
+  border-color: #0284c7;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.1);
+}
+
+.spotlight-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.spotlight-pill.blue {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.spotlight-pill.amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.spotlight-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.spotlight-card-desc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.spotlight-card-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.spotlight-metric-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0284c7;
+}
+
+.spotlight-metric-label {
+  font-size: 12px;
+  color: #475569;
+}
+
+.spotlight-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0284c7;
+  margin-top: 4px;
+}
+
+/* =========================================================================
+   Dark Theme Adaptations for ML Benchmark & Missing Data Gap
+   ========================================================================= */
+
+body.dark-theme .analysis-subtab-bar {
+  background: #0b1524 !important;
+  border-color: #1a3356 !important;
+}
+
+body.dark-theme .analysis-subtab-btn {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .analysis-subtab-btn:hover {
+  background: #13243c !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-theme .analysis-subtab-btn.active {
+  background: #38bdf8 !important;
+  color: #060d17 !important;
+}
+
+body.dark-theme .dd-stat-card,
+body.dark-theme .benchmark-table-wrap,
+body.dark-theme .dd-info-card,
+body.dark-theme .method-comp-card,
+body.dark-theme .variance-bar-card,
+body.dark-theme .dark-factor-card,
+body.dark-theme .proforma-item,
+body.dark-theme .home-spotlight-card {
+  background: #0b1728 !important;
+  border-color: #1a3356 !important;
+}
+
+body.dark-theme .dd-stat-val,
+body.dark-theme .benchmark-method-title,
+body.dark-theme .dd-card-title,
+body.dark-theme .method-comp-pred,
+body.dark-theme .dark-factor-title,
+body.dark-theme .proforma-proposal-head h3,
+body.dark-theme .proforma-item-title,
+body.dark-theme .spotlight-card-title {
+  color: #f8fafc !important;
+}
+
+body.dark-theme .benchmark-table th {
+  background: #08111e !important;
+  color: #94a3b8 !important;
+  border-color: #1a3356 !important;
+}
+
+body.dark-theme .benchmark-table td {
+  border-color: #13243c !important;
+  color: #cbd5e1 !important;
+}
+
+body.dark-theme .benchmark-table tr:hover td {
+  background: #0f2139 !important;
+}
+
+body.dark-theme .benchmark-table tr.highlight-ai td {
+  background: #062a19 !important;
+  border-color: #166534 !important;
+  color: #86efac !important;
+}
+
+body.dark-theme .method-sim-box {
+  background: #081220 !important;
+  border-color: #1a3356 !important;
+}
+
+body.dark-theme .method-sim-btn {
+  background: #0b1728 !important;
+  border-color: #1a3356 !important;
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .method-sim-btn.active {
+  background: #38bdf8 !important;
+  color: #060d17 !important;
+  border-color: #38bdf8 !important;
+}
+
+body.dark-theme .method-comp-card.highlight {
+  background: #062a19 !important;
+  border-color: #22c55e !important;
+}
+
+body.dark-theme .dark-factor-desc,
+body.dark-theme .dd-card-body,
+body.dark-theme .proforma-item-desc,
+body.dark-theme .spotlight-card-desc {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .dark-factor-impact {
+  background: #2a1b06 !important;
+  border-color: #78350f !important;
+  color: #fde68a !important;
+}
+
+body.dark-theme .proforma-proposal-box {
+  background: #081220 !important;
+  border-color: #0284c7 !important;
+}
+
+body.dark-theme .imbalance-notice-box {
+  background: #0c2340 !important;
+  border-color: #1d4ed8 !important;
+}
+
+body.dark-theme .imbalance-notice-title {
+  color: #93c5fd !important;
+}
+
+body.dark-theme .imbalance-notice-desc {
+  color: #bfdbfe !important;
+}
+
+body.dark-theme .dd-card-icon {
+  background: #13243c !important;
+  color: #38bdf8 !important;
+}
