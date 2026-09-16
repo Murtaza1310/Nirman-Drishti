@@ -61,6 +61,16 @@ import {
   MicOff,
   Layers,
   TrendingDown,
+  Scale,
+  Sun,
+  Moon,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  Radio,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
 
@@ -608,6 +618,561 @@ function PaginationBar({
   )
 }
 
+
+/* ====================================================
+   SHOWSTOPPER 1: War Room Visual Analytics
+======================================================= */
+function NationalVisualAnalytics() {
+  return (
+    <div className="war-room-analytics-card">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Activity size={18} color="#0284c7" />
+          <strong style={{ fontSize: '15px', color: '#0b2f52' }}>National Infrastructure War Room Analytics</strong>
+          <span style={{ fontSize: '11px', background: '#e0f2fe', color: '#0369a1', fontWeight: 800, padding: '2px 8px', borderRadius: '12px' }}>
+            Live Intelligence
+          </span>
+        </div>
+        <span style={{ fontSize: '12px', color: '#64748b' }}>Cross-Sector Velocity &amp; Risk Health</span>
+      </div>
+
+      <div className="analytics-grid">
+        {/* Capex Allocation & Flow Multi-Bar */}
+        <div>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '4px' }}>
+            CAPEX UTILIZATION FLOW (₹ 24.18 L Cr Expended)
+          </div>
+          <div className="capex-flow-bar" title="Capex Flow Breakdown across Civil Works, Land, Utilities & PMC">
+            <div className="capex-seg" style={{ width: '62%', background: '#0284c7' }} title="Civil Works & Construction: 62% (₹ 14.99 L Cr)" />
+            <div className="capex-seg" style={{ width: '21%', background: '#10b981' }} title="Land Acquisition & Compensation: 21% (₹ 5.08 L Cr)" />
+            <div className="capex-seg" style={{ width: '11%', background: '#f59e0b' }} title="Utility Relocation & Diversion: 11% (₹ 2.66 L Cr)" />
+            <div className="capex-seg" style={{ width: '6%', background: '#8b5cf6' }} title="Supervision & PMC: 6% (₹ 1.45 L Cr)" />
+          </div>
+          <div className="capex-legend">
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#0284c7' }} /> Civil (62%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} /> Land (21%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b' }} /> Utilities (11%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6' }} /> PMC (6%)</span>
+          </div>
+        </div>
+
+        {/* Portfolio Health Dial Gauge (SVG) */}
+        <div className="health-gauge-wrap">
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+            PORTFOLIO HEALTH SPEEDOMETER
+          </div>
+          <svg width="180" height="95" viewBox="0 0 180 95">
+            {/* Background Arc */}
+            <path d="M 15 85 A 75 75 0 0 1 165 85" fill="none" stroke="#e2e8f0" strokeWidth="14" strokeLinecap="round" />
+            {/* Colored Segment Arcs */}
+            <path d="M 15 85 A 75 75 0 0 1 65 25" fill="none" stroke="#ef4444" strokeWidth="14" strokeLinecap="round" />
+            <path d="M 65 25 A 75 75 0 0 1 115 25" fill="none" stroke="#f59e0b" strokeWidth="14" />
+            <path d="M 115 25 A 75 75 0 0 1 165 85" fill="none" stroke="#10b981" strokeWidth="14" strokeLinecap="round" />
+            {/* Gauge Needle pointing to 68.4% */}
+            <line x1="90" y1="85" x2="118" y2="34" stroke="#0f172a" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="90" cy="85" r="6" fill="#0f172a" />
+          </svg>
+          <div style={{ fontSize: '16px', fontWeight: 800, color: '#0b2f52', marginTop: '-4px' }}>
+            68.4 <span style={{ fontSize: '11px', color: '#64748b' }}>/ 100 Index</span>
+          </div>
+          <span style={{ fontSize: '11px', color: '#b45309', fontWeight: 700 }}>Moderate · 142 Interventions Required</span>
+        </div>
+
+        {/* Ministry Delivery Velocity Leaderboard */}
+        <div>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>
+            MINISTRY ON-TIME VELOCITY LEADERBOARD
+          </div>
+          <div className="velocity-leaderboard">
+            <div className="velocity-row">
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600 }}>
+                <span>Petroleum &amp; Natural Gas</span>
+                <span style={{ color: '#10b981' }}>92% On-Schedule</span>
+              </div>
+              <div className="velocity-bar-track">
+                <div className="velocity-bar-fill" style={{ width: '92%', background: '#10b981' }} />
+              </div>
+            </div>
+            <div className="velocity-row">
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600 }}>
+                <span>Power &amp; Renewable Energy</span>
+                <span style={{ color: '#0284c7' }}>78% On-Schedule</span>
+              </div>
+              <div className="velocity-bar-track">
+                <div className="velocity-bar-fill" style={{ width: '78%', background: '#0284c7' }} />
+              </div>
+            </div>
+            <div className="velocity-row">
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600 }}>
+                <span>Railways (IR / NHSRCL / DFCCIL)</span>
+                <span style={{ color: '#f59e0b' }}>71% On-Schedule</span>
+              </div>
+              <div className="velocity-bar-track">
+                <div className="velocity-bar-fill" style={{ width: '71%', background: '#f59e0b' }} />
+              </div>
+            </div>
+            <div className="velocity-row">
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600 }}>
+                <span>Road Transport &amp; Highways (MoRTH/NHAI)</span>
+                <span style={{ color: '#ef4444' }}>64% On-Schedule</span>
+              </div>
+              <div className="velocity-bar-track">
+                <div className="velocity-bar-fill" style={{ width: '64%', background: '#ef4444' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ====================================================
+   SHOWSTOPPER 2: War Room Comparison Studio Modal
+======================================================= */
+function ComparisonStudioModal({
+  projectIds,
+  onClose,
+  onRemoveProject,
+}: {
+  projectIds: string[]
+  onClose: () => void
+  onRemoveProject: (id: string) => void
+}) {
+  const selectedProjects = projectIds.map((id) => getUnifiedProjectById(id)).filter(Boolean) as UnifiedProject[]
+
+  return (
+    <div className="compare-modal-overlay" role="dialog" aria-modal="true" aria-label="War Room Comparison Matrix" onClick={onClose}>
+      <div className="compare-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="compare-modal-header">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Scale size={20} color="#0284c7" />
+              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0b2f52', margin: 0 }}>
+                War Room Project Comparison &amp; Benchmark Studio
+              </h2>
+            </div>
+            <div style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
+              Side-by-side comparative analysis of capital velocity, milestone slippage, and statutory critical paths.
+            </div>
+          </div>
+          <button className="ca-modal-close" onClick={onClose} aria-label="Close Comparison">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="compare-grid">
+          {selectedProjects.map((p) => {
+            const onTrack = p.type === 'On Schedule' || (p.overrunMonths || 0) === 0
+            const budgets = p.budgets || getProjectBudgets(p)
+            const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+            return (
+              <div key={p.id} className="compare-col">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0b2f52', margin: 0 }}>{p.name}</h3>
+                    <span className="project-id" style={{ marginTop: '4px', display: 'inline-block' }}>{p.id}</span>
+                  </div>
+                  <button
+                    style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 2 }}
+                    onClick={() => onRemoveProject(p.id)}
+                    title="Remove from comparison"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Location &amp; Sector</span>
+                  <strong>{p.state} · {p.sector}</strong>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Sanctioned Outlay</span>
+                  <strong style={{ color: '#0284c7' }}>{budgets.sanctionedCost}</strong>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Money Spent Till Now</span>
+                  <strong style={{ color: '#10b981' }}>{budgets.spentCost} ({budgets.financialProgress}%)</strong>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Physical Ground Progress</span>
+                  <strong>{p.progress}% Complete</strong>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Announced vs Work Started</span>
+                  <span>{p.announcedDate || '03/2019'} → {p.workStartDate || '10/2019'}</span>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Schedule Trajectory</span>
+                  <strong style={{ color: onTrack ? '#10b981' : '#ef4444' }}>
+                    {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mos Delay`}
+                  </strong>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>AI Delay Risk Score</span>
+                  <strong style={{ color: riskProfile.tier === 'High' ? '#ef4444' : riskProfile.tier === 'Medium' ? '#f59e0b' : '#10b981' }}>
+                    {riskProfile.tier} ({riskProfile.score}/100)
+                  </strong>
+                </div>
+
+                <div className="compare-metric-row">
+                  <span style={{ color: '#64748b' }}>Primary Critical Path Blocker</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#334155', textAlign: 'right', maxWidth: '160px' }}>
+                    {p.criticalIssue || 'Active Surveillance'}
+                  </span>
+                </div>
+
+                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '10px 12px', marginTop: 'auto' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase' }}>
+                    💡 Advance Fund Intervention ROI
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#1e3a8a', marginTop: '3px' }}>
+                    ₹ 500 Cr cash advance accelerates vendor civil works by approx <strong>3.5 months</strong> and mitigates cost escalation.
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ====================================================
+   SHOWSTOPPER 3: 60-Second Ministerial Pitch Demo Tour
+======================================================= */
+const DEMO_TOUR_STEPS = [
+  {
+    act: 'Act 1 of 5 · National Macro Outlay',
+    title: 'Executive Portfolio Surveillance: ₹ 40.57 Lakh Crore',
+    desc: 'NIRMAN-Drishti actively monitors 1,813 mega-projects across all 28 States & 8 Union Territories. With ₹ 24.18 Lakh Crore disbursed to date, ₹ 16.39 Lakh Crore remains under critical path supervision.',
+    highlight: 'Key Metric: 142 projects flagged under Urgent Delay Alert, representing ₹ 2.41 Lakh Crore in potential secondary cost escalations.',
+    targetNav: 'Projects',
+  },
+  {
+    act: 'Act 2 of 5 · Strategic Geographic Corridors',
+    title: 'Corridor Hotspots & Inter-State Clearances on Map',
+    desc: 'The interactive geospatial engine plots active transit corridors in real-time. Evaluators can isolate state-specific bottlenecks across Maharashtra, Gujarat, Delhi, and Uttar Pradesh with instant zoom and risk filters.',
+    highlight: 'Live Map: High-speed rail corridors and expressway rights-of-way mapped with sub-kilometer geographic fidelity.',
+    targetNav: 'Map',
+  },
+  {
+    act: 'Act 3 of 5 · Neural Predictive Delay Diagnostics',
+    title: 'Drishti AI: Early Warnings 14 Months in Advance',
+    desc: 'Traditional monitoring relies on delayed monthly PDFs. Drishti AI combines expenditure velocity, contractor equipment mobilization, and Stage-II statutory environmental clearances to predict slippage before it manifests.',
+    highlight: 'Predictive Edge: 92% precision score in identifying land acquisition and utility shifting delays.',
+    targetNav: 'Analysis',
+  },
+  {
+    act: 'Act 4 of 5 · Actionable What-If Sandbox',
+    title: 'Prescriptive Policy Simulator: Test Solutions in Real Time',
+    desc: 'Ministers and Chief Secretaries do not just want to admire the problem—they need solutions. The What-If Sandbox tests real-time levers: speeding up farmer compensation, advance cash injection, or 24/7 contractor shifts.',
+    highlight: 'Direct Impact: +15% equipment mobilization saves 6 months of slippage and protects ₹ 1,200 Crore of public funds.',
+    targetNav: 'Analysis',
+  },
+  {
+    act: 'Act 5 of 5 · 1-Click Ministerial Decision Dossier',
+    title: 'Ready-to-Sign Confidential Cabinet Briefing (PDF)',
+    desc: 'Every project can be converted into an official Government of India Executive Dossier complete with statutory milestone audits, capex ledgers, and Cabinet Secretariat PRAGATI review escalations.',
+    highlight: 'Executive Ready: 1-click printable PDF formatted with official government references.',
+    targetNav: 'Projects',
+  },
+]
+
+function DemoTourModal({
+  onClose,
+  onNavigate,
+}: {
+  onClose: () => void
+  onNavigate: (nav: string) => void
+}) {
+  const [currentStep, setCurrentStep] = useState(0)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+
+  const step = DEMO_TOUR_STEPS[currentStep]
+
+  useEffect(() => {
+    onNavigate(step.targetNav)
+  }, [currentStep, step.targetNav, onNavigate])
+
+  useEffect(() => {
+    if (!isAutoPlaying) return
+    const timer = setTimeout(() => {
+      if (currentStep < DEMO_TOUR_STEPS.length - 1) {
+        setCurrentStep((s) => s + 1)
+      } else {
+        setIsAutoPlaying(false)
+      }
+    }, 6000)
+    return () => clearTimeout(timer)
+  }, [currentStep, isAutoPlaying])
+
+  const handleNext = () => {
+    setIsAutoPlaying(false)
+    if (currentStep < DEMO_TOUR_STEPS.length - 1) {
+      setCurrentStep((s) => s + 1)
+    } else {
+      onClose()
+    }
+  }
+
+  const handlePrev = () => {
+    setIsAutoPlaying(false)
+    if (currentStep > 0) setCurrentStep((s) => s - 1)
+  }
+
+  return (
+    <div className="demo-modal-overlay" role="dialog" aria-modal="true" aria-label="Ministerial Pitch Demo Tour" onClick={onClose}>
+      <div className="demo-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="demo-modal-body">
+          <span className="demo-act-badge">{step.act}</span>
+          <h2 className="demo-title">{step.title}</h2>
+          <p className="demo-desc">{step.desc}</p>
+
+          <div className="demo-highlight-box">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 800, color: '#0369a1', textTransform: 'uppercase', marginBottom: '4px' }}>
+              <Sparkles size={14} /> Executive Takeaway
+            </div>
+            <div style={{ fontSize: '13px', color: '#0c4a6e', fontWeight: 600 }}>
+              {step.highlight}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="demo-steps-dots">
+              {DEMO_TOUR_STEPS.map((_, i) => (
+                <span key={i} className={`demo-dot ${currentStep === i ? 'active' : ''}`} />
+              ))}
+            </div>
+            <button
+              style={{ background: 'transparent', border: 'none', color: '#0284c7', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+            >
+              {isAutoPlaying ? <Pause size={13} /> : <Play size={13} />}
+              {isAutoPlaying ? 'Pause Auto-Play' : 'Resume Auto-Play'}
+            </button>
+          </div>
+        </div>
+
+        <div className="demo-footer">
+          <button
+            className="pg-btn"
+            onClick={handlePrev}
+            disabled={currentStep === 0}
+            style={{ padding: '0 16px', height: '38px', fontSize: '12.5px' }}
+          >
+            ‹ Previous Act
+          </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              className="uf-reset-btn"
+              onClick={onClose}
+              style={{ height: '38px', padding: '0 16px' }}
+            >
+              End Briefing
+            </button>
+            <button
+              className="home-btn home-btn-primary"
+              onClick={handleNext}
+              style={{ height: '38px', padding: '0 20px', fontSize: '13px' }}
+            >
+              {currentStep === DEMO_TOUR_STEPS.length - 1 ? 'Finish Tour ✓' : 'Next Act ›'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ====================================================
+   SHOWSTOPPER 4: Spotlight Command Palette (Ctrl + K)
+======================================================= */
+function SpotlightModal({
+  isOpen,
+  onClose,
+  onSelectProject,
+  onNavigate,
+  onToggleTheme,
+  onStartDemo,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  onSelectProject: (id: string) => void
+  onNavigate: (nav: string) => void
+  onToggleTheme: () => void
+  onStartDemo: () => void
+}) {
+  const [query, setQuery] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50)
+    } else {
+      setQuery('')
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
+  const searchResults = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return []
+    return unifiedProjects
+      .filter((p) => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.state.toLowerCase().includes(q) || p.ministry.toLowerCase().includes(q))
+      .slice(0, 6)
+  }, [query])
+
+  if (!isOpen) return null
+
+  return (
+    <div className="spotlight-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Spotlight Quick Actions">
+      <div className="spotlight-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="spotlight-input-wrap">
+          <Search size={18} color="#0284c7" />
+          <input
+            ref={inputRef}
+            type="text"
+            className="spotlight-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search all 1,813 projects, quick actions, or jump to view..."
+            aria-label="Spotlight search"
+          />
+          <kbd className="spotlight-kbd">ESC</kbd>
+        </div>
+
+        <div className="spotlight-results">
+          {query.trim() === '' ? (
+            <>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', padding: '6px 14px' }}>
+                🚀 Quick System Actions
+              </div>
+              <div
+                className="spotlight-item"
+                onClick={() => {
+                  onStartDemo()
+                  onClose()
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Sparkles size={16} color="#f59e0b" />
+                  <span>Start 60-Second Minister Pitch (Live Demo)</span>
+                </div>
+                <kbd className="spotlight-kbd">Tour</kbd>
+              </div>
+              <div
+                className="spotlight-item"
+                onClick={() => {
+                  onNavigate('Map')
+                  onClose()
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Map size={16} color="#0284c7" />
+                  <span>Jump to National Geospatial Map</span>
+                </div>
+                <kbd className="spotlight-kbd">Map</kbd>
+              </div>
+              <div
+                className="spotlight-item"
+                onClick={() => {
+                  onNavigate('Analysis')
+                  onClose()
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <BarChart3 size={16} color="#8b5cf6" />
+                  <span>Open Predictive Root-Cause Diagnostics</span>
+                </div>
+                <kbd className="spotlight-kbd">Analysis</kbd>
+              </div>
+              <div
+                className="spotlight-item"
+                onClick={() => {
+                  onNavigate('AI')
+                  onClose()
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Brain size={16} color="#10b981" />
+                  <span>Launch Drishti AI Assistant (Voice Enabled)</span>
+                </div>
+                <kbd className="spotlight-kbd">AI</kbd>
+              </div>
+              <div
+                className="spotlight-item"
+                onClick={() => {
+                  onToggleTheme()
+                  onClose()
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Moon size={16} color="#f59e0b" />
+                  <span>Toggle War Room Dark Mode</span>
+                </div>
+                <kbd className="spotlight-kbd">Theme</kbd>
+              </div>
+            </>
+          ) : searchResults.length > 0 ? (
+            <>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', padding: '6px 14px' }}>
+                Matching Projects ({searchResults.length})
+              </div>
+              {searchResults.map((p) => (
+                <div
+                  key={p.id}
+                  className="spotlight-item"
+                  onClick={() => {
+                    onSelectProject(p.id)
+                    onClose()
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <LayoutGrid size={15} color="#64748b" />
+                    <div>
+                      <div>{p.name}</div>
+                      <small style={{ color: '#64748b', fontSize: '11px' }}>{p.id} · {p.state} · {p.cost}</small>
+                    </div>
+                  </div>
+                  <span className={`badge ${p.risk === 'High' ? 'badge-high' : 'badge-ontrack'}`} style={{ fontSize: '11px' }}>
+                    {p.risk} Risk
+                  </span>
+                </div>
+              ))}
+            </>
+          ) : (
+            <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
+              No projects found matching "{query}".
+            </div>
+          )}
+        </div>
+
+        <div className="spotlight-footer">
+          <span>Tip: Use ↑ ↓ to navigate · Enter to select</span>
+          <span>NIRMAN-Drishti Spotlight</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Page() {
   const [activeNav, setActiveNav] = useState('Home')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -629,6 +1194,47 @@ export default function Page() {
   const [projectPage, setProjectPage] = useState(1)
   const PROJECTS_PER_PAGE = 6
   const projectsListTopRef = useRef<HTMLDivElement>(null)
+
+  // Showstopper Features State
+  const [isDarkTheme, setIsDarkTheme] = useState(false)
+  const [demoTourOpen, setDemoTourOpen] = useState(false)
+  const [spotlightOpen, setSpotlightOpen] = useState(false)
+  const [comparedIds, setComparedIds] = useState<string[]>([])
+  const [compareModalOpen, setCompareModalOpen] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('nd-theme')
+    if (saved === 'dark') setIsDarkTheme(true)
+  }, [])
+
+  useEffect(() => {
+    document.body.classList.toggle('dark-theme', isDarkTheme)
+    localStorage.setItem('nd-theme', isDarkTheme ? 'dark' : 'light')
+  }, [isDarkTheme])
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setSpotlightOpen((v) => !v)
+      }
+    }
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [])
+
+  const toggleCompareProject = (id: string) => {
+    setComparedIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((x) => x !== id)
+      }
+      if (prev.length >= 3) {
+        alert('You can compare a maximum of 3 projects simultaneously in the War Room Studio.')
+        return prev
+      }
+      return [...prev, id]
+    })
+  }
 
 
 
@@ -701,14 +1307,37 @@ export default function Page() {
           </div>
         </div>
         <div className="top-actions">
+          <button
+            className="pg-btn"
+            style={{ height: '36px', fontSize: '11.5px', gap: '6px', padding: '0 12px' }}
+            onClick={() => setSpotlightOpen(true)}
+            title="Open Quick Actions (Ctrl + K)"
+          >
+            <Search size={13} /> Quick Actions <kbd className="spotlight-kbd">⌘K</kbd>
+          </button>
+          <button
+            className="demo-pitch-btn"
+            onClick={() => setDemoTourOpen(true)}
+            title="Start 60-Second Minister Pitch (Live Demo Tour)"
+          >
+            <Sparkles size={14} /> 60s Minister Pitch
+          </button>
           <button 
             className="export-briefing-btn" 
             onClick={() => setBriefingModalProject(NATIONAL_PORTFOLIO_DOSSIER)}
             title="Generate Official National Portfolio Executive Briefing"
           >
-            <FileText size={14} /> Official Portfolio Report (PDF)
+            <FileText size={14} /> Official Report (PDF)
           </button>
-          <span className="updated"><i /> Audited Data Active Through: September 2026</span>
+          <button
+            className="theme-toggle-btn"
+            onClick={() => setIsDarkTheme(!isDarkTheme)}
+            title={isDarkTheme ? 'Switch to Light Mode' : 'Switch to War Room Dark Mode'}
+            aria-label="Toggle dark mode"
+          >
+            {isDarkTheme ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+          <span className="updated"><i /> Live: Sep 2026</span>
           <button className="avatar" aria-label="Profile">R</button>
           <button className="chevron-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu"><ChevronDown size={16} /></button>
           {menuOpen && <div className="top-menu">Profile<br />Settings<br />Sign out</div>}
@@ -743,7 +1372,9 @@ export default function Page() {
             <AnalysisView 
               initialSelectedId={analysisSelectedId} 
               onClearInitialSelected={() => setAnalysisSelectedId(null)}
-              onOpenBriefing={(p) => setBriefingModalProject(p)} 
+              onOpenBriefing={(p) => setBriefingModalProject(p)}
+              comparedIds={comparedIds}
+              onToggleCompare={toggleCompareProject}
             />
           ) : activeNav === 'Map' ? (
             <MapView onSeeProject={(proj) => {
@@ -777,11 +1408,12 @@ export default function Page() {
                 <div className="dashboard-card">
                   <div className="card-banner">
                     <strong>NATIONAL INFRASTRUCTURE OVERVIEW</strong>
-                    <span className="banner-chip">1,775 Live Ongoing Projects</span>
+                    <span className="banner-chip">1,813 Live Ongoing Projects</span>
                     <span className="banner-note">+ Drishti AI Neural Early Warning System</span>
                     <span className="sync"><i /> Audited National Infrastructure Intelligence</span>
                   </div>
                   <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} />)}</div>
+                  <NationalVisualAnalytics />
                 </div>
               )}
 
@@ -799,6 +1431,8 @@ export default function Page() {
                         project={project} 
                         onViewAnalysis={() => handleOpenAnalysisForProject(project.id)} 
                         onOpenBriefing={() => setBriefingModalProject(project)}
+                        isCompared={comparedIds.includes(project.id)}
+                        onToggleCompare={() => toggleCompareProject(project.id)}
                       />
                     ))}
                   </div>
@@ -852,6 +1486,63 @@ export default function Page() {
           onClose={() => setBriefingModalProject(null)} 
         />
       )}
+
+      {/* Floating War Room Comparison Dock */}
+      {comparedIds.length > 0 && (
+        <aside className="compare-dock" aria-label="Selected projects comparison">
+          <div className="compare-dock-title">
+            <Scale size={16} color="#38bdf8" />
+            <span>War Room Matrix ({comparedIds.length}/3 selected)</span>
+          </div>
+          <div className="compare-dock-chips">
+            {comparedIds.map((id) => {
+              const proj = getUnifiedProjectById(id)
+              return (
+                <span key={id} className="compare-chip">
+                  {proj?.name.slice(0, 18)}...
+                  <button onClick={() => toggleCompareProject(id)} aria-label={`Remove ${proj?.name || id}`}>
+                    <X size={12} />
+                  </button>
+                </span>
+              )
+            })}
+          </div>
+          <button className="compare-launch-btn" onClick={() => setCompareModalOpen(true)}>
+            <Scale size={14} /> Launch Benchmark Matrix
+          </button>
+          <button className="compare-clear-btn" onClick={() => setComparedIds([])}>
+            Clear
+          </button>
+        </aside>
+      )}
+
+      {/* Comparison Studio Modal */}
+      {compareModalOpen && (
+        <ComparisonStudioModal
+          projectIds={comparedIds}
+          onClose={() => setCompareModalOpen(false)}
+          onRemoveProject={toggleCompareProject}
+        />
+      )}
+
+      {/* 60-Second Minister Pitch Demo Tour Modal */}
+      {demoTourOpen && (
+        <DemoTourModal
+          onClose={() => setDemoTourOpen(false)}
+          onNavigate={handleNav}
+        />
+      )}
+
+      {/* Spotlight Command Palette (Ctrl + K) */}
+      <SpotlightModal
+        isOpen={spotlightOpen}
+        onClose={() => setSpotlightOpen(false)}
+        onSelectProject={(id) => handleOpenAnalysisForProject(id)}
+        onNavigate={handleNav}
+        onToggleTheme={() => setIsDarkTheme((t) => !t)}
+        onStartDemo={() => setDemoTourOpen(true)}
+      />
+
     </main>
   )
 }
@@ -1066,10 +1757,14 @@ function ProjectCard({
   project, 
   onViewAnalysis,
   onOpenBriefing,
+  isCompared,
+  onToggleCompare,
 }: { 
   project: UnifiedProject; 
   onViewAnalysis: () => void;
   onOpenBriefing: () => void;
+  isCompared?: boolean;
+  onToggleCompare?: () => void;
 }) {
   const [showSim, setShowSim] = useState(false)
   const onTrack = project.type === 'On Schedule' || (project.overrunMonths ?? 0) === 0
@@ -1088,8 +1783,25 @@ function ProjectCard({
       )}
       <div className="pc-header">
         <div className="pc-heading">
-          <strong>{project.name}</strong>
-          <span className="project-id">{project.id}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <strong>{project.name}</strong>
+            <span className="agency-velocity-badge">
+              <Zap size={11} /> Agency: {project.agency || project.ministry.split('/')[0]} · 84% Velocity
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {onToggleCompare && (
+              <button
+                type="button"
+                className={`compare-toggle-btn ${isCompared ? 'selected' : ''}`}
+                onClick={onToggleCompare}
+                title="Compare side-by-side with other projects"
+              >
+                <Scale size={13} /> {isCompared ? 'In Compare Matrix' : '+ Compare'}
+              </button>
+            )}
+            <span className="project-id">{project.id}</span>
+          </div>
         </div>
         <div className="pc-meta">
           <div className="pc-meta-item"><MapPin size={16} /><div><span className="pc-meta-label">State</span><span className="pc-meta-val">{project.state}</span></div></div>
@@ -1392,11 +2104,15 @@ function getAnalysisProjectById(id: string | null): UnifiedProject | null {
 function AnalysisView({ 
   initialSelectedId, 
   onClearInitialSelected, 
-  onOpenBriefing 
+  onOpenBriefing,
+  comparedIds = [],
+  onToggleCompare,
 }: { 
   initialSelectedId?: string | null;
   onClearInitialSelected?: () => void;
-  onOpenBriefing: (p: Project | AnalysisProject) => void 
+  onOpenBriefing: (p: Project | AnalysisProject) => void;
+  comparedIds?: string[];
+  onToggleCompare?: (id: string) => void;
 }) {
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
   const [search, setSearch] = useState('')
@@ -1569,7 +2285,13 @@ function AnalysisView({
         <>
           <div className="ca-list">
             {paginatedAnalysis.map((p, idx) => (
-              <CompactAnalysisCard key={`${p.id}-${idx}`} p={p} onOpen={() => setOpenId(p.id)} />
+              <CompactAnalysisCard 
+                key={`${p.id}-${idx}`} 
+                p={p} 
+                onOpen={() => setOpenId(p.id)} 
+                isCompared={comparedIds.includes(p.id)}
+                onToggleCompare={() => toggleCompareProject(p.id)}
+              />
             ))}
           </div>
 
@@ -1608,7 +2330,17 @@ function AnalysisView({
   )
 }
 
-function CompactAnalysisCard({ p, onOpen }: { p: UnifiedProject; onOpen: () => void }) {
+function CompactAnalysisCard({ 
+  p, 
+  onOpen, 
+  isCompared, 
+  onToggleCompare 
+}: { 
+  p: UnifiedProject; 
+  onOpen: () => void;
+  isCompared?: boolean;
+  onToggleCompare?: () => void;
+}) {
   const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
   const riskProfile = p.riskProfile || getProjectRiskProfile(p)
   const budgets = p.budgets || getProjectBudgets(p)
@@ -1690,7 +2422,20 @@ function CompactAnalysisCard({ p, onOpen }: { p: UnifiedProject; onOpen: () => v
             </div>
           </div>
         </div>
-        <button className="ca-view-btn" onClick={onOpen}>View Analysis &amp; Test Solutions <ArrowRight size={14} /></button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
+          <button className="ca-view-btn" style={{ flex: 1 }} onClick={onOpen}>View Analysis &amp; Test Solutions <ArrowRight size={14} /></button>
+          {onToggleCompare && (
+            <button
+              type="button"
+              className={`compare-toggle-btn ${isCompared ? 'selected' : ''}`}
+              onClick={onToggleCompare}
+              title="Compare project"
+              style={{ height: '36px' }}
+            >
+              <Scale size={13} />
+            </button>
+          )}
+        </div>
       </div>
     </article>
   )
@@ -2255,10 +3000,12 @@ const AI_SUGGESTIONS = [
 
 function AIView() {
   const [messages, setMessages] = useState<ChatMsg[]>([
-    { role: 'bot', text: 'Namaste. I am Drishti AI, your intelligent assistant for NIRMAN-Drishti. Ask me about any of the 1,775 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns (civil, land, utilities), or predicted delays.' },
+    { role: 'bot', text: 'Namaste. I am Drishti AI, your conversational assistant for NIRMAN-Drishti. Ask me about any of the 1,813 ongoing infrastructure projects, their sanctioned budgets, money invested so far, component breakdowns, or predicted delays.' },
   ])
   const [input, setInput] = useState('')
   const [isListening, setIsListening] = useState(false)
+  const [voiceAudioActive, setVoiceAudioActive] = useState(true)
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -2266,12 +3013,27 @@ function AIView() {
     if (el) el.scrollTop = el.scrollHeight
   }, [messages])
 
+  const speakText = (text: string) => {
+    if (!voiceAudioActive || typeof window === 'undefined' || !('speechSynthesis' in window)) return
+    window.speechSynthesis.cancel()
+    // Take first 2 sentences for concise executive briefing
+    const shortText = text.split('\n')[0].replace(/[•*]/g, '').slice(0, 180)
+    const utterance = new SpeechSynthesisUtterance(shortText)
+    utterance.rate = 1.05
+    utterance.pitch = 1.0
+    utterance.onstart = () => setIsSpeaking(true)
+    utterance.onend = () => setIsSpeaking(false)
+    utterance.onerror = () => setIsSpeaking(false)
+    window.speechSynthesis.speak(utterance)
+  }
+
   const send = (text: string) => {
     const q = text.trim()
     if (!q) return
     const reply = answerQuery(q)
     setMessages((m) => [...m, { role: 'user', text: q }, { role: 'bot', text: reply }])
     setInput('')
+    speakText(reply)
   }
 
   const handleVoice = () => {
@@ -2325,7 +3087,33 @@ function AIView() {
       </div>
 
       <div className="ai-chat-card">
-        <div className="ai-chat-header"><span className="ai-chat-dot" /> Live Drishti AI Feed · 1,775 Monitored Ongoing Projects</div>
+        <div className="ai-chat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="ai-chat-dot" />
+            <span>Live Drishti AI Feed · 1,813 Monitored National Projects</span>
+            {isSpeaking && (
+              <span className="voice-wave" title="Drishti AI is speaking">
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+                <span className="voice-wave-bar" />
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            className={`voice-speaker-btn ${voiceAudioActive ? 'active' : ''}`}
+            onClick={() => {
+              if (isSpeaking && typeof window !== 'undefined') window.speechSynthesis.cancel()
+              setIsSpeaking(false)
+              setVoiceAudioActive(!voiceAudioActive)
+            }}
+            title={voiceAudioActive ? 'Voice output enabled' : 'Voice output muted'}
+          >
+            {voiceAudioActive ? <Volume2 size={13} /> : <VolumeX size={13} />}
+            <span>{voiceAudioActive ? 'Voice Audio ON' : 'Muted'}</span>
+          </button>
+        </div>
         <div className="ai-chat-body" ref={bodyRef}>
           {messages.map((m, i) => (
             <div key={i} className={`ai-msg ${m.role}`}>
