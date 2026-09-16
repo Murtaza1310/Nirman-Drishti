@@ -31,4 +31,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 backup_stable_v1/
+backup_pre_traffy/
+*.tsbuildinfo
 
