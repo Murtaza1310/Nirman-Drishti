@@ -4833,8 +4833,8 @@ body.dark-theme,
 
 .analytics-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
 @media (max-width: 900px) {
@@ -5817,3 +5817,72 @@ body.dark-theme .why-ai-btn:hover {
   background: #2563eb;
   color: #ffffff;
 }
+
+/* Enhancements for Collapsed Bottleneck Barometer & Compact Analysis Cards */
+.national-bottleneck-barometer.is-collapsed {
+  padding: 12px 18px;
+}
+
+.national-bottleneck-barometer.is-collapsed .nbb-header {
+  margin-bottom: 0;
+}
+
+.nbb-toggle-cards-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0284c7 !important;
+}
+
+.compact-summary-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.4fr) minmax(320px, 2fr) minmax(240px, 1.3fr);
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.compact-summary-card .ca-col {
+  padding: 8px 14px;
+}
+
+.compact-summary-card .ca-idrow {
+  margin-bottom: 4px;
+}
+
+.uf-pill-urgent {
+  border-color: #fca5a5 !important;
+  background: #fef2f2;
+  color: #991b1b;
+  font-weight: 700;
+}
+
+.uf-pill-urgent:hover {
+  background: #fee2e2;
+  border-color: #ef4444 !important;
+}
+
+body.dark-theme .national-bottleneck-barometer.is-collapsed {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+body.dark-theme .nbb-toggle-cards-btn {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-theme .nbb-toggle-cards-btn:hover {
+  background: #334155 !important;
+  color: #38bdf8 !important;
+}
+
+body.dark-theme .compact-summary-card {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+body.dark-theme .uf-pill-urgent {
+  background: #450a0a;
+  border-color: #7f1d1d !important;
+  color: #fca5a5;
+}
+

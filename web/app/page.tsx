@@ -90,17 +90,16 @@ import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps
 
 const navItems = [
   { label: 'Home', icon: Home },
-  { label: 'Projects', icon: LayoutGrid, active: true, badge: '1,775' },
+  { label: 'Projects', icon: LayoutGrid, active: true, badge: '1,813' },
   { label: 'Analysis', icon: BarChart3 },
   { label: 'Map', icon: Map },
   { label: 'AI', icon: Sparkles },
 ]
 
 const metrics = [
-  { label: 'ACTIVE ONGOING PROJECTS', value: '1,775', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
-  { label: 'HISTORICAL AI ARCHIVE', value: '49,094', note: 'Audited National Infrastructure Repository', tag: '25-Year Corpus', icon: Landmark, tone: 'blue' },
-  { label: 'ON-TIME PROJECTS', value: '11', note: 'Executing within baseline target', tag: 'On Schedule', icon: CircleCheck, tone: 'green' },
-  { label: 'DELAYED PROJECTS', value: '1,764', note: 'Running past original target deadline', tag: '99.4% Ratio', icon: Clock3, tone: 'orange' },
+  { label: 'ACTIVE ONGOING PROJECTS', value: '1,813', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
+  { label: 'ON-TIME PROJECTS', value: '187', note: 'Executing within baseline target', tag: 'On Schedule (10.3%)', icon: CircleCheck, tone: 'green' },
+  { label: 'DELAYED PROJECTS', value: '1,626', note: 'Running past original target deadline', tag: '89.7% Ratio', icon: Clock3, tone: 'orange' },
   { label: 'TOTAL APPROVED BUDGET', value: '₹ 40.57 Lakh Cr', note: 'Officially sanctioned capital outlay', tag: 'Sanctioned', icon: CircleDollarSign, tone: 'blue' },
   { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
 ]
@@ -126,7 +125,7 @@ const sectorOptions = ['All', ...allUniqueSectors]
 
 const NATIONAL_PORTFOLIO_DOSSIER: Project = {
   id: 'NAT-PORTFOLIO-2026',
-  name: 'National Infrastructure Portfolio (1,775 Active Mega-Projects Overview)',
+  name: 'National Infrastructure Portfolio (1,813 Active Mega-Projects Overview)',
   state: 'All 28 States & 8 Union Territories',
   risk: 'High',
   type: 'Delayed',
@@ -241,6 +240,7 @@ interface FilterState {
   Type: string
   Ministry: string
   Sector: string
+  urgentOnly?: boolean
 }
 
 const DEFAULT_FILTERS: FilterState = {
@@ -249,6 +249,7 @@ const DEFAULT_FILTERS: FilterState = {
   Type: 'All',
   Ministry: 'All',
   Sector: 'All',
+  urgentOnly: false,
 }
 
 function UnifiedFilterBar({
@@ -264,6 +265,8 @@ function UnifiedFilterBar({
   highRiskCount,
   delayedCount,
   onScheduleCount,
+  urgentCount = 0,
+  onToggleUrgent,
   placeholder = "Search projects by name, ID, ministry, state...",
 }: {
   search: string
@@ -278,6 +281,8 @@ function UnifiedFilterBar({
   highRiskCount: number
   delayedCount: number
   onScheduleCount: number
+  urgentCount?: number
+  onToggleUrgent?: () => void
   placeholder?: string
 }) {
   const [popoverOpen, setPopoverOpen] = useState(false)
@@ -336,16 +341,26 @@ function UnifiedFilterBar({
 
         <div className="uf-quick-pills">
           <button
-            className={`uf-pill ${(filters.Risk === 'All' && filters.Type === 'All') ? 'active' : ''}`}
+            className={`uf-pill ${(filters.Risk === 'All' && filters.Type === 'All' && !filters.urgentOnly) ? 'active' : ''}`}
             onClick={() => {
               onFilterChange('Risk', 'All')
               onFilterChange('Type', 'All')
+              if (filters.urgentOnly && onToggleUrgent) onToggleUrgent()
             }}
           >
             All <span className="uf-pill-badge">{totalCount}</span>
           </button>
           <button
-            className={`uf-pill ${filters.Risk === 'High' ? 'active' : ''}`}
+            type="button"
+            className={`uf-pill uf-pill-urgent ${filters.urgentOnly ? 'active' : ''}`}
+            onClick={onToggleUrgent}
+            style={filters.urgentOnly ? { background: '#ef4444', color: '#ffffff', borderColor: '#dc2626' } : {}}
+            title="Immediate Attention: High Risk projects delayed 24+ months"
+          >
+            <span style={{ color: filters.urgentOnly ? '#ffffff' : '#ef4444' }}>🚨</span> Urgent Attention <span className="uf-pill-badge" style={filters.urgentOnly ? { background: '#ffffff', color: '#ef4444' } : {}}>{urgentCount}</span>
+          </button>
+          <button
+            className={`uf-pill ${filters.Risk === 'High' && !filters.urgentOnly ? 'active' : ''}`}
             onClick={() => {
               onFilterChange('Risk', filters.Risk === 'High' ? 'All' : 'High')
             }}
@@ -353,7 +368,7 @@ function UnifiedFilterBar({
             <span style={{ color: '#ef4444' }}>●</span> High Risk <span className="uf-pill-badge">{highRiskCount}</span>
           </button>
           <button
-            className={`uf-pill ${filters.Type === 'Delayed' ? 'active' : ''}`}
+            className={`uf-pill ${filters.Type === 'Delayed' && !filters.urgentOnly ? 'active' : ''}`}
             onClick={() => {
               onFilterChange('Type', filters.Type === 'Delayed' ? 'All' : 'Delayed')
             }}
@@ -361,7 +376,7 @@ function UnifiedFilterBar({
             <Clock3 size={13} /> Delayed <span className="uf-pill-badge">{delayedCount}</span>
           </button>
           <button
-            className={`uf-pill ${filters.Type === 'On Schedule' ? 'active' : ''}`}
+            className={`uf-pill ${filters.Type === 'On Schedule' && !filters.urgentOnly ? 'active' : ''}`}
             onClick={() => {
               onFilterChange('Type', filters.Type === 'On Schedule' ? 'All' : 'On Schedule')
             }}
@@ -670,27 +685,7 @@ function NationalVisualAnalytics() {
           </div>
         </div>
 
-        {/* Portfolio Health Dial Gauge (SVG) */}
-        <div className="health-gauge-wrap">
-          <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
-            PORTFOLIO HEALTH SPEEDOMETER
-          </div>
-          <svg width="180" height="95" viewBox="0 0 180 95">
-            {/* Background Arc */}
-            <path d="M 15 85 A 75 75 0 0 1 165 85" fill="none" stroke="#e2e8f0" strokeWidth="14" strokeLinecap="round" />
-            {/* Colored Segment Arcs */}
-            <path d="M 15 85 A 75 75 0 0 1 65 25" fill="none" stroke="#ef4444" strokeWidth="14" strokeLinecap="round" />
-            <path d="M 65 25 A 75 75 0 0 1 115 25" fill="none" stroke="#f59e0b" strokeWidth="14" />
-            <path d="M 115 25 A 75 75 0 0 1 165 85" fill="none" stroke="#10b981" strokeWidth="14" strokeLinecap="round" />
-            {/* Gauge Needle pointing to 68.4% */}
-            <line x1="90" y1="85" x2="118" y2="34" stroke="#0f172a" strokeWidth="3" strokeLinecap="round" />
-            <circle cx="90" cy="85" r="6" fill="#0f172a" />
-          </svg>
-          <div style={{ fontSize: '16px', fontWeight: 800, color: '#0b2f52', marginTop: '-4px' }}>
-            68.4 <span style={{ fontSize: '11px', color: '#64748b' }}>/ 100 Index</span>
-          </div>
-          <span style={{ fontSize: '11px', color: '#b45309', fontWeight: 700 }}>Moderate · 142 Interventions Required</span>
-        </div>
+
 
         {/* Ministry Delivery Velocity Leaderboard */}
         <div>
@@ -1282,6 +1277,7 @@ export default function Page() {
       if (filters.Type !== 'All' && project.type !== filters.Type) return false
       if (filters.Ministry !== 'All' && project.ministry !== filters.Ministry) return false
       if (filters.Sector !== 'All' && project.sector !== filters.Sector) return false
+      if (filters.urgentOnly && (project.risk !== 'High' || (project.overrunMonths ?? 0) < 24)) return false
       if (activeBottleneck) {
         const bText = `${project.criticalIssue || ''} ${project.flagshipDetails?.bottleneck || ''} ${project.flagshipDetails?.bottleneckDesc || ''}`.toLowerCase()
         if (activeBottleneck === 'land' && !/(land|acquisition|row|possession|compensation|rehabilitation)/.test(bText)) return false
@@ -1303,9 +1299,10 @@ export default function Page() {
   const totalHighRiskCount = useMemo(() => projects.filter((p) => p.risk === 'High').length, [])
   const totalDelayedCount = useMemo(() => projects.filter((p) => p.type === 'Delayed').length, [])
   const totalOnScheduleCount = useMemo(() => projects.filter((p) => p.type === 'On Schedule').length, [])
+  const totalUrgentCount = useMemo(() => projects.filter((p) => p.risk === 'High' && (p.overrunMonths ?? 0) >= 24).length, [])
 
   const projectFiltersActive =
-    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== ''
+    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== '' || Boolean(filters.urgentOnly) || activeBottleneck !== null
 
   const handleNav = (nav: string) => {
     setActiveNav(nav)
@@ -1331,21 +1328,6 @@ export default function Page() {
           </div>
         </div>
         <div className="top-actions">
-          <button
-            className="pg-btn"
-            style={{ height: '36px', fontSize: '11.5px', gap: '6px', padding: '0 12px' }}
-            onClick={() => setSpotlightOpen(true)}
-            title="Open Quick Actions (Ctrl + K)"
-          >
-            <Search size={13} /> Quick Actions <kbd className="spotlight-kbd">⌘K</kbd>
-          </button>
-          <button
-            className="demo-pitch-btn"
-            onClick={() => setDemoTourOpen(true)}
-            title="Start 60-Second Minister Pitch (Live Demo Tour)"
-          >
-            <Sparkles size={14} /> 60s Minister Pitch
-          </button>
           <button 
             className="export-briefing-btn" 
             onClick={() => setBriefingModalProject(NATIONAL_PORTFOLIO_DOSSIER)}
@@ -1362,9 +1344,6 @@ export default function Page() {
             {isDarkTheme ? <Sun size={17} /> : <Moon size={17} />}
           </button>
           <span className="updated"><i /> Live: Sep 2026</span>
-          <button className="avatar" aria-label="Profile">R</button>
-          <button className="chevron-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu"><ChevronDown size={16} /></button>
-          {menuOpen && <div className="top-menu">Profile<br />Settings<br />Sign out</div>}
         </div>
       </header>
       <div className="body-layout">
@@ -1426,7 +1405,9 @@ export default function Page() {
                 highRiskCount={totalHighRiskCount}
                 delayedCount={totalDelayedCount}
                 onScheduleCount={totalOnScheduleCount}
-                placeholder="Search 1,775 national projects by name, ID, ministry, location..."
+                urgentCount={totalUrgentCount}
+                onToggleUrgent={() => setFilters((f) => ({ ...f, urgentOnly: !f.urgentOnly }))}
+                placeholder="Search 1,813 national projects by name, ID, ministry, location..."
               />
 
               {!projectFiltersActive && (
@@ -1454,7 +1435,7 @@ export default function Page() {
               />
 
               <div className="section-heading" ref={projectsListTopRef}>
-                <strong>{projectFiltersActive ? 'Filtered Portfolio Results' : 'Active Ongoing National Initiatives'}</strong>
+                <strong>{projectFiltersActive ? 'Filtered Portfolio Results' : 'ALL INDIA PROJECTS'}</strong>
                 <span>Showing page {projectPage} of {totalProjectPages} ({filteredProjects.length.toLocaleString()} Total Matches)</span>
               </div>
 
@@ -1563,6 +1544,13 @@ export default function Page() {
       )}
 
       {/* 60-Second Minister Pitch Demo Tour Modal */}
+      {evidenceLockerProject && (
+        <EvidenceLockerModal
+          project={evidenceLockerProject}
+          onClose={() => setEvidenceLockerProject(null)}
+        />
+      )}
+
       {demoTourOpen && (
         <DemoTourModal
           onClose={() => setDemoTourOpen(false)}
@@ -1823,67 +1811,111 @@ function DynamicNationalBottleneckBarometer({
   selectedCategory?: string | null
   onSelectCategory: (catId: string | null) => void
 }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const bottlenecks = useMemo(() => computeDynamicBottlenecks(projects), [projects])
   const total = projects.length
 
   return (
-    <div className="national-bottleneck-barometer">
-      <div className="nbb-header">
+    <div className={`national-bottleneck-barometer ${isExpanded ? 'is-expanded' : 'is-collapsed'}`}>
+      <div className="nbb-header" style={{ marginBottom: isExpanded ? '14px' : '0' }}>
         <div className="nbb-header-left">
           <span className="nbb-pulse-dot" />
           <strong className="nbb-title">DYNAMIC NATIONAL BOTTLENECK ANALYSIS</strong>
-          <span className="nbb-subtitle">Live aggregated across {total.toLocaleString()} active filtered projects</span>
+          <span className="nbb-subtitle">Live aggregated across {total.toLocaleString()} projects</span>
         </div>
-        {selectedCategory && (
-          <button 
+
+        <div className="nbb-controls" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '11.5px', fontWeight: 600, color: '#64748b' }}>Select Roadblock View:</span>
+            <select
+              className="uf-select"
+              style={{ padding: '4px 10px', height: '30px', fontSize: '12px', minWidth: '175px' }}
+              value={selectedCategory || ''}
+              onChange={(e) => onSelectCategory(e.target.value ? e.target.value : null)}
+              aria-label="Filter by Bottleneck Category"
+            >
+              <option value="">All Roadblocks (5 Categories)</option>
+              {bottlenecks.map((b) => (
+                <option key={b.id} value={b.id}>{b.label} ({b.count} projects · {b.percentage}%)</option>
+              ))}
+            </select>
+          </div>
+
+          <button
             type="button"
-            className="nbb-clear-btn"
-            onClick={() => onSelectCategory(null)}
+            className="nbb-toggle-cards-btn"
+            onClick={() => setIsExpanded(!isExpanded)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '4px 10px',
+              height: '30px',
+              fontSize: '11.5px',
+              fontWeight: 600,
+              background: '#f8fafc',
+              border: '1px solid #cbd5e1',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              color: '#0f172a'
+            }}
           >
-            Clear Bottleneck Filter (Show All)
+            {isExpanded ? 'Hide Visual Cards ▲' : 'Show Visual Cards ▼'}
           </button>
-        )}
+
+          {selectedCategory && (
+            <button 
+              type="button"
+              className="nbb-clear-btn"
+              onClick={() => onSelectCategory(null)}
+            >
+              Clear Filter
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="nbb-grid">
-        {bottlenecks.map((b) => {
-          const isSelected = selectedCategory === b.id
-          return (
-            <div
-              key={b.id}
-              className={`nbb-card ${isSelected ? 'selected' : ''}`}
-              onClick={() => onSelectCategory(isSelected ? null : b.id)}
-              role="button"
-              tabIndex={0}
-              title={`Click to filter projects affected by ${b.label}`}
-            >
-              <div className="nbb-card-top">
-                <span className="nbb-card-icon" style={{ backgroundColor: `${b.color}18`, color: b.color }}>
-                  {b.id === 'land' && <Building size={16} />}
-                  {b.id === 'environment' && <Trees size={16} />}
-                  {b.id === 'funding' && <Coins size={16} />}
-                  {b.id === 'contractor' && <HardHat size={16} />}
-                  {b.id === 'utility' && <Zap size={16} />}
-                </span>
-                <span className="nbb-count-pill" style={{ borderColor: b.color, color: b.color }}>
-                  {b.count} Projects
-                </span>
+      {isExpanded && (
+        <div className="nbb-grid">
+          {bottlenecks.map((b) => {
+            const isSelected = selectedCategory === b.id
+            return (
+              <div
+                key={b.id}
+                className={`nbb-card ${isSelected ? 'selected' : ''}`}
+                onClick={() => onSelectCategory(isSelected ? null : b.id)}
+                role="button"
+                tabIndex={0}
+                title={`Click to filter projects affected by ${b.label}`}
+              >
+                <div className="nbb-card-top">
+                  <span className="nbb-card-icon" style={{ backgroundColor: `${b.color}18`, color: b.color }}>
+                    {b.id === 'land' && <Building size={16} />}
+                    {b.id === 'environment' && <Trees size={16} />}
+                    {b.id === 'funding' && <Coins size={16} />}
+                    {b.id === 'contractor' && <HardHat size={16} />}
+                    {b.id === 'utility' && <Zap size={16} />}
+                  </span>
+                  <span className="nbb-count-pill" style={{ borderColor: b.color, color: b.color }}>
+                    {b.count} Projects
+                  </span>
+                </div>
+                <div className="nbb-label">{b.label}</div>
+                <div className="nbb-stat-row">
+                  <span className="nbb-pct">{b.percentage}% of portfolio</span>
+                  <span className="nbb-impact">+{b.avgDelayMonths} mo avg delay</span>
+                </div>
+                <div className="nbb-bar-track">
+                  <div 
+                    className="nbb-bar-fill" 
+                    style={{ width: `${Math.max(6, b.percentage)}%`, backgroundColor: b.color }} 
+                  />
+                </div>
               </div>
-              <div className="nbb-label">{b.label}</div>
-              <div className="nbb-stat-row">
-                <span className="nbb-pct">{b.percentage}% of portfolio</span>
-                <span className="nbb-impact">+{b.avgDelayMonths} mo avg delay</span>
-              </div>
-              <div className="nbb-bar-track">
-                <div 
-                  className="nbb-bar-fill" 
-                  style={{ width: `${Math.max(6, b.percentage)}%`, backgroundColor: b.color }} 
-                />
-              </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -1894,6 +1926,12 @@ function SatelliteGroundRealityWidget({ p }: { p: UnifiedProject }) {
 
   return (
     <div className={`sat-reality-box ${s.hasDiscrepancy ? 'discrepancy' : 'aligned'}`}>
+      <div className="sat-source-callout" style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '10px 12px', marginBottom: '12px', fontSize: '11.5px', color: '#0369a1', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+        <Radar size={15} style={{ flexShrink: 0, marginTop: '2px', color: '#0284c7' }} />
+        <div>
+          <strong>🛰️ Independent Satellite Telemetry Source:</strong> Automated earth observation feeds via <b>ISRO Bhuvan Remote Sensing</b> and <b>Copernicus Sentinel-2 Optical/SAR Earth Observation</b> satellites. Computer vision algorithms evaluate actual earthwork physical footprint and site activity to cross-verify against contractor PAIMANA claims.
+        </div>
+      </div>
       <div className="sat-reality-header">
         <div className="sat-reality-title">
           <Radar size={16} color={s.hasDiscrepancy ? '#dc2626' : '#16a34a'} />
@@ -2554,6 +2592,7 @@ function AnalysisView({
       if (filters.Type !== 'All' && p.type !== filters.Type) return false
       if (filters.Ministry !== 'All' && p.ministry !== filters.Ministry) return false
       if (filters.Sector !== 'All' && p.sector !== filters.Sector) return false
+      if (filters.urgentOnly && (p.risk !== 'High' || (p.overrunMonths ?? 0) < 24)) return false
       if (selectedBottleneck) {
         const bText = `${p.criticalIssue || ''} ${p.flagshipDetails?.bottleneck || ''} ${p.flagshipDetails?.bottleneckDesc || ''}`.toLowerCase()
         if (selectedBottleneck === 'land' && !/(land|acquisition|row|possession|compensation|rehabilitation)/.test(bText)) return false
@@ -2575,9 +2614,10 @@ function AnalysisView({
   const totalHighRiskCount = useMemo(() => projects.filter((p) => p.risk === 'High').length, [])
   const totalDelayedCount = useMemo(() => projects.filter((p) => p.type === 'Delayed').length, [])
   const totalOnScheduleCount = useMemo(() => projects.filter((p) => p.type === 'On Schedule').length, [])
+  const totalUrgentCount = useMemo(() => projects.filter((p) => p.risk === 'High' && (p.overrunMonths ?? 0) >= 24).length, [])
 
   const filtersActive =
-    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== ''
+    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== '' || Boolean(filters.urgentOnly)
 
   return (
     <div className="analysis-view">
@@ -2594,6 +2634,8 @@ function AnalysisView({
         highRiskCount={totalHighRiskCount}
         delayedCount={totalDelayedCount}
         onScheduleCount={totalOnScheduleCount}
+        urgentCount={totalUrgentCount}
+        onToggleUrgent={() => setFilters((f) => ({ ...f, urgentOnly: !f.urgentOnly }))}
         placeholder="Search analysis by project name, bottleneck, root cause, state..."
       />
       
@@ -2620,7 +2662,7 @@ function AnalysisView({
               <div className="pa-card">
                 <div className="pa-head">
                   <div className="pa-head-left">
-                    <div className="analysis-back" style={{ color: '#0757a0', fontWeight: 700 }}><ArrowLeft size={14} /> Portfolio Analysis</div>
+                    <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#0284c7", letterSpacing: "0.05em" }}>National Portfolio Deep-Dive</span>
                     <h2 className="pa-title">India Infrastructure Portfolio Early Warning Dashboard</h2>
                     <span className="pa-id">IND-PORTFOLIO-2026</span>
                   </div>
@@ -2663,7 +2705,7 @@ function AnalysisView({
       />
 
       <div className="section-heading" ref={analysisListTopRef}>
-        <strong>{filtersActive ? 'Filtered Predictive Analysis' : 'National Infrastructure Predictive Deep-Dive'}</strong>
+        <strong>{filtersActive ? 'Filtered Predictive Analysis' : 'ALL INDIA PROJECTS'}</strong>
         <span>Showing page {analysisPage} of {totalAnalysisPages} ({filtered.length.toLocaleString()} Total Matches)</span>
       </div>
       {filtered.length > 0 ? (
@@ -2739,7 +2781,7 @@ function CompactAnalysisCard({
   const statusClass = onTrack ? 'ca-status-ok' : p.type === 'High Risk' ? 'ca-status-risk' : 'ca-status-bad'
 
   return (
-    <article className="ca-card">
+    <article className="ca-card compact-summary-card">
       <div className="ca-col ca-identity">
         <div className="ca-idrow">
           <span className="ca-icon"><Share2 size={16} /></span>
@@ -2748,32 +2790,17 @@ function CompactAnalysisCard({
             <span className="ca-id">{p.id}</span>
           </div>
         </div>
-        <div className="ca-meta">
-          <div className="ca-meta-item"><Landmark size={14} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">{p.ministry}</span></div></div>
-          <div className="ca-meta-item"><Share2 size={14} /><div><span className="ca-meta-label">Sector</span><span className="ca-meta-val">{p.sector}</span></div></div>
-          <div className="ca-meta-item"><MapPin size={14} /><div><span className="ca-meta-label">States</span><span className="ca-meta-val">{p.state}</span></div></div>
-          <div className="ca-meta-item"><CalendarDays size={14} /><div><span className="ca-meta-label">Announced</span><span className="ca-meta-val">{p.announcedDate || p.approvalDate || 'March 2019'}</span></div></div>
-          <div className="ca-meta-item"><Activity size={14} /><div><span className="ca-meta-label">Work Started</span><span className="ca-meta-val">{p.workStartDate || 'October 2019'}</span></div></div>
+        <div className="ca-meta" style={{ marginTop: '4px' }}>
+          <div className="ca-meta-item"><Landmark size={13} /><div><span className="ca-meta-label">Ministry</span><span className="ca-meta-val">{p.ministry}</span></div></div>
+          <div className="ca-meta-item"><MapPin size={13} /><div><span className="ca-meta-label">State</span><span className="ca-meta-val">{p.state}</span></div></div>
         </div>
       </div>
 
-      <div className="ca-col ca-facts">
+      <div className="ca-col ca-facts" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', gap: '16px' }}>
         <div className="ca-fact">
-          <span className="ca-fact-label">Original Sanctioned Cost</span>
+          <span className="ca-fact-label">Sanctioned Outlay</span>
           <strong className="ca-fact-val">{budgets.sanctionedCost}</strong>
-          <small className="ca-fact-note">Approved Baseline</small>
-        </div>
-        <div className="ca-fact">
-          <span className="ca-fact-label">Anticipated/Revised Cost</span>
-          <strong className="ca-fact-val">{budgets.revisedCost}</strong>
-          <small className={`ca-fact-note ${budgets.hasOverrun ? 'pa-red' : 'pa-green'}`}>
-            {budgets.hasOverrun ? `+${budgets.costOverrunPct}% Escalation` : 'Protected (0% Escalation)'}
-          </small>
-        </div>
-        <div className="ca-fact">
-          <span className="ca-fact-label">Expenditure to Date</span>
-          <strong className="ca-fact-val pa-green">{budgets.spentCost}</strong>
-          <small className="ca-fact-note pa-green">{budgets.financialProgress}% Disbursed</small>
+          <small className="ca-fact-note">{budgets.financialProgress}% Disbursed</small>
         </div>
         <div className="ca-fact ca-fact-progress">
           <span className="ca-fact-label">Physical Progress</span>
@@ -2788,8 +2815,8 @@ function CompactAnalysisCard({
         </div>
       </div>
 
-      <div className="ca-col ca-side">
-        <div className="ca-side-top">
+      <div className="ca-col ca-side" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px' }}>
+        <div className="ca-side-top" style={{ justifyContent: 'space-between' }}>
           <span className={`ca-status ${statusClass}`}>{!onTrack && <AlertTriangle size={12} />} {p.type}</span>
           {p.freshness && (
             <span className={`freshness-badge ${p.freshness.badgeClass}`} title={p.freshness.statusMessage}>
@@ -2797,49 +2824,32 @@ function CompactAnalysisCard({
               {p.freshness.label}
             </span>
           )}
-          <MLTooltip title="Drishti AI ML Risk Profile" text={riskProfile.explanation}>
-            <span className="ca-risk" style={{ cursor: 'help' }}>
-              Risk: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100) <Info size={11} className="ml-info-btn" />
-            </span>
-          </MLTooltip>
+          <span className="ca-risk">
+            Risk: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100)
+          </span>
         </div>
-        <div className="ca-ai">
-          <div className="ca-ai-head"><Brain size={13} /> AI Prediction</div>
-          <div className="ca-ai-grid">
-            <div className="ca-ai-item">
-              <span className="ca-ai-label">Schedule Slippage Expected</span>
-              <strong className={onTrack ? 'pa-green' : 'pa-red'}>{riskProfile.predictedExtraDelay}</strong>
-            </div>
-            <div className="ca-ai-item">
-              <span className="ca-ai-label">Anticipated Cost Variance</span>
-              <strong className={budgets.hasOverrun ? 'pa-orange' : 'pa-green'}>{riskProfile.estimatedExtraCost}</strong>
-            </div>
-            <div className="ca-ai-item">
-              <span className="ca-ai-label">Delay Probability</span>
-              <strong className="pa-navy">{riskProfile.delayProbability}%</strong>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
           {onOpenEvidenceLocker && (
             <button 
               type="button" 
               className="why-ai-btn" 
-              style={{ width: '100%', justifyContent: 'center' }}
+              style={{ fontSize: '11px', padding: '6px 10px' }}
               onClick={() => onOpenEvidenceLocker(p)}
               title="View verified 4-point evidence audit trail"
             >
-              <ShieldCheck size={13} /> Why did AI say this? [Evidence Locker]
+              <ShieldCheck size={12} /> Why AI?
             </button>
           )}
-          <button className="ca-view-btn" style={{ flex: 1 }} onClick={onOpen}>View Analysis &amp; Test Solutions <ArrowRight size={14} /></button>
+          <button className="ca-view-btn" style={{ flex: 1, padding: '7px 12px' }} onClick={onOpen}>
+            View Analysis &amp; Solutions <ArrowRight size={13} />
+          </button>
           {onToggleCompare && (
             <button
               type="button"
               className={`compare-toggle-btn ${isCompared ? 'selected' : ''}`}
               onClick={onToggleCompare}
               title="Compare project"
-              style={{ height: '36px' }}
+              style={{ height: '32px', width: '32px', padding: 0 }}
             >
               <Scale size={13} />
             </button>
@@ -2915,7 +2925,7 @@ function ProjectAnalysisCard({
     <article className="pa-card">
       <div className="pa-head">
         <div className="pa-head-left">
-          <div className="analysis-back" style={{ color: '#0757a0', fontWeight: 700 }}><ArrowLeft size={14} /> Flagship Project In-Depth Analysis</div>
+          <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#0284c7", letterSpacing: "0.05em" }}>Flagship Project Deep-Dive</span>
           <h2 className="pa-title">{p.name}</h2>
           <span className="pa-id">{p.id}</span>
         </div>
