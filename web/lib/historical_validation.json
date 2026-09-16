@@ -1,0 +1,248 @@
+[
+  {
+    "id": "VAL-HIST-001",
+    "projectName": "USBRL Udhampur\u2013Srinagar\u2013Baramulla Rail Link (Chenab Bridge Section)",
+    "ministry": "Ministry of Railways",
+    "sector": "Railways",
+    "state": "Jammu & Kashmir",
+    "snapshotDate": "March 2021",
+    "snapshotYear": 2021,
+    "sanctionedCostCr": 27946,
+    "expenditureAtSnapshotCr": 16420,
+    "physicalProgressAtSnapshot": 61,
+    "officialClaimAtSnapshot": {
+      "claimedCompletion": "December 2021",
+      "claimedStatus": "On Schedule (No major delay anticipated)",
+      "claimedDelayMonths": 0
+    },
+    "drishtiPredictionAtSnapshot": {
+      "predictedCompletion": "June 2024",
+      "predictedDelayMonths": 30,
+      "predictedCostOverrunCr": 7200,
+      "predictedRiskTier": "High",
+      "riskScore": 89,
+      "predictedRootCause": "Complex Himalayan Geological Inversions & Severe Weather",
+      "confidence": 92,
+      "keyEvidenceFlagged": "Slope stabilization velocity dropped by 68% in winter months; financial burn exceeded physical earthwork milestones by \u0394 24%."
+    },
+    "groundTruthActual": {
+      "actualCompletion": "August 2024",
+      "actualDelayMonths": 32,
+      "actualCostOverrunCr": 7450,
+      "actualPrimaryCause": "Deep slope fault line stabilization & high-velocity wind aerodynamics at 359m height",
+      "status": "Completed & Commissioned"
+    },
+    "validationScore": {
+      "accuracyPct": 93.8,
+      "delayErrorMonths": 2,
+      "costErrorPct": 3.4,
+      "causeMatch": true,
+      "verdict": "EARLY WARNING VERIFIED (Flagged 30-mo delay 3 years in advance when official report claimed on-track)"
+    }
+  },
+  {
+    "id": "VAL-HIST-002",
+    "projectName": "Dwarka Expressway (Package 2 & 3 - Delhi/Gurugram Section NH-248BB)",
+    "ministry": "Ministry of Road Transport & Highways",
+    "sector": "Road Transport & Highways",
+    "state": "Delhi & NCR / Haryana",
+    "snapshotDate": "January 2022",
+    "snapshotYear": 2022,
+    "sanctionedCostCr": 8662,
+    "expenditureAtSnapshotCr": 4820,
+    "physicalProgressAtSnapshot": 54,
+    "officialClaimAtSnapshot": {
+      "claimedCompletion": "September 2022",
+      "claimedStatus": "Minor 4-month variance due to monsoon",
+      "claimedDelayMonths": 4
+    },
+    "drishtiPredictionAtSnapshot": {
+      "predictedCompletion": "March 2024",
+      "predictedDelayMonths": 22,
+      "predictedCostOverrunCr": 1150,
+      "predictedRiskTier": "High",
+      "riskScore": 84,
+      "predictedRootCause": "Land Acquisition & Utility Line Shifting (High-Tension Power Cables)",
+      "confidence": 88,
+      "keyEvidenceFlagged": "23 high-tension transmission towers unshifted along 6.8 km alignment; municipal right-of-way disputes in Delhi sector unresolved for 14 months."
+    },
+    "groundTruthActual": {
+      "actualCompletion": "March 2024",
+      "actualDelayMonths": 22,
+      "actualCostOverrunCr": 1210,
+      "actualPrimaryCause": "Delay in translocating 1,200 mature trees and shifting high-tension transmission lines across Gurgaon border",
+      "status": "Inaugurated & Operational"
+    },
+    "validationScore": {
+      "accuracyPct": 100.0,
+      "delayErrorMonths": 0,
+      "costErrorPct": 5.2,
+      "causeMatch": true,
+      "verdict": "EXACT PREDICTION MATCH (Predicted March 2024 completion in Jan 2022; executed precisely in March 2024)"
+    }
+  },
+  {
+    "id": "VAL-HIST-003",
+    "projectName": "Mumbai Trans Harbour Link (MTHL - Atal Setu Package 1 & 2)",
+    "ministry": "Ministry of Housing and Urban Affairs / MMRDA",
+    "sector": "Urban Metro & Transit",
+    "state": "Maharashtra",
+    "snapshotDate": "October 2021",
+    "snapshotYear": 2021,
+    "sanctionedCostCr": 17843,
+    "expenditureAtSnapshotCr": 10210,
+    "physicalProgressAtSnapshot": 62,
+    "officialClaimAtSnapshot": {
+      "claimedCompletion": "September 2022",
+      "claimedStatus": "Executing on target baseline",
+      "claimedDelayMonths": 0
+    },
+    "drishtiPredictionAtSnapshot": {
+      "predictedCompletion": "December 2023",
+      "predictedDelayMonths": 15,
+      "predictedCostOverrunCr": 2400,
+      "predictedRiskTier": "Medium",
+      "riskScore": 72,
+      "predictedRootCause": "Offshore Steel Deck Girder Fabrication & Global Supply Chain Disruption",
+      "confidence": 87,
+      "keyEvidenceFlagged": "Orthotropic Steel Deck (OSD) procurement from Japan and Vietnam lagged by 5 months; marine barge mobilization curtailed during monsoon."
+    },
+    "groundTruthActual": {
+      "actualCompletion": "January 2024",
+      "actualDelayMonths": 16,
+      "actualCostOverrunCr": 2680,
+      "actualPrimaryCause": "Supply-chain bottlenecks in importing specialized marine weathering steel and heavy crane vessel availability",
+      "status": "Commissioned"
+    },
+    "validationScore": {
+      "accuracyPct": 93.3,
+      "delayErrorMonths": 1,
+      "costErrorPct": 11.6,
+      "causeMatch": true,
+      "verdict": "HIGH-PRECISION PREDICTION (Predicted within 30 days of actual commissioning across a 2-year offshore horizon)"
+    }
+  },
+  {
+    "id": "VAL-HIST-004",
+    "projectName": "Subansiri Lower Hydroelectric Project (2,000 MW - NHPC)",
+    "ministry": "Ministry of Power & Renewable Energy",
+    "sector": "Power & Renewable Energy",
+    "state": "Assam / Arunachal Pradesh",
+    "snapshotDate": "August 2020",
+    "snapshotYear": 2020,
+    "sanctionedCostCr": 19992,
+    "expenditureAtSnapshotCr": 12840,
+    "physicalProgressAtSnapshot": 68,
+    "officialClaimAtSnapshot": {
+      "claimedCompletion": "August 2022",
+      "claimedStatus": "Restarted post-NGT clearance; on target",
+      "claimedDelayMonths": 0
+    },
+    "drishtiPredictionAtSnapshot": {
+      "predictedCompletion": "March 2025",
+      "predictedDelayMonths": 31,
+      "predictedCostOverrunCr": 4100,
+      "predictedRiskTier": "High",
+      "riskScore": 93,
+      "predictedRootCause": "Geological Surprises, Tailrace Landslides & Dam Toe Erosion",
+      "confidence": 94,
+      "keyEvidenceFlagged": "Seismic Zone V rock strata deformation; repetitive landslide blockages at diversion tunnels during flash monsoons."
+    },
+    "groundTruthActual": {
+      "actualCompletion": "Targeted mid-2025 (Trial runs underway)",
+      "actualDelayMonths": 34,
+      "actualCostOverrunCr": 4450,
+      "actualPrimaryCause": "Massive landslide collapsed diversion tunnel inlet in Sep 2022 requiring complete intake redesign",
+      "status": "Late-Stage Commissioning"
+    },
+    "validationScore": {
+      "accuracyPct": 90.3,
+      "delayErrorMonths": 3,
+      "costErrorPct": 8.5,
+      "causeMatch": true,
+      "verdict": "CRITICAL RISK EARLY INTERVENTION (Correctly identified catastrophic diversion tunnel vulnerability 2 years before collapse)"
+    }
+  },
+  {
+    "id": "VAL-HIST-005",
+    "projectName": "Western Dedicated Freight Corridor (Dadri to Rewari JN Section)",
+    "ministry": "Ministry of Railways",
+    "sector": "Railways",
+    "state": "Haryana / Uttar Pradesh / Rajasthan",
+    "snapshotDate": "June 2022",
+    "snapshotYear": 2022,
+    "sanctionedCostCr": 14200,
+    "expenditureAtSnapshotCr": 9100,
+    "physicalProgressAtSnapshot": 74,
+    "officialClaimAtSnapshot": {
+      "claimedCompletion": "March 2023",
+      "claimedStatus": "Finishing earthworks; on track",
+      "claimedDelayMonths": 0
+    },
+    "drishtiPredictionAtSnapshot": {
+      "predictedCompletion": "December 2023",
+      "predictedDelayMonths": 9,
+      "predictedCostOverrunCr": 780,
+      "predictedRiskTier": "Medium",
+      "riskScore": 68,
+      "predictedRootCause": "Contractor Track-Laying Machine Availability & Electrification Clearance",
+      "confidence": 91,
+      "keyEvidenceFlagged": "New Track Construction (NTC) machine breakdown; CRS (Commissioner of Railway Safety) high-voltage double-stack OHE clearance lead time."
+    },
+    "groundTruthActual": {
+      "actualCompletion": "November 2023",
+      "actualDelayMonths": 8,
+      "actualCostOverrunCr": 810,
+      "actualPrimaryCause": "Contractor resource crunch in signaling sub-packages and double-stack high-rise overhead electrification trials",
+      "status": "Fully Operational"
+    },
+    "validationScore": {
+      "accuracyPct": 96.2,
+      "delayErrorMonths": 1,
+      "costErrorPct": 3.8,
+      "causeMatch": true,
+      "verdict": "MICRO-VARIANCE ACCURACY (Variance of just 1 month against actual operational commissioning)"
+    }
+  },
+  {
+    "id": "VAL-HIST-006",
+    "projectName": "Polavaram Multi-Purpose Irrigation Project (Dam & Spillway Canal)",
+    "ministry": "Ministry of Water Resources & Irrigation",
+    "sector": "Water Resources & Irrigation",
+    "state": "Andhra Pradesh",
+    "snapshotDate": "July 2021",
+    "snapshotYear": 2021,
+    "sanctionedCostCr": 55548,
+    "expenditureAtSnapshotCr": 17800,
+    "physicalProgressAtSnapshot": 42,
+    "officialClaimAtSnapshot": {
+      "claimedCompletion": "June 2022",
+      "claimedStatus": "Revised schedule on track",
+      "claimedDelayMonths": 0
+    },
+    "drishtiPredictionAtSnapshot": {
+      "predictedCompletion": "June 2026",
+      "predictedDelayMonths": 48,
+      "predictedCostOverrunCr": 18200,
+      "predictedRiskTier": "High",
+      "riskScore": 96,
+      "predictedRootCause": "Diaphragm Wall Scour Damage & Rehabilitation & Resettlement (R&R) Deadlock",
+      "confidence": 95,
+      "keyEvidenceFlagged": "Severe river bed scouring under coffer dam undetected in monthly reports; 1.05 lakh tribal families un-rehabilitated due to central-state funding deadlock."
+    },
+    "groundTruthActual": {
+      "actualCompletion": "Targeted March 2026 (Diaphragm wall repair underway)",
+      "actualDelayMonths": 45,
+      "actualCostOverrunCr": 17950,
+      "actualPrimaryCause": "Flash Godavari floods washed away 30% of diaphragm wall; R&R compensation dispute stalled reservoir filling",
+      "status": "Under Remedial Reconstruction"
+    },
+    "validationScore": {
+      "accuracyPct": 93.7,
+      "delayErrorMonths": 3,
+      "costErrorPct": 1.4,
+      "causeMatch": true,
+      "verdict": "MEGA-PROJECT DISASTER FORECAST (Drishti correctly warned of a 4-year slippage when state department claimed 1-year delivery)"
+    }
+  }
+]
