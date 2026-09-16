@@ -210,6 +210,404 @@ function useAnimatedView(target: MapViewport): MapViewport {
   return view
 }
 
+
+interface FilterState {
+  State: string
+  Risk: string
+  Type: string
+  Ministry: string
+  Sector: string
+}
+
+const DEFAULT_FILTERS: FilterState = {
+  State: 'All',
+  Risk: 'All',
+  Type: 'All',
+  Ministry: 'All',
+  Sector: 'All',
+}
+
+function UnifiedFilterBar({
+  search,
+  onSearchChange,
+  filters,
+  onFilterChange,
+  onReset,
+  stateOptions,
+  ministryOptions,
+  sectorOptions,
+  totalCount,
+  highRiskCount,
+  delayedCount,
+  onScheduleCount,
+  placeholder = "Search projects by name, ID, ministry, state...",
+}: {
+  search: string
+  onSearchChange: (v: string) => void
+  filters: FilterState
+  onFilterChange: (key: keyof FilterState, val: string) => void
+  onReset: () => void
+  stateOptions: string[]
+  ministryOptions: string[]
+  sectorOptions: string[]
+  totalCount: number
+  highRiskCount: number
+  delayedCount: number
+  onScheduleCount: number
+  placeholder?: string
+}) {
+  const [popoverOpen, setPopoverOpen] = useState(false)
+  const popoverRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setPopoverOpen(false)
+      }
+    }
+    if (popoverOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [popoverOpen])
+
+  const activeFilterCount =
+    (filters.State !== 'All' ? 1 : 0) +
+    (filters.Risk !== 'All' ? 1 : 0) +
+    (filters.Type !== 'All' ? 1 : 0) +
+    (filters.Ministry !== 'All' ? 1 : 0) +
+    (filters.Sector !== 'All' ? 1 : 0)
+
+  return (
+    <div className="unified-filter-container" ref={popoverRef}>
+      <div className="unified-filter-bar">
+        <div className="uf-search-wrap">
+          <Search size={16} />
+          <input
+            type="text"
+            className="uf-search-input"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder={placeholder}
+            aria-label="Search"
+          />
+          {search && (
+            <button className="uf-clear-btn" onClick={() => onSearchChange('')} title="Clear search">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+
+        <button
+          className={`uf-filter-btn ${activeFilterCount > 0 ? 'active' : ''}`}
+          onClick={() => setPopoverOpen((v) => !v)}
+          aria-expanded={popoverOpen}
+          aria-label="Filter options"
+        >
+          <SlidersHorizontal size={15} />
+          <span>Filters</span>
+          {activeFilterCount > 0 && <span className="uf-badge">{activeFilterCount}</span>}
+          <ChevronDown size={14} style={{ transform: popoverOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        </button>
+
+        <div className="uf-quick-pills">
+          <button
+            className={`uf-pill ${(filters.Risk === 'All' && filters.Type === 'All') ? 'active' : ''}`}
+            onClick={() => {
+              onFilterChange('Risk', 'All')
+              onFilterChange('Type', 'All')
+            }}
+          >
+            All <span className="uf-pill-badge">{totalCount}</span>
+          </button>
+          <button
+            className={`uf-pill ${filters.Risk === 'High' ? 'active' : ''}`}
+            onClick={() => {
+              onFilterChange('Risk', filters.Risk === 'High' ? 'All' : 'High')
+            }}
+          >
+            <span style={{ color: '#ef4444' }}>●</span> High Risk <span className="uf-pill-badge">{highRiskCount}</span>
+          </button>
+          <button
+            className={`uf-pill ${filters.Type === 'Delayed' ? 'active' : ''}`}
+            onClick={() => {
+              onFilterChange('Type', filters.Type === 'Delayed' ? 'All' : 'Delayed')
+            }}
+          >
+            <Clock3 size={13} /> Delayed <span className="uf-pill-badge">{delayedCount}</span>
+          </button>
+          <button
+            className={`uf-pill ${filters.Type === 'On Schedule' ? 'active' : ''}`}
+            onClick={() => {
+              onFilterChange('Type', filters.Type === 'On Schedule' ? 'All' : 'On Schedule')
+            }}
+          >
+            <CheckCircle2 size={13} style={{ color: '#10b981' }} /> On Track <span className="uf-pill-badge">{onScheduleCount}</span>
+          </button>
+        </div>
+      </div>
+
+      {popoverOpen && (
+        <div className="uf-popover" role="dialog" aria-label="Filter configuration">
+          <div className="uf-popover-head">
+            <div className="uf-popover-title">
+              <SlidersHorizontal size={16} /> Filter Projects Portfolio
+            </div>
+            <button className="uf-popover-close" onClick={() => setPopoverOpen(false)} aria-label="Close filters">
+              <X size={16} />
+            </button>
+          </div>
+
+          <div className="uf-popover-grid">
+            <div className="uf-field-group">
+              <label className="uf-field-label">State / UT</label>
+              <select
+                className="uf-select"
+                value={filters.State}
+                onChange={(e) => onFilterChange('State', e.target.value)}
+              >
+                {stateOptions.map((st) => (
+                  <option key={st} value={st}>{st === 'All' ? 'All States & UTs' : st}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="uf-field-group">
+              <label className="uf-field-label">Union Ministry</label>
+              <select
+                className="uf-select"
+                value={filters.Ministry}
+                onChange={(e) => onFilterChange('Ministry', e.target.value)}
+              >
+                {ministryOptions.map((m) => (
+                  <option key={m} value={m}>{m === 'All' ? 'All Ministries' : m}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="uf-field-group full-width">
+              <label className="uf-field-label">Infrastructure Sector</label>
+              <select
+                className="uf-select"
+                value={filters.Sector}
+                onChange={(e) => onFilterChange('Sector', e.target.value)}
+              >
+                {sectorOptions.map((s) => (
+                  <option key={s} value={s}>{s === 'All' ? 'All Sectors' : s}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="uf-field-group">
+              <label className="uf-field-label">AI Risk Level</label>
+              <div className="uf-radio-row">
+                {['All', 'High', 'Medium', 'Low'].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`uf-chip-radio ${filters.Risk === r ? 'active' : ''}`}
+                    onClick={() => onFilterChange('Risk', r)}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="uf-field-group">
+              <label className="uf-field-label">Schedule Status</label>
+              <div className="uf-radio-row">
+                {['All', 'On Schedule', 'Delayed'].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`uf-chip-radio ${filters.Type === t ? 'active' : ''}`}
+                    onClick={() => onFilterChange('Type', t)}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="uf-popover-footer">
+            <button className="uf-reset-btn" onClick={onReset}>
+              Reset All
+            </button>
+            <button className="uf-apply-btn" onClick={() => setPopoverOpen(false)}>
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Active Filter Tags */}
+      {(activeFilterCount > 0 || search.trim() !== '') && (
+        <div className="uf-active-tags">
+          <span style={{ fontSize: '11.5px', color: '#68829c', fontWeight: 600 }}>Active Filters:</span>
+          {search.trim() !== '' && (
+            <span className="uf-tag">
+              Search: "{search}"
+              <button className="uf-tag-close" onClick={() => onSearchChange('')} aria-label="Remove search filter">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          {filters.State !== 'All' && (
+            <span className="uf-tag">
+              State: {filters.State}
+              <button className="uf-tag-close" onClick={() => onFilterChange('State', 'All')} aria-label="Remove state filter">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          {filters.Ministry !== 'All' && (
+            <span className="uf-tag">
+              Ministry: {filters.Ministry}
+              <button className="uf-tag-close" onClick={() => onFilterChange('Ministry', 'All')} aria-label="Remove ministry filter">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          {filters.Sector !== 'All' && (
+            <span className="uf-tag">
+              Sector: {filters.Sector}
+              <button className="uf-tag-close" onClick={() => onFilterChange('Sector', 'All')} aria-label="Remove sector filter">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          {filters.Risk !== 'All' && (
+            <span className="uf-tag">
+              Risk: {filters.Risk}
+              <button className="uf-tag-close" onClick={() => onFilterChange('Risk', 'All')} aria-label="Remove risk filter">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          {filters.Type !== 'All' && (
+            <span className="uf-tag">
+              Status: {filters.Type}
+              <button className="uf-tag-close" onClick={() => onFilterChange('Type', 'All')} aria-label="Remove status filter">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          <button className="uf-clear-all-tag" onClick={onReset}>
+            Clear all
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PaginationBar({
+  currentPage,
+  totalPages,
+  totalItems,
+  pageSize = 6,
+  onPageChange,
+}: {
+  currentPage: number
+  totalPages: number
+  totalItems: number
+  pageSize?: number
+  onPageChange: (page: number) => void
+}) {
+  const [jumpInput, setJumpInput] = useState('')
+
+  const startIdx = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1
+  const endIdx = Math.min(currentPage * pageSize, totalItems)
+
+  const handleJump = () => {
+    const pageNum = parseInt(jumpInput, 10)
+    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+      onPageChange(pageNum)
+      setJumpInput('')
+    }
+  }
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      pages.push(1)
+      if (currentPage > 3) pages.push('...')
+      const start = Math.max(2, currentPage - 1)
+      const end = Math.min(totalPages - 1, currentPage + 1)
+      for (let i = start; i <= end; i++) pages.push(i)
+      if (currentPage < totalPages - 2) pages.push('...')
+      pages.push(totalPages)
+    }
+    return pages
+  }
+
+  if (totalItems === 0) return null
+
+  return (
+    <nav className="pagination-wrap" aria-label="Pagination">
+      <div className="pagination-info">
+        Showing <strong>{startIdx}–{endIdx}</strong> of <strong>{totalItems.toLocaleString()}</strong> projects (Page {currentPage} of {totalPages})
+      </div>
+
+      <div className="pagination-controls">
+        <button
+          className="pg-btn"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+          aria-label="Previous page"
+        >
+          <ChevronLeft size={16} /> Prev
+        </button>
+
+        {getPageNumbers().map((p, idx) => {
+          if (p === '...') {
+            return <span key={`ellipsis-${idx}`} className="pg-ellipsis">…</span>
+          }
+          return (
+            <button
+              key={`page-${p}`}
+              className={`pg-btn ${currentPage === p ? 'active' : ''}`}
+              onClick={() => onPageChange(Number(p))}
+              aria-current={currentPage === p ? 'page' : undefined}
+            >
+              {p}
+            </button>
+          )
+        })}
+
+        <button
+          className="pg-btn"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages}
+          aria-label="Next page"
+        >
+          Next <ChevronRight size={16} />
+        </button>
+      </div>
+
+      <div className="pagination-jump">
+        <span>Go to:</span>
+        <input
+          type="number"
+          min={1}
+          max={totalPages}
+          value={jumpInput}
+          onChange={(e) => setJumpInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleJump()}
+          placeholder={String(currentPage)}
+          className="pg-input"
+          aria-label="Jump to page"
+        />
+        <button className="pg-jump-btn" onClick={handleJump}>Go</button>
+      </div>
+    </nav>
+  )
+}
+
 export default function Page() {
   const [activeNav, setActiveNav] = useState('Home')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -226,63 +624,58 @@ export default function Page() {
 
   const [analysisSelectedId, setAnalysisSelectedId] = useState<string | null>(null)
 
-  const [filters, setFilters] = useState({ State: 'All', Risk: 'All', Type: 'All' })
-  const [groupMode, setGroupMode] = useState<'Ministry' | 'Sector'>('Sector')
-  const [groupValue, setGroupValue] = useState('All')
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
   const [search, setSearch] = useState('')
-  const [displayLimit, setDisplayLimit] = useState(36)
-
-  // Reset display limit when filter criteria change
-  useEffect(() => {
-    setDisplayLimit(36)
-  }, [filters.State, filters.Risk, filters.Type, groupValue, groupMode, search])
+  const [projectPage, setProjectPage] = useState(1)
+  const PROJECTS_PER_PAGE = 6
+  const projectsListTopRef = useRef<HTMLDivElement>(null)
 
 
 
   const resetAllFilters = () => {
-    setFilters({ State: 'All', Risk: 'All', Type: 'All' })
-    setGroupMode('Sector')
-    setGroupValue('All')
+    setFilters(DEFAULT_FILTERS)
     setSearch('')
+    setProjectPage(1)
   }
 
-  const setFilter = (label: keyof typeof filters, value: string) =>
-    setFilters((current) => ({ ...current, [label]: value }))
-
-  const switchGroupMode = (mode: 'Ministry' | 'Sector') => {
-    setGroupMode(mode)
-    setGroupValue('All')
+  const handleFilterChange = (key: keyof FilterState, val: string) => {
+    setFilters((c) => ({ ...c, [key]: val }))
+    setProjectPage(1)
   }
 
-  const groupOptions = groupMode === 'Ministry' ? ministryOptions : sectorOptions
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setProjectPage(1)
+  }
 
-  const filteredProjects = projects.filter((project) => {
-    const query = search.trim().toLowerCase()
-    const haystack = [project.name, project.id, project.state, project.risk, project.type, project.ministry, project.sector, project.criticalIssue].join(' ').toLowerCase()
-    if (query && !haystack.includes(query)) return false
-    if (filters.State !== 'All' && !project.state.includes(filters.State)) return false
-    if (filters.Risk !== 'All' && project.risk !== filters.Risk) return false
-    if (filters.Type !== 'All' && project.type !== filters.Type) return false
-    if (groupValue !== 'All') {
-      if (groupMode === 'Ministry' && project.ministry !== groupValue) return false
-      if (groupMode === 'Sector' && project.sector !== groupValue) return false
-    }
-    return true
-  })
-
-  // Infinite scroll listener for seamless scrolling through all 1,775 projects
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500) {
-        setDisplayLimit((prev) => (prev < filteredProjects.length ? Math.min(filteredProjects.length, prev + 36) : prev))
+  const filteredProjects = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return projects.filter((project) => {
+      if (q) {
+        const haystack = [project.name, project.id, project.state, project.risk, project.type, project.ministry, project.sector, project.criticalIssue].join(' ').toLowerCase()
+        if (!haystack.includes(q)) return false
       }
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [filteredProjects.length])
+      if (filters.State !== 'All' && !project.state.includes(filters.State)) return false
+      if (filters.Risk !== 'All' && project.risk !== filters.Risk) return false
+      if (filters.Type !== 'All' && project.type !== filters.Type) return false
+      if (filters.Ministry !== 'All' && project.ministry !== filters.Ministry) return false
+      if (filters.Sector !== 'All' && project.sector !== filters.Sector) return false
+      return true
+    })
+  }, [search, filters])
+
+  const totalProjectPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE) || 1
+  const paginatedProjects = useMemo(() => {
+    const start = (projectPage - 1) * PROJECTS_PER_PAGE
+    return filteredProjects.slice(start, start + PROJECTS_PER_PAGE)
+  }, [filteredProjects, projectPage])
+
+  const totalHighRiskCount = useMemo(() => projects.filter((p) => p.risk === 'High').length, [])
+  const totalDelayedCount = useMemo(() => projects.filter((p) => p.type === 'Delayed').length, [])
+  const totalOnScheduleCount = useMemo(() => projects.filter((p) => p.type === 'On Schedule').length, [])
 
   const projectFiltersActive =
-    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || groupValue !== 'All' || search.trim() !== ''
+    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== ''
 
   const handleNav = (nav: string) => {
     setActiveNav(nav)
@@ -364,29 +757,22 @@ export default function Page() {
             <AIView />
           ) : (
             <>
-              <div className="filter-row">
-                <FilterSelect label="State" value={filters.State} onChange={(value) => setFilter('State', value)} />
-                <FilterSelect label="Risk" value={filters.Risk} onChange={(value) => setFilter('Risk', value)} />
-                <FilterSelect label="Type" value={filters.Type} onChange={(value) => setFilter('Type', value)} />
-                <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search 1,775 active national infrastructure projects by name, ID, ministry..." aria-label="Search projects" /></label>
-                {projectFiltersActive && (
-                  <button className="map-reset" onClick={resetAllFilters} style={{ marginLeft: '4px' }}>
-                    Reset Filters
-                  </button>
-                )}
-              </div>
-              <div className="switch-row">
-                <div className="segmented" role="tablist" aria-label="Group projects by">
-                  <button className={`seg ${groupMode === 'Ministry' ? 'active' : ''}`} onClick={() => switchGroupMode('Ministry')} role="tab" aria-selected={groupMode === 'Ministry'}><Landmark size={14} /> Ministry</button>
-                  <button className={`seg ${groupMode === 'Sector' ? 'active' : ''}`} onClick={() => switchGroupMode('Sector')} role="tab" aria-selected={groupMode === 'Sector'}><Clock3 size={14} /> Sector</button>
-                </div>
-                <label className="sector-select-wrap">
-                  <select className="sector-select" value={groupValue} onChange={(event) => setGroupValue(event.target.value)} aria-label={`Select ${groupMode.toLowerCase()}`}>
-                    {groupOptions.map((option) => <option key={option} value={option}>{option}</option>)}
-                  </select>
-                  <ChevronDown size={14} />
-                </label>
-              </div>
+              <UnifiedFilterBar
+                search={search}
+                onSearchChange={handleSearchChange}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                onReset={resetAllFilters}
+                stateOptions={filterOptions.State}
+                ministryOptions={ministryOptions}
+                sectorOptions={sectorOptions}
+                totalCount={projects.length}
+                highRiskCount={totalHighRiskCount}
+                delayedCount={totalDelayedCount}
+                onScheduleCount={totalOnScheduleCount}
+                placeholder="Search 1,775 national projects by name, ID, ministry, location..."
+              />
+
               {!projectFiltersActive && (
                 <div className="dashboard-card">
                   <div className="card-banner">
@@ -398,14 +784,16 @@ export default function Page() {
                   <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} />)}</div>
                 </div>
               )}
-              <div className="section-heading">
-                <strong>{projectFiltersActive ? 'Filtered Results' : 'Active Ongoing National Initiatives'}</strong>
-                <span>Showing {Math.min(displayLimit, filteredProjects.length)} of {filteredProjects.length} initiatives ({projects.length} Total Ongoing National Projects)</span>
+
+              <div className="section-heading" ref={projectsListTopRef}>
+                <strong>{projectFiltersActive ? 'Filtered Portfolio Results' : 'Active Ongoing National Initiatives'}</strong>
+                <span>Showing page {projectPage} of {totalProjectPages} ({filteredProjects.length.toLocaleString()} Total Matches)</span>
               </div>
+
               {filteredProjects.length > 0 ? (
                 <>
                   <div className="project-list">
-                    {filteredProjects.slice(0, displayLimit).map((project, idx) => (
+                    {paginatedProjects.map((project, idx) => (
                       <ProjectCard 
                         key={`${project.id}-${idx}`} 
                         project={project} 
@@ -414,29 +802,22 @@ export default function Page() {
                       />
                     ))}
                   </div>
-                  {displayLimit < filteredProjects.length && (
-                    <div style={{ textAlign: 'center', marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <button
-                        className="home-btn home-btn-primary"
-                        onClick={() => setDisplayLimit((prev) => prev + 48)}
-                        style={{ padding: '12px 24px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-                      >
-                        Load More ({filteredProjects.length - displayLimit} remaining) <ChevronDown size={16} />
-                      </button>
-                      <button
-                        className="home-btn home-btn-outline"
-                        onClick={() => setDisplayLimit(filteredProjects.length)}
-                        style={{ padding: '12px 24px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#eef6fc', border: '1px solid #b8d5ed', color: '#0c5c9d', fontWeight: 700 }}
-                      >
-                        Show All {filteredProjects.length} Projects <LayoutGrid size={16} />
-                      </button>
-                    </div>
-                  )}
+
+                  <PaginationBar
+                    currentPage={projectPage}
+                    totalPages={totalProjectPages}
+                    totalItems={filteredProjects.length}
+                    pageSize={PROJECTS_PER_PAGE}
+                    onPageChange={(p) => {
+                      setProjectPage(p)
+                      projectsListTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }}
+                  />
                 </>
               ) : (
                 <div className="project-empty">
                   <Search size={20} />
-                  <span>No projects match your filters. Try resetting search criteria.</span>
+                  <span>No projects match your search and filter criteria.</span>
                   <button className="home-btn home-btn-primary" onClick={resetAllFilters} style={{ marginTop: '12px', padding: '8px 20px', fontSize: '12px' }}>
                     Reset All Filters
                   </button>
@@ -755,8 +1136,7 @@ function ProjectCard({
         </div>
       </div>
 
-      {/* Explicit 3-Column Unified Budget Definitions */}
-      <ProjectBudgetSummary budgets={budgets} />
+
 
       <div className="pc-metrics">
         <MetricTile icon={Coins} tone="blue" label="Total Approved Budget" value={budgets.sanctionedCost} note="Sanctioned Outlay" />
@@ -1018,12 +1398,13 @@ function AnalysisView({
   onClearInitialSelected?: () => void;
   onOpenBriefing: (p: Project | AnalysisProject) => void 
 }) {
-  const [selectedFilters, setSelectedFilters] = useState({ State: 'All', Risk: 'All', Type: 'All' })
-  const [groupMode, setGroupMode] = useState<'Ministry' | 'Sector'>('Sector')
-  const [groupValue, setGroupValue] = useState('All')
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
   const [search, setSearch] = useState('')
+  const [analysisPage, setAnalysisPage] = useState(1)
+  const ANALYSIS_PER_PAGE = 6
   const [openId, setOpenId] = useState<string | null>(initialSelectedId || null)
   const [portfolioOpen, setPortfolioOpen] = useState(false)
+  const analysisListTopRef = useRef<HTMLDivElement>(null)
 
   const handleCloseModal = () => {
     setOpenId(null)
@@ -1057,47 +1438,67 @@ function AnalysisView({
   }, [anyModalOpen])
 
   const resetFilters = () => {
-    setSelectedFilters({ State: 'All', Risk: 'All', Type: 'All' })
-    setGroupMode('Sector')
-    setGroupValue('All')
+    setFilters(DEFAULT_FILTERS)
     setSearch('')
+    setAnalysisPage(1)
   }
 
-  const groupOptions = groupMode === 'Ministry' ? ministryOptions : sectorOptions
-  const switchGroupMode = (mode: 'Ministry' | 'Sector') => {
-    setGroupMode(mode)
-    setGroupValue('All')
+  const handleFilterChange = (key: keyof FilterState, val: string) => {
+    setFilters((c) => ({ ...c, [key]: val }))
+    setAnalysisPage(1)
   }
 
-  const [analysisDisplayLimit, setAnalysisDisplayLimit] = useState(12)
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setAnalysisPage(1)
+  }
 
   const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase()
     return projects.filter((p) => {
-      const query = search.trim().toLowerCase()
-      const haystack = [p.name, p.id, (p.state || ''), p.risk, p.type, p.ministry, p.sector, (p.flagshipDetails?.bottleneck || p.criticalIssue || ''), ...(p.flagshipDetails?.rootCause || [])].join(' ').toLowerCase()
-      if (query && !haystack.includes(query)) return false
-      if (selectedFilters.State !== 'All' && !((p.state || '').includes(selectedFilters.State))) return false
-      if (selectedFilters.Risk !== 'All' && p.risk !== selectedFilters.Risk) return false
-      if (selectedFilters.Type !== 'All' && p.type !== selectedFilters.Type) return false
-      if (groupValue !== 'All') {
-        if (groupMode === 'Ministry' && p.ministry !== groupValue) return false
-        if (groupMode === 'Sector' && p.sector !== groupValue) return false
+      if (query) {
+        const haystack = [p.name, p.id, (p.state || ''), p.risk, p.type, p.ministry, p.sector, (p.flagshipDetails?.bottleneck || p.criticalIssue || ''), ...(p.flagshipDetails?.rootCause || [])].join(' ').toLowerCase()
+        if (!haystack.includes(query)) return false
       }
+      if (filters.State !== 'All' && !((p.state || '').includes(filters.State))) return false
+      if (filters.Risk !== 'All' && p.risk !== filters.Risk) return false
+      if (filters.Type !== 'All' && p.type !== filters.Type) return false
+      if (filters.Ministry !== 'All' && p.ministry !== filters.Ministry) return false
+      if (filters.Sector !== 'All' && p.sector !== filters.Sector) return false
       return true
     })
-  }, [projects, search, selectedFilters, groupMode, groupValue])
+  }, [projects, search, filters])
+
+  const totalAnalysisPages = Math.ceil(filtered.length / ANALYSIS_PER_PAGE) || 1
+  const paginatedAnalysis = useMemo(() => {
+    const start = (analysisPage - 1) * ANALYSIS_PER_PAGE
+    return filtered.slice(start, start + ANALYSIS_PER_PAGE)
+  }, [filtered, analysisPage])
+
+  const totalHighRiskCount = useMemo(() => projects.filter((p) => p.risk === 'High').length, [])
+  const totalDelayedCount = useMemo(() => projects.filter((p) => p.type === 'Delayed').length, [])
+  const totalOnScheduleCount = useMemo(() => projects.filter((p) => p.type === 'On Schedule').length, [])
 
   const filtersActive =
-    selectedFilters.State !== 'All' || selectedFilters.Risk !== 'All' || selectedFilters.Type !== 'All' || groupValue !== 'All' || search.trim() !== ''
+    filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== ''
 
   return (
     <div className="analysis-view">
-      <div className="filter-row">
-        {(['State', 'Risk', 'Type'] as const).map((label) => (
-          <FilterSelect key={label} label={label} value={selectedFilters[label]} onChange={(value) => setSelectedFilters((current) => ({ ...current, [label]: value }))} />
-        ))}
-        <label className="search-field"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search flagship projects, root causes, bottlenecks..." aria-label="Search projects" /></label>
-      </div>
+      <UnifiedFilterBar
+        search={search}
+        onSearchChange={handleSearchChange}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onReset={resetFilters}
+        stateOptions={filterOptions.State}
+        ministryOptions={ministryOptions}
+        sectorOptions={sectorOptions}
+        totalCount={projects.length}
+        highRiskCount={totalHighRiskCount}
+        delayedCount={totalDelayedCount}
+        onScheduleCount={totalOnScheduleCount}
+        placeholder="Search analysis by project name, bottleneck, root cause, state..."
+      />
       
       <div className="switch-row">
         <div className="segmented" role="tablist" aria-label="Group projects by">
@@ -1160,34 +1561,28 @@ function AnalysisView({
         </div>
       )}
 
-      <div className="section-heading">
-        <strong>{filtersActive ? 'Filtered Results' : 'National Infrastructure Initiatives Deep-Dive'}</strong>
-        <span>Showing {Math.min(analysisDisplayLimit, filtered.length)} of {filtered.length} initiatives ({projects.length} Total Monitored Projects)</span>
+      <div className="section-heading" ref={analysisListTopRef}>
+        <strong>{filtersActive ? 'Filtered Predictive Analysis' : 'National Infrastructure Predictive Deep-Dive'}</strong>
+        <span>Showing page {analysisPage} of {totalAnalysisPages} ({filtered.length.toLocaleString()} Total Matches)</span>
       </div>
       {filtered.length > 0 ? (
         <>
           <div className="ca-list">
-            {filtered.slice(0, analysisDisplayLimit).map((p, idx) => (
+            {paginatedAnalysis.map((p, idx) => (
               <CompactAnalysisCard key={`${p.id}-${idx}`} p={p} onOpen={() => setOpenId(p.id)} />
             ))}
           </div>
-          {analysisDisplayLimit < filtered.length && (
-            <div style={{ textAlign: 'center', marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              <button
-                className="home-btn home-btn-primary"
-                style={{ minWidth: '220px' }}
-                onClick={() => setAnalysisDisplayLimit((prev) => prev + 18)}
-              >
-                Load More Projects ({filtered.length - analysisDisplayLimit} remaining)
-              </button>
-              <button
-                className="home-btn home-btn-ghost"
-                onClick={() => setAnalysisDisplayLimit(filtered.length)}
-              >
-                View All ({filtered.length})
-              </button>
-            </div>
-          )}
+
+          <PaginationBar
+            currentPage={analysisPage}
+            totalPages={totalAnalysisPages}
+            totalItems={filtered.length}
+            pageSize={ANALYSIS_PER_PAGE}
+            onPageChange={(p) => {
+              setAnalysisPage(p)
+              analysisListTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+          />
         </>
       ) : (
         <div className="project-empty">
