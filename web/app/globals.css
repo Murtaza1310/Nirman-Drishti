@@ -9213,3 +9213,109 @@ body.dark-theme .dd-card-icon {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ==========================================================================
+   WHERE HAS THE MONEY BEEN SPENT: 4 CORE SPENDING HEADS STYLING
+   ========================================================================== */
+
+.pa-financial-overview-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 14px 0;
+}
+
+.pa-financial-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pa-where-money-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+@media (max-width: 850px) {
+  .pa-where-money-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pa-where-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+}
+
+.pa-where-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.pa-where-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pa-where-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pa-where-pct {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #f0f9ff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #bae6fd;
+}
+
+.pa-where-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.pa-where-desc {
+  margin: 0;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.pa-spend-bar-wrapper {
+  display: flex;
+  height: 10px;
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 14px;
+  background: #e2e8f0;
+}
+
+.pa-spend-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.seg-civil { background: #0284c7; }
+.seg-land { background: #ea580c; }
+.seg-util { background: #16a34a; }
+.seg-pmc { background: #7c3aed; }
