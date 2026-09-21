@@ -3725,10 +3725,22 @@ function ProjectAnalysisCard({
   const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
 
   const breakdown = budgets.breakdown || p.expenditureBreakdown || {
-    civilWorks: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.6).toLocaleString()} Cr`,
-    landAcquisition: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.2).toLocaleString()} Cr`,
-    utilityAndSystems: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.13).toLocaleString()} Cr`,
-    contingencyAndPMC: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.07).toLocaleString()} Cr`,
+    civilWorks: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.54).toLocaleString()} Cr`,
+    landAcquisition: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.28).toLocaleString()} Cr`,
+    utilityAndSystems: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.12).toLocaleString()} Cr`,
+    contingencyAndPMC: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.06).toLocaleString()} Cr`,
+    civilPct: 54,
+    landPct: 28,
+    utilPct: 12,
+    pmcPct: 6,
+    civilLabel: 'Civil Construction Works',
+    landLabel: 'Land Acquisition & Compensation',
+    utilLabel: 'Utility Relocation & Shifting',
+    pmcLabel: 'Project Supervision & Approvals',
+    civilDesc: 'Pillars, Tunnels, Bridges & Carriageways',
+    landDesc: 'Direct Money Paid to Farmers & Landowners',
+    utilDesc: 'Electric Poles, Water Pipes & Grid Infrastructure',
+    pmcDesc: 'Safety Audits, Quality Checks & Statutory Permits',
   }
 
   return (
@@ -3851,50 +3863,66 @@ function ProjectAnalysisCard({
           {/* Box 1: Civil Works */}
           <div className="pa-where-card">
             <div className="pa-where-top">
-              <span className="pa-where-label">Civil Construction Works</span>
-              <span className="pa-where-pct">60% of Spent</span>
+              <span className="pa-where-label">{breakdown.civilLabel || 'Civil Construction Works'}</span>
+              <span className="pa-where-pct">{breakdown.civilPct ?? 54}% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.civilWorks}</strong>
-            <p className="pa-where-desc">Pillars, Tunnels, Bridges &amp; Railway Tracks</p>
+            <p className="pa-where-desc">{breakdown.civilDesc || 'Pillars, Tunnels, Bridges & Carriageways'}</p>
           </div>
 
           {/* Box 2: Land Acquisition */}
           <div className="pa-where-card">
             <div className="pa-where-top">
-              <span className="pa-where-label">Land Acquisition &amp; Compensation</span>
-              <span className="pa-where-pct">20% of Spent</span>
+              <span className="pa-where-label">{breakdown.landLabel || 'Land Acquisition & Compensation'}</span>
+              <span className="pa-where-pct">{breakdown.landPct ?? 28}% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.landAcquisition}</strong>
-            <p className="pa-where-desc">Direct Money Paid to Farmers &amp; Landowners</p>
+            <p className="pa-where-desc">{breakdown.landDesc || 'Direct Money Paid to Farmers & Landowners'}</p>
           </div>
 
-          {/* Box 3: Utilities */}
+          {/* Box 3: Utilities & Systems */}
           <div className="pa-where-card">
             <div className="pa-where-top">
-              <span className="pa-where-label">Utility Relocation (Power, Water, Gas)</span>
-              <span className="pa-where-pct">13% of Spent</span>
+              <span className="pa-where-label">{breakdown.utilLabel || 'Utility Relocation & Systems'}</span>
+              <span className="pa-where-pct">{breakdown.utilPct ?? 12}% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.utilityAndSystems}</strong>
-            <p className="pa-where-desc">Electric Poles, Water Pipes &amp; Signals</p>
+            <p className="pa-where-desc">{breakdown.utilDesc || 'Electric Poles, Water Pipes & Grid Equipment'}</p>
           </div>
 
           {/* Box 4: Project Management & Clearances */}
           <div className="pa-where-card">
             <div className="pa-where-top">
-              <span className="pa-where-label">Project Supervision &amp; Approvals</span>
-              <span className="pa-where-pct">7% of Spent</span>
+              <span className="pa-where-label">{breakdown.pmcLabel || 'Project Supervision & Clearances'}</span>
+              <span className="pa-where-pct">{breakdown.pmcPct ?? 6}% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.contingencyAndPMC}</strong>
-            <p className="pa-where-desc">Safety Audits, Quality Checks &amp; Government Permits</p>
+            <p className="pa-where-desc">{breakdown.pmcDesc || 'Safety Audits, Quality Checks & Statutory Permits'}</p>
           </div>
         </div>
 
         {/* Multi-Colored Visual Spending Allocation Bar */}
         <div className="pa-spend-bar-wrapper">
-          <div className="pa-spend-segment seg-civil" style={{ width: '60%' }} title="Civil Construction Works: 60%" />
-          <div className="pa-spend-segment seg-land" style={{ width: '20%' }} title="Land Acquisition & Compensation: 20%" />
-          <div className="pa-spend-segment seg-util" style={{ width: '13%' }} title="Utility Relocation: 13%" />
-          <div className="pa-spend-segment seg-pmc" style={{ width: '7%' }} title="Project Supervision: 7%" />
+          <div 
+            className="pa-spend-segment seg-civil" 
+            style={{ width: `${breakdown.civilPct ?? 54}%` }} 
+            title={`${breakdown.civilLabel || 'Civil Works'}: ${breakdown.civilPct ?? 54}% (${breakdown.civilWorks})`} 
+          />
+          <div 
+            className="pa-spend-segment seg-land" 
+            style={{ width: `${breakdown.landPct ?? 28}%` }} 
+            title={`${breakdown.landLabel || 'Land Acquisition'}: ${breakdown.landPct ?? 28}% (${breakdown.landAcquisition})`} 
+          />
+          <div 
+            className="pa-spend-segment seg-util" 
+            style={{ width: `${breakdown.utilPct ?? 12}%` }} 
+            title={`${breakdown.utilLabel || 'Utilities & Systems'}: ${breakdown.utilPct ?? 12}% (${breakdown.utilityAndSystems})`} 
+          />
+          <div 
+            className="pa-spend-segment seg-pmc" 
+            style={{ width: `${breakdown.pmcPct ?? 6}%` }} 
+            title={`${breakdown.pmcLabel || 'Project Supervision'}: ${breakdown.pmcPct ?? 6}% (${breakdown.contingencyAndPMC})`} 
+          />
         </div>
       </div>
 
@@ -4611,24 +4639,24 @@ function ExecutiveDossierModal({
                 <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>Expenditure Audit &amp; Capital Utilization Breakdown</h4>
                 <div className="capex-breakdown-grid">
                   <div className="capex-chip">
-                    <div className="capex-chip-header">Civil Construction Works</div>
+                    <div className="capex-chip-header">{bd.civilLabel || 'Civil Construction Works'} ({bd.civilPct ?? 54}%)</div>
                     <div className="capex-chip-val">{bd.civilWorks}</div>
-                    <div className="capex-chip-sub">Procurement, Physical Structures</div>
+                    <div className="capex-chip-sub">{bd.civilDesc || 'Procurement, Physical Structures'}</div>
                   </div>
                   <div className="capex-chip">
-                    <div className="capex-chip-header">Land Acquisition &amp; Compensation (R&amp;R)</div>
+                    <div className="capex-chip-header">{bd.landLabel || 'Land Acquisition & Compensation'} ({bd.landPct ?? 28}%)</div>
                     <div className="capex-chip-val">{bd.landAcquisition}</div>
-                    <div className="capex-chip-sub">Direct Compensation &amp; Resettlement</div>
+                    <div className="capex-chip-sub">{bd.landDesc || 'Direct Compensation & Resettlement'}</div>
                   </div>
                   <div className="capex-chip">
-                    <div className="capex-chip-header">Utility &amp; Systems Integration</div>
+                    <div className="capex-chip-header">{bd.utilLabel || 'Utility & Systems Integration'} ({bd.utilPct ?? 12}%)</div>
                     <div className="capex-chip-val">{bd.utilityAndSystems}</div>
-                    <div className="capex-chip-sub">Power Grids, Relocation, Signals</div>
+                    <div className="capex-chip-sub">{bd.utilDesc || 'Power Grids, Relocation, Signals'}</div>
                   </div>
                   <div className="capex-chip">
-                    <div className="capex-chip-header">Project Supervision &amp; Legal Approvals</div>
+                    <div className="capex-chip-header">{bd.pmcLabel || 'Project Supervision & Approvals'} ({bd.pmcPct ?? 6}%)</div>
                     <div className="capex-chip-val">{bd.contingencyAndPMC}</div>
-                    <div className="capex-chip-sub">Statutory Approvals &amp; Overhead</div>
+                    <div className="capex-chip-sub">{bd.pmcDesc || 'Statutory Approvals & Overhead'}</div>
                   </div>
                 </div>
               </div>

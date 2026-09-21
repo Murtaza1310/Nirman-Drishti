@@ -4,6 +4,25 @@ import rawFlagshipAnalysis from './flagship_analysis.json'
 export type RiskTier = 'High' | 'Medium' | 'Low'
 export type ProjectStatus = 'On Schedule' | 'Delayed' | 'High Risk'
 
+export interface ProjectExpenditureBreakdown {
+  civilWorks: string
+  landAcquisition: string
+  utilityAndSystems: string
+  contingencyAndPMC: string
+  civilPct?: number
+  landPct?: number
+  utilPct?: number
+  pmcPct?: number
+  civilLabel?: string
+  landLabel?: string
+  utilLabel?: string
+  pmcLabel?: string
+  civilDesc?: string
+  landDesc?: string
+  utilDesc?: string
+  pmcDesc?: string
+}
+
 export interface Project {
   id: string
   name: string
@@ -26,12 +45,7 @@ export interface Project {
   rawSpentCost?: number
   balanceCost?: string
   financialProgress?: number
-  expenditureBreakdown?: {
-    civilWorks: string
-    landAcquisition: string
-    utilityAndSystems: string
-    contingencyAndPMC: string
-  }
+  expenditureBreakdown?: ProjectExpenditureBreakdown
   revisedCost?: string
   rawRevisedCost?: number
   costOverrunCr?: number
@@ -75,12 +89,7 @@ export interface ProjectBudgets {
   hasOverrun: boolean
   rawSpentCost?: number
   rawCost?: number
-  breakdown?: {
-    civilWorks: string
-    landAcquisition: string
-    utilityAndSystems: string
-    contingencyAndPMC: string
-  }
+  breakdown?: ProjectExpenditureBreakdown
 }
 
 export interface FlagshipAnalysisDetails {
@@ -295,6 +304,171 @@ export function getProjectRiskProfile(project: Project): ProjectRiskProfile {
 }
 
 /**
+ * Computes realistic, sector-aware expenditure profiles based on Indian infrastructure realities:
+ * - Highways/Roads: High land acquisition (26-32%) and civil works (52-56%)
+ * - Railways: Balanced civil/track (48-54%), high traction/signalling/Kavach (18-22%)
+ * - Telecom: Heavy optical network & core electronics (44-48%), negligible land purchase (2-5%)
+ * - Power/Energy: Heavy substation, turbine & transmission lines (34-39%)
+ * - Urban Metro: Underground viaducts/tunnels (46-52%), rolling stock & CBTC (20-25%)
+ * All 4 categories strictly sum to 100.0%.
+ */
+export function getSectorExpenditureProfile(sector?: string, id?: string) {
+  const s = (sector || '').toLowerCase()
+  const pid = id || 'proj_default'
+  let h = 0
+  for (let i = 0; i < pid.length; i++) {
+    h = (h * 31 + pid.charCodeAt(i)) & 0xFFFFFFFF
+  }
+  const d1 = (Math.abs(h) % 5) - 2
+  const d2 = (Math.abs(h >> 3) % 5) - 2
+  const d3 = (Math.abs(h >> 6) % 3) - 1
+
+  let baseCivil = 54, baseLand = 28, baseUtil = 12, basePmc = 6
+  let civilLabel = 'Civil Construction Works', civilDesc = 'Carriageway, Pavement, Bridges & Flyovers'
+  let landLabel = 'Land Acquisition & Compensation', landDesc = 'Direct Compensation to Farmers & Landowners (RoW)'
+  let utilLabel = 'Utility Relocation & Shifting', utilDesc = 'High-Tension Power Lines, Water Mains & Tree Shifting'
+  let pmcLabel = 'Project Supervision & Quality Audits', pmcDesc = 'Independent Engineer Supervision & Safety Clearances'
+
+  if (s.includes('road') || s.includes('highway')) {
+    baseCivil = 54; baseLand = 28; baseUtil = 12; basePmc = 6
+    civilLabel = 'Civil & Highway Construction'
+    civilDesc = 'Carriageway, Pavement, Bridges, Culverts & Flyovers'
+    landLabel = 'Land Acquisition & Compensation'
+    landDesc = 'Direct Compensation to Farmers & Landowners (RoW)'
+    utilLabel = 'Utility Shifting & Relocation'
+    utilDesc = 'High-Tension Power Lines, Water Mains & Tree Shifting'
+    pmcLabel = 'Authority Engineer & Quality Audits'
+    pmcDesc = 'Independent Supervision, Safety Audits & Clearances'
+  } else if (s.includes('railway')) {
+    baseCivil = 50; baseLand = 23; baseUtil = 20; basePmc = 7
+    civilLabel = 'Civil, Viaducts & Track Bed'
+    civilDesc = 'Bridges, Tunnels, Viaducts, Ballast & Rail Track'
+    landLabel = 'Right of Way Land Acquisition'
+    landDesc = 'Linear Land Acquisition, Resettlement & Rehabilitation'
+    utilLabel = 'OHE Traction, Signalling & Kavach'
+    utilDesc = 'Overhead Electrification, Kavach System & Signalling'
+    pmcLabel = 'Statutory Approvals & Project Oversight'
+    pmcDesc = 'CRS Safety Audits, Engineering Oversight & Clearances'
+  } else if (s.includes('telecom')) {
+    baseCivil = 43; baseLand = 4; baseUtil = 46; basePmc = 7
+    civilLabel = 'OFC Trenching & Duct Laying'
+    civilDesc = 'Underground Trenching, HDD Boring & Aerial Cabling'
+    landLabel = 'RoW Permissions & Admin Fees'
+    landDesc = 'Highway & Forest Right of Way Permissions (No Purchase)'
+    utilLabel = 'Optical Electronics & Core Network'
+    utilDesc = 'GPON, OLT/ONT Terminals, Solar Backups & Routers'
+    pmcLabel = 'Acceptance Testing & NOC Integration'
+    pmcDesc = 'Third-Party Acceptance Testing (TPA) & NOC Setup'
+  } else if (s.includes('power') || s.includes('renewable')) {
+    baseCivil = 45; baseLand = 12; baseUtil = 36; basePmc = 7
+    civilLabel = 'Civil & Structural Engineering'
+    civilDesc = 'Powerhouse, Dam Civil, Foundations & Module Mounts'
+    landLabel = 'Land Acquisition & Forest Clearance'
+    landDesc = 'Solar Park Land, Reservoir Submergence & Forest NPV'
+    utilLabel = 'Turbines, Substation & Grid Lines'
+    utilDesc = 'Heavy Turbines, Inverters, High-Voltage Switchyards'
+    pmcLabel = 'Grid Interconnection & Clearances'
+    pmcDesc = 'Grid Synchronization, CEA Inspections & Safety Audits'
+  } else if (s.includes('petroleum') || s.includes('gas')) {
+    baseCivil = 47; baseLand = 14; baseUtil = 32; basePmc = 7
+    civilLabel = 'Pipeline Trenching & Plant Civil'
+    civilDesc = 'Right-of-Way Trenching, Stringing & Civil Foundations'
+    landLabel = 'Right of User (RoU) Compensation'
+    landDesc = 'Crop Damage & RoU Statutory Compensation to Landowners'
+    utilLabel = 'Compressor Stations, SCADA & Valves'
+    utilDesc = 'Compressors, Metering Stations, Mainline Valves & SCADA'
+    pmcLabel = 'PESO Clearances & Safety Oversight'
+    pmcDesc = 'PESO Statutory Approval, Hydrotesting & Quality Audits'
+  } else if (s.includes('urban') || s.includes('metro')) {
+    baseCivil = 48; baseLand = 22; baseUtil = 23; basePmc = 7
+    civilLabel = 'Underground & Viaduct Civil Works'
+    civilDesc = 'TBM Tunnels, Elevated Guideways & Passenger Stations'
+    landLabel = 'Urban Land Acquisition & R&R'
+    landDesc = 'Commercial Relocation, Depot Land & Structural R&R'
+    utilLabel = 'Rolling Stock, Traction & CBTC'
+    utilDesc = 'Metro Coaches, CBTC Automatic Train Control & Power'
+    pmcLabel = 'General Consultant & CMRS Approvals'
+    pmcDesc = 'General Consultant Oversight & CMRS Safety Clearances'
+  } else if (s.includes('aviation')) {
+    baseCivil = 52; baseLand = 20; baseUtil = 21; basePmc = 7
+    civilLabel = 'Runway, Apron & Terminal Civils'
+    civilDesc = 'Pavements, Passenger Terminal Building & Taxiways'
+    landLabel = 'Airport Land Parcel Acquisition'
+    landDesc = 'Perimeter Buffer Zones & Land Compensation'
+    utilLabel = 'DVOR, ILS & Airside Systems'
+    utilDesc = 'Navigation Aids, Instrument Landing, Baggage & Lighting'
+    pmcLabel = 'DGCA & BCAS Security Licensing'
+    pmcDesc = 'Statutory Aerodrome Licensing & Airspace Clearance'
+  } else if (s.includes('port') || s.includes('shipping')) {
+    baseCivil = 55; baseLand = 15; baseUtil = 23; basePmc = 7
+    civilLabel = 'Berths, Jetties & Breakwaters'
+    civilDesc = 'Deep-water Berths, Quay Walls, Breakwater Civils'
+    landLabel = 'Port Land & Waterfront Reclamation'
+    landDesc = 'Port Estate Acquisition & Coastal Zone Management'
+    utilLabel = 'Ship-to-Shore Cranes & Dredging'
+    utilDesc = 'STS Gantry Cranes, Capital Dredging & Vessel Traffic'
+    pmcLabel = 'Port Regulatory & Environmental NOC'
+    pmcDesc = 'Major Port Regulatory Authority & Environmental Clearances'
+  } else if (s.includes('water')) {
+    baseCivil = 58; baseLand = 22; baseUtil = 14; basePmc = 6
+    civilLabel = 'Dam Body, Spillway & Barrage Civils'
+    civilDesc = 'RCC Concrete Structures, Spillways & Embankments'
+    landLabel = 'Submergence Land & R&R Packages'
+    landDesc = 'Reservoir Submergence Land & Resettlement Packages'
+    utilLabel = 'Canal Lining, Hydro Gates & Pumps'
+    utilDesc = 'Radial Sluice Gates, Heavy Pump Houses & Pipelines'
+    pmcLabel = 'CWC Clearances & Dam Safety Audits'
+    pmcDesc = 'Central Water Commission Monitoring & Safety Audits'
+  } else if (s.includes('coal') || s.includes('mining') || s.includes('steel')) {
+    baseCivil = 46; baseLand = 23; baseUtil = 24; basePmc = 7
+    civilLabel = 'Silo, CHP & Plant Civil Works'
+    civilDesc = 'CHP Structure, Rail Siding Civils & Overburden Bunds'
+    landLabel = 'Mining Lease Land & Forest NPV'
+    landDesc = 'Forest Divergence NPV & Landowner Resettlement'
+    utilLabel = 'Heavy Mining Machinery & Crushers'
+    utilDesc = 'Draglines, Continuous Miners, Crushers & Belt Conveyors'
+    pmcLabel = 'DGMS Approvals & Environmental Audits'
+    pmcDesc = 'Directorate General of Mines Safety & Environmental Clearances'
+  } else {
+    baseCivil = 58; baseLand = 18; baseUtil = 18; basePmc = 6
+    civilLabel = 'Building Superstructure & Finishing'
+    civilDesc = 'RCC Framed Hospital/Academic Blocks, Labs & Finishing'
+    landLabel = 'Institutional Land Allotment'
+    landDesc = 'Campus Land Acquisition & External Boundary RoW'
+    utilLabel = 'Specialized MEP, HVAC & Medical Gases'
+    utilDesc = 'HVAC Central Plants, Medical Gas Pipelines & Elevators'
+    pmcLabel = 'PMC Supervision & Statutory Clearances'
+    pmcDesc = 'Architecture Oversight, Fire NOC & Green Building Rating'
+  }
+
+  let civilPct = baseCivil + d1
+  let landPct = baseLand + d2
+  let utilPct = baseUtil + d3
+  let pmcPct = 100 - civilPct - landPct - utilPct
+
+  if (pmcPct < 5 || pmcPct > 8) {
+    const diff = pmcPct - basePmc
+    civilPct += diff
+    pmcPct = basePmc
+  }
+
+  return {
+    civilPct,
+    landPct,
+    utilPct,
+    pmcPct,
+    civilLabel,
+    civilDesc,
+    landLabel,
+    landDesc,
+    utilLabel,
+    utilDesc,
+    pmcLabel,
+    pmcDesc,
+  }
+}
+
+/**
  * Standardized budget calculations with airtight mathematical consistency.
  */
 export function getProjectBudgets(project: Project): ProjectBudgets {
@@ -327,17 +501,34 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
   const expectedFinalCostNum = Math.round((rawCostNum + (hasOverrun ? costOverrunCr : 0)) * 10) / 10
   const revisedCost = `₹ ${expectedFinalCostNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
 
-  // Guaranteed 100% sum: Civil 60%, Land 20%, Utilities 13%, PMC 7%
-  const civil = Math.round(rawSpentNum * 0.60 * 10) / 10
-  const land = Math.round(rawSpentNum * 0.20 * 10) / 10
-  const util = Math.round(rawSpentNum * 0.13 * 10) / 10
+  const profile = getSectorExpenditureProfile(project.sector, project.id)
+  const civilPct = project.expenditureBreakdown?.civilPct ?? profile.civilPct
+  const landPct = project.expenditureBreakdown?.landPct ?? profile.landPct
+  const utilPct = project.expenditureBreakdown?.utilPct ?? profile.utilPct
+  const pmcPct = project.expenditureBreakdown?.pmcPct ?? profile.pmcPct
+
+  const civil = Math.round(rawSpentNum * (civilPct / 100) * 10) / 10
+  const land = Math.round(rawSpentNum * (landPct / 100) * 10) / 10
+  const util = Math.round(rawSpentNum * (utilPct / 100) * 10) / 10
   const pmc = Math.max(0, Math.round((rawSpentNum - civil - land - util) * 10) / 10)
 
-  const breakdown = {
-    civilWorks: `₹ ${civil.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
-    landAcquisition: `₹ ${land.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
-    utilityAndSystems: `₹ ${util.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
-    contingencyAndPMC: `₹ ${pmc.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+  const breakdown: ProjectExpenditureBreakdown = {
+    civilWorks: project.expenditureBreakdown?.civilWorks || `₹ ${civil.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    landAcquisition: project.expenditureBreakdown?.landAcquisition || `₹ ${land.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    utilityAndSystems: project.expenditureBreakdown?.utilityAndSystems || `₹ ${util.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    contingencyAndPMC: project.expenditureBreakdown?.contingencyAndPMC || `₹ ${pmc.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    civilPct,
+    landPct,
+    utilPct,
+    pmcPct,
+    civilLabel: project.expenditureBreakdown?.civilLabel || profile.civilLabel,
+    civilDesc: project.expenditureBreakdown?.civilDesc || profile.civilDesc,
+    landLabel: project.expenditureBreakdown?.landLabel || profile.landLabel,
+    landDesc: project.expenditureBreakdown?.landDesc || profile.landDesc,
+    utilLabel: project.expenditureBreakdown?.utilLabel || profile.utilLabel,
+    utilDesc: project.expenditureBreakdown?.utilDesc || profile.utilDesc,
+    pmcLabel: project.expenditureBreakdown?.pmcLabel || profile.pmcLabel,
+    pmcDesc: project.expenditureBreakdown?.pmcDesc || profile.pmcDesc,
   }
 
   return {
