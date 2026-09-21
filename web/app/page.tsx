@@ -2225,12 +2225,20 @@ function SatelliteGroundRealityWidget({ p }: { p: UnifiedProject }) {
         </div>
       </div>
 
-      {s.hasDiscrepancy && (
+      {s.hasDiscrepancy ? (
         <div className="sat-discrepancy-alert">
           <AlertTriangle size={15} />
           <div>
             <strong>Physical–Visual Gap: Δ -{s.discrepancyGap}%</strong>
             <p>{s.auditSummary}</p>
+          </div>
+        </div>
+      ) : (
+        <div className="sat-verified-alert" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '10px 12px', marginTop: '12px', fontSize: '12px', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+          <CheckCircle2 size={15} style={{ flexShrink: 0, marginTop: '2px', color: '#16a34a' }} />
+          <div>
+            <strong style={{ color: '#15803d' }}>Ground Truth Confirmed by Satellite</strong>
+            <p style={{ margin: '2px 0 0', color: '#166534', fontSize: '11.5px', lineHeight: 1.4 }}>{s.auditSummary}</p>
           </div>
         </div>
       )}
@@ -3553,11 +3561,11 @@ function ProjectAnalysisCard({
   const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
   const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
 
-  const breakdown = p.expenditureBreakdown || {
-    civilWorks: `₹ ${Math.round((budgets.rawSpentCost || 1000) * 0.6).toLocaleString()} Cr`,
-    landAcquisition: `₹ ${Math.round((budgets.rawSpentCost || 1000) * 0.2).toLocaleString()} Cr`,
-    utilityAndSystems: `₹ ${Math.round((budgets.rawSpentCost || 1000) * 0.13).toLocaleString()} Cr`,
-    contingencyAndPMC: `₹ ${Math.round((budgets.rawSpentCost || 1000) * 0.07).toLocaleString()} Cr`,
+  const breakdown = budgets.breakdown || p.expenditureBreakdown || {
+    civilWorks: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.6).toLocaleString()} Cr`,
+    landAcquisition: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.2).toLocaleString()} Cr`,
+    utilityAndSystems: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.13).toLocaleString()} Cr`,
+    contingencyAndPMC: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.07).toLocaleString()} Cr`,
   }
 
   return (
@@ -4401,33 +4409,37 @@ function ExecutiveDossierModal({
           </div>
 
           {/* Component Breakdown Table */}
-          {p.expenditureBreakdown && (
-            <div style={{ marginBottom: '24px' }}>
-              <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>Expenditure Audit &amp; Capital Utilization Breakdown</h4>
-              <div className="capex-breakdown-grid">
-                <div className="capex-chip">
-                  <div className="capex-chip-header">Civil Construction Works</div>
-                  <div className="capex-chip-val">{p.expenditureBreakdown.civilWorks}</div>
-                  <div className="capex-chip-sub">Procurement, Physical Structures</div>
-                </div>
-                <div className="capex-chip">
-                  <div className="capex-chip-header">Land Acquisition &amp; Compensation (R&amp;R)</div>
-                  <div className="capex-chip-val">{p.expenditureBreakdown.landAcquisition}</div>
-                  <div className="capex-chip-sub">Direct Compensation &amp; Resettlement</div>
-                </div>
-                <div className="capex-chip">
-                  <div className="capex-chip-header">Utility &amp; Systems Integration</div>
-                  <div className="capex-chip-val">{p.expenditureBreakdown.utilityAndSystems}</div>
-                  <div className="capex-chip-sub">Power Grids, Relocation, Signals</div>
-                </div>
-                <div className="capex-chip">
-                  <div className="capex-chip-header">Project Supervision &amp; Legal Approvals</div>
-                  <div className="capex-chip-val">{p.expenditureBreakdown.contingencyAndPMC}</div>
-                  <div className="capex-chip-sub">Statutory Approvals &amp; Overhead</div>
+          {(() => {
+            const bd = budgets.breakdown || p.expenditureBreakdown
+            if (!bd) return null
+            return (
+              <div style={{ marginBottom: '24px' }}>
+                <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>Expenditure Audit &amp; Capital Utilization Breakdown</h4>
+                <div className="capex-breakdown-grid">
+                  <div className="capex-chip">
+                    <div className="capex-chip-header">Civil Construction Works</div>
+                    <div className="capex-chip-val">{bd.civilWorks}</div>
+                    <div className="capex-chip-sub">Procurement, Physical Structures</div>
+                  </div>
+                  <div className="capex-chip">
+                    <div className="capex-chip-header">Land Acquisition &amp; Compensation (R&amp;R)</div>
+                    <div className="capex-chip-val">{bd.landAcquisition}</div>
+                    <div className="capex-chip-sub">Direct Compensation &amp; Resettlement</div>
+                  </div>
+                  <div className="capex-chip">
+                    <div className="capex-chip-header">Utility &amp; Systems Integration</div>
+                    <div className="capex-chip-val">{bd.utilityAndSystems}</div>
+                    <div className="capex-chip-sub">Power Grids, Relocation, Signals</div>
+                  </div>
+                  <div className="capex-chip">
+                    <div className="capex-chip-header">Project Supervision &amp; Legal Approvals</div>
+                    <div className="capex-chip-val">{bd.contingencyAndPMC}</div>
+                    <div className="capex-chip-sub">Statutory Approvals &amp; Overhead</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* Satellite Ground Reality & Model Telemetry Audits */}
           <div style={{ marginBottom: '20px' }}>

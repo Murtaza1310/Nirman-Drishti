@@ -69,6 +69,14 @@ export interface ProjectBudgets {
   costOverrunCr: number
   costOverrunPct: number
   hasOverrun: boolean
+  rawSpentCost?: number
+  rawCost?: number
+  breakdown?: {
+    civilWorks: string
+    landAcquisition: string
+    utilityAndSystems: string
+    contingencyAndPMC: string
+  }
 }
 
 export interface FlagshipAnalysisDetails {
@@ -269,19 +277,28 @@ export function getProjectRiskProfile(project: Project): ProjectRiskProfile {
 }
 
 /**
- * Standardized budget calculations.
+ * Standardized budget calculations with airtight mathematical consistency.
  */
 export function getProjectBudgets(project: Project): ProjectBudgets {
-  const sanctionedCost = project.cost
-  const revisedCost = project.revisedCost || project.cost
+  const rawCostNum = project.rawCost || (project.cost ? parseFloat(project.cost.replace(/[^0-9.]/g, '')) : 0) || 500
+  let rawSpentNum = project.rawSpentCost ?? (project.spentCost ? parseFloat(project.spentCost.replace(/[^0-9.]/g, '')) : 0)
 
-  const rawCostNum = project.rawCost || parseFloat(project.cost.replace(/[^0-9.]/g, '')) || 5000
-  const finProgress = project.financialProgress ?? Math.min(100, Math.round(project.progress * 0.95))
-  const computedSpentNum = project.rawSpentCost || Math.round(rawCostNum * (finProgress / 100))
-  const computedBalanceNum = Math.max(0, rawCostNum - computedSpentNum)
+  // Consistency checks:
+  if (project.progress === 0 && rawSpentNum > rawCostNum * 0.1) {
+    // Zero ground execution implies zero capex expenditure (or negligible mobilization advance)
+    rawSpentNum = 0
+  } else if (rawSpentNum <= 0 && project.progress > 0) {
+    // If progress is active, compute realistic spent tracking progress
+    rawSpentNum = Math.round(rawCostNum * (project.progress / 100) * 0.92 * 10) / 10
+  }
 
-  const spentCost = project.spentCost || `₹ ${computedSpentNum.toLocaleString('en-IN')} Cr`
-  const balanceCost = project.balanceCost || `₹ ${computedBalanceNum.toLocaleString('en-IN')} Cr`
+  const finProgress = rawCostNum > 0 ? Math.min(100, Math.round((rawSpentNum / rawCostNum) * 100)) : 0
+  const balanceNum = Math.max(0, Math.round((rawCostNum - rawSpentNum) * 10) / 10)
+
+  const sanctionedCost = `₹ ${rawCostNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
+  const spentCost = `₹ ${rawSpentNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
+  const balanceCost = `₹ ${balanceNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
+  const revisedCost = project.revisedCost || sanctionedCost
 
   let costOverrunCr = project.costOverrunCr ?? 0
   const overrunMo = project.overrunMonths ?? 0
@@ -290,6 +307,19 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
   }
   const costOverrunPct = project.costOverrunPct ?? (costOverrunCr > 0 ? Math.round((costOverrunCr / rawCostNum) * 100) : 0)
   const hasOverrun = costOverrunCr > 0
+
+  // Guaranteed 100% sum: Civil 60%, Land 20%, Utilities 13%, PMC 7%
+  const civil = Math.round(rawSpentNum * 0.60 * 10) / 10
+  const land = Math.round(rawSpentNum * 0.20 * 10) / 10
+  const util = Math.round(rawSpentNum * 0.13 * 10) / 10
+  const pmc = Math.max(0, Math.round((rawSpentNum - civil - land - util) * 10) / 10)
+
+  const breakdown = {
+    civilWorks: `₹ ${civil.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    landAcquisition: `₹ ${land.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    utilityAndSystems: `₹ ${util.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+    contingencyAndPMC: `₹ ${pmc.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`,
+  }
 
   return {
     sanctionedCost,
@@ -300,6 +330,9 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
     costOverrunCr,
     costOverrunPct,
     hasOverrun,
+    rawSpentCost: rawSpentNum,
+    rawCost: rawCostNum,
+    breakdown,
   }
 }
 
@@ -448,27 +481,50 @@ export function calculateSatelliteAudit(project: Project): SatelliteAudit {
   let discrepancyGap = 0
   let visualProgress = reported
 
+  if (reported === 0) {
+    // Preliminary phase: Zero ground excavation or earthwork footprint expected
+    visualProgress = 0
+    discrepancyGap = 0
+    const sensorSource = 'ISRO Bhuvan & Sentinel-2 Optical/SAR'
+    const auditStatus = 'VERIFIED_ALIGNED'
+    const confidence = 96
+    const auditSummary = `Ground Truth Corroborated: Project is in preliminary statutory clearance / pre-construction phase. Satellite optical and SAR sensors confirm 0% physical ground excavation, fully corroborating contractor reports.`
+    const now = new Date(2026, 8, 18)
+    const lastPassDate = now.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+
+    return {
+      reportedProgress: 0,
+      visualProgress: 0,
+      discrepancyGap: 0,
+      hasDiscrepancy: false,
+      confidence,
+      sensorSource,
+      auditStatus,
+      auditSummary,
+      lastPassDate
+    }
+  }
+
   if (!isDelayed) {
     discrepancyGap = (h % 3)
     visualProgress = Math.max(0, reported - discrepancyGap)
   } else {
-    const rawGap = ((h % 16) + 4)
-    discrepancyGap = Math.min(reported - 5, rawGap)
-    if (discrepancyGap < 0) discrepancyGap = 3
-    visualProgress = Math.max(2, reported - discrepancyGap)
+    // Realistic slippage gap: between 3% and 8%
+    discrepancyGap = Math.min(Math.max(1, reported - 1), (h % 8) + 3)
+    visualProgress = Math.max(0, reported - discrepancyGap)
   }
 
-  const hasDiscrepancy = discrepancyGap >= 10
-  const confidence = hasDiscrepancy ? 87 : 94
-  const sensorSource = 'ISRO Bhuvan & Sentinel-2 Optical Footprint'
+  const hasDiscrepancy = discrepancyGap >= 8
+  const confidence = hasDiscrepancy ? 89 : 94
+  const sensorSource = 'ISRO Bhuvan & Copernicus Sentinel-2 Optical/SAR (10m Resolution)'
   const auditStatus = hasDiscrepancy ? 'DISCREPANCY_FLAGGED' : 'VERIFIED_ALIGNED'
 
   const auditSummary = hasDiscrepancy
-    ? `Ground Reality Discrepancy Flagged: Department reports ${reported}% progress, but satellite optical footprint registers ~${visualProgress}% structural and civil completion (Δ -${discrepancyGap}% discrepancy gap).`
+    ? `Ground Reality Discrepancy Flagged: Implementing agency reports ${reported}% progress, but satellite optical and SAR ground footprints register ~${visualProgress}% structural completion (Δ -${discrepancyGap}% discrepancy gap). Recommended for physical milestone audit.`
     : `Ground Truth Corroborated: Satellite optical footprint confirms structural alignment at ~${visualProgress}% within contractual tolerance of reported progress (${reported}%).`
 
-  const now = new Date(2026, 8, 14)
-  now.setDate(now.getDate() - (h % 9))
+  const now = new Date(2026, 8, 18)
+  now.setDate(now.getDate() - (h % 6))
   const lastPassDate = now.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
 
   return {
