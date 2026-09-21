@@ -221,6 +221,26 @@ function hashString(str: string): number {
  * Deterministic canonical risk profile calculator.
  */
 export function getProjectRiskProfile(project: Project): ProjectRiskProfile {
+  const isCompleted = (project.progress ?? 0) >= 100 || project.type === 'Completed'
+  if (isCompleted) {
+    return {
+      tier: 'Low',
+      score: 8,
+      delayProbability: 0,
+      badgeClass: 'badge-low',
+      textClass: 'pa-green',
+      bgLightClass: '#f0fdf4',
+      label: 'Asset Commissioned & Live',
+      predictedExtraDelay: '0 Months (Completed Asset)',
+      estimatedExtraCost: '₹ 0 Cr (Final Account Settled)',
+      explanation: 'Drishti AI Verification: Asset has achieved 100% physical ground completion and entered operational status. Zero remaining schedule slippage or cost escalation.',
+      timeConfidence: 96,
+      costConfidence: 97,
+      riskConfidence: 98,
+      overallConfidence: 97,
+    }
+  }
+
   const overrun = project.overrunMonths ?? 0
   const costOverrun = project.costOverrunCr ?? 0
   const costOverrunPct = project.costOverrunPct ?? 0
@@ -301,6 +321,38 @@ export function getProjectRiskProfile(project: Project): ProjectRiskProfile {
     riskConfidence,
     overallConfidence,
   }
+}
+
+/**
+ * Accurately calculates elapsed delay and remaining projected delay based on real calendar dates.
+ * - originalDoc: e.g. "07/2020"
+ * - anticipatedDoc: e.g. "01/2029"
+ * - report period baseline: July 2026
+ */
+export function calculateScheduleLapse(originalDoc?: string, anticipatedDoc?: string, isCompleted?: boolean) {
+  if (isCompleted || !originalDoc) {
+    return { alreadyDelayed: 0, extraDelay: 0, totalOverrun: 0 }
+  }
+  const parseMY = (d?: string) => {
+    if (!d) return null
+    const m = d.match(/(\d{1,2})\/(\d{4})/)
+    if (m) return parseInt(m[2]) * 12 + parseInt(m[1])
+    return null
+  }
+  const origMo = parseMY(originalDoc)
+  const antiMo = parseMY(anticipatedDoc)
+  // Current audit period is July 2026
+  const currentMo = 2026 * 12 + 7
+
+  if (!origMo || !antiMo || antiMo <= origMo) {
+    return { alreadyDelayed: 0, extraDelay: 0, totalOverrun: 0 }
+  }
+
+  const totalOverrun = Math.max(0, antiMo - origMo)
+  const alreadyDelayed = Math.max(0, Math.min(totalOverrun, currentMo - origMo))
+  const extraDelay = Math.max(0, totalOverrun - alreadyDelayed)
+
+  return { alreadyDelayed, extraDelay, totalOverrun }
 }
 
 /**

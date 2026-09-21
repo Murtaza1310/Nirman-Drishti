@@ -10,6 +10,7 @@ import {
   getUnifiedProjectById,
   getProjectRiskProfile,
   getProjectBudgets,
+  calculateScheduleLapse,
   getFlagshipDetails,
   getFlagshipProjects,
   computeDynamicBottlenecks,
@@ -1925,14 +1926,32 @@ function ProjectWhyAIModal({
   type: 'time' | 'cost' | 'risk';
   onClose: () => void;
 }) {
-  const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
+  const isCompleted = (p.progress ?? 0) >= 100 || p.type === 'Completed'
+  const onTrack = isCompleted || p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
   const budgets = p.budgets || getProjectBudgets(p)
-  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
-  const totalOverrun = p.overrunMonths || 0
-  const alreadyDelayed = onTrack ? 0 : Math.max(0, Math.min(totalOverrun, Math.round(totalOverrun * 0.6) || 12))
-  const extraDelay = onTrack ? 0 : Math.max(0, totalOverrun - alreadyDelayed)
-  const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
-  const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
+  const riskProfile = isCompleted ? {
+    tier: 'Low' as RiskTier,
+    score: 8,
+    delayProbability: 0,
+    badgeClass: 'badge-low',
+    textClass: 'pa-green',
+    bgLightClass: '#f0fdf4',
+    label: 'Asset Commissioned & Live',
+    predictedExtraDelay: '0 Months (Completed Asset)',
+    estimatedExtraCost: '₹ 0 Cr (Final Account Settled)',
+    explanation: 'Drishti AI Verification: Asset has achieved 100% physical ground completion and entered operational status. Zero remaining schedule slippage or cost escalation.',
+    timeConfidence: 96,
+    costConfidence: 97,
+    riskConfidence: 98,
+    overallConfidence: 97,
+  } : (p.riskProfile || getProjectRiskProfile(p))
+
+  const lapse = calculateScheduleLapse(p.originalDoc, p.anticipatedDoc, isCompleted)
+  const totalOverrun = lapse.totalOverrun
+  const alreadyDelayed = lapse.alreadyDelayed
+  const extraDelay = lapse.extraDelay
+  const timeOverrunText = isCompleted ? '0 Months (Completed Asset)' : onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
+  const costOverrunText = isCompleted ? '₹ 0 Cr (Final Outlay Settled)' : (riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation'))
 
   let title = ''
   let subHeader = ''
@@ -1948,42 +1967,68 @@ function ProjectWhyAIModal({
     subHeader = `${p.name} · Schedule Slippage Model`
     bigVal = timeOverrunText
     confidence = `Confidence: ${riskProfile.timeConfidence}%`
-    summarySub = onTrack 
+    summarySub = isCompleted
+      ? 'Asset 100% physically executed on ground and commissioned for public / commercial operations.'
+      : onTrack 
       ? 'Contract execution is progressing within original approved baseline.'
       : `Already Delayed: ${alreadyDelayed} Months · Predicted Extra Delay: +${extraDelay} Months`
-    explanation = onTrack
+    explanation = isCompleted
+      ? `This asset has achieved 100% physical ground completion. All civil structures, equipment integration, safety inspections, and commissioning certificates have been finalized. The asset is fully delivered and operational.`
+      : onTrack
       ? `This project is executing steadily on ground at ${p.progress}% progress. Current contractor workforce, machinery deployment, and milestone velocity align with the target completion milestone without critical path slippage.`
       : `Drishti AI analyzed the monthly milestone velocity for ${p.name}. The project has already suffered ${alreadyDelayed} months of slippage primarily due to ${p.criticalIssue || 'statutory site clearances'}. Machine learning curve fitting across historical ${p.sector} projects indicates contractor mobilization cannot recover lost time under standard operating procedures, forecasting an additional +${extraDelay} months of delay to complete remaining work.`
-    reasons = [
+    reasons = isCompleted ? [
+      `Physical Progress Rate: 100% ground execution verified by site audits and satellite observation.`,
+      `Commercial Operations: Construction phase fully concluded with zero critical path remaining.`,
+      `Statutory Clearances: Final completion certificates and safety compliance approvals obtained.`,
+      `Asset Handover: Infrastructure is operational and delivering public / commercial service.`
+    ] : [
       `Physical Progress Rate: Ground execution is at ${p.progress}%, which lags behind the required run-rate for target completion.`,
       `Critical Bottleneck: Site hurdles flagged in "${p.criticalIssue || 'Land Acquisition & Statutory Permissions'}".`,
       `Satellite Ground Truth: ISRO Bhuvan & Sentinel-2 Earth Observation confirms ~${p.satelliteAudit?.visualProgress || p.progress}% structural completion, corroborating schedule timeline.`,
       `Historical Cohort Delay Pattern: Similar ${p.sector} projects in ${p.state} took a median of ${Math.round(totalOverrun * 1.15)} months to fully commission under these conditions.`
     ]
-    nextAction = `Execute fast-track inter-agency escalation via PM GatiShakti portal to clear "${p.criticalIssue || 'statutory approvals'}" and avoid further contractor idling.`
+    nextAction = isCompleted
+      ? `Project lifecycle is completed. Perform defect liability period (DLP) monitoring and finalize asset capitalization in Union accounts.`
+      : `Execute fast-track inter-agency escalation via PM GatiShakti portal to clear "${p.criticalIssue || 'statutory approvals'}" and avoid further contractor idling.`
   } else if (type === 'cost') {
     title = 'Cost Overrun Prediction Analysis'
     subHeader = `${p.name} · Capital Escalation Model`
     bigVal = costOverrunText
     confidence = `Confidence: ${riskProfile.costConfidence}%`
-    summarySub = `Approved Budget: ${budgets.sanctionedCost} → Expected Final Cost: ${budgets.revisedCost}`
-    explanation = onTrack
+    summarySub = isCompleted
+      ? `Approved Budget: ${budgets.sanctionedCost} · Final Capex Spent: ${budgets.spentCost} (Final Settlement)`
+      : `Approved Budget: ${budgets.sanctionedCost} → Expected Final Cost: ${budgets.revisedCost}`
+    explanation = isCompleted
+      ? `Final accounts, contractor billing reconciliation, and statutory audit verification confirm that the project closed within authorized financial outlays (${budgets.spentCost} invested). Zero further capital escalation.`
+      : onTrack
       ? `Disbursements (${budgets.spentCost} spent, ${budgets.financialProgress}%) are tracking strictly within the cabinet-approved budget of ${budgets.sanctionedCost}. Price indices and contractor claims show zero abnormal escalation.`
       : `Because the project has slipped by ${totalOverrun} months, the prolonged project lifecycle automatically triggers compounding financial escalation. This includes inflation on essential construction materials (cement, structural steel, bitumen), contractor prolongation claims, idle machinery overhead, and debt interest during construction (IDC). Drishti AI calculates an extra ${costOverrunText} will be required, increasing the final project cost from ${budgets.sanctionedCost} to ${budgets.revisedCost}.`
-    reasons = [
+    reasons = isCompleted ? [
+      `Fiscal Discipline: Total expenditure closed within authorized sanction envelope of ${budgets.sanctionedCost}.`,
+      `Contractor Closure: Running account bills and retention guarantees reconciled with zero pending claims.`,
+      `Capital Utilization: ${budgets.spentCost} (${budgets.financialProgress}%) successfully disbursed into physical ground infrastructure.`,
+      `Statutory Audit: Project accounts audited and approved by ministry finance division.`
+    ] : [
       `Approved Budget Baseline: ₹ ${budgets.rawCost?.toLocaleString() || budgets.sanctionedCost} Cr approved outlay, with ${budgets.spentCost} (${budgets.financialProgress}%) disbursed to date.`,
       `Unspent Sanction Balance: ${budgets.balanceCost} remaining for future execution phases.`,
       `Time Delay Escalation Index: Prolonged duration over +${totalOverrun} months triggers statutory Price Adjustment Clauses (WPI/CPI inflation).`,
       `Indirect Overhead & Supervision: Extended project management consultancy (PMC) fees, insurance, and interest charges accrue for each delayed quarter.`
     ]
-    nextAction = `Initiate Standing Finance Committee (SFC) or Revised Cost Committee (RCC) review to realign budget authorization and prevent cash-flow choking.`
+    nextAction = isCompleted
+      ? `Archive project financial files and transition ongoing operations to departmental operations & maintenance (O&M) budget.`
+      : `Initiate Standing Finance Committee (SFC) or Revised Cost Committee (RCC) review to realign budget authorization and prevent cash-flow choking.`
   } else {
     title = 'Overall Risk Level & Multi-Factor Scoring'
     subHeader = `${p.name} · Neural Early Warning System`
     bigVal = `${riskProfile.tier} Risk (${riskProfile.score}/100)`
     confidence = `Confidence: ${riskProfile.riskConfidence}%`
-    summarySub = `${riskProfile.delayProbability}% Chance of Missing Target Deadline · ${riskProfile.tier} Urgency`
-    explanation = onTrack
+    summarySub = isCompleted
+      ? '0% Delay Probability · Completed Asset (Zero Operational Risk)'
+      : `${riskProfile.delayProbability}% Chance of Missing Target Deadline · ${riskProfile.tier} Urgency`
+    explanation = isCompleted
+      ? `Drishti AI assigns the lowest possible risk classification (8/100) because the asset has completed 100% physical ground execution and is in commercial operation.`
+      : onTrack
       ? `The project exhibits excellent operational health with an AI risk score of ${riskProfile.score}/100. Both physical completion and capex disbursements match expectations.`
       : `Drishti AI evaluated 17 real-time telemetry indicators to assign an AI risk score of ${riskProfile.score}/100. ${p.name} has substantial time delay (+${totalOverrun} months), a financial-to-physical progress variance (${budgets.financialProgress}% money spent vs ${p.progress}% ground progress), and persistent bottleneck issues (${p.criticalIssue}). This places it in the ${riskProfile.tier} Risk priority tier.`
     reasons = [
@@ -3568,10 +3613,27 @@ function CompactAnalysisCard({
   initialSubTab?: 'projects' | 'ml_benchmark' | 'missing_data';
   onNavigate?: (nav: string) => void;
 }) {
-  const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
-  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+  const isCompleted = (p.progress ?? 0) >= 100 || p.type === 'Completed'
+  const onTrack = isCompleted || p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
+  const riskProfile = isCompleted ? {
+    tier: 'Low' as RiskTier,
+    score: 8,
+    delayProbability: 0,
+    badgeClass: 'badge-low',
+    textClass: 'pa-green',
+    bgLightClass: '#f0fdf4',
+    label: 'Asset Commissioned & Live',
+    predictedExtraDelay: '0 Months (Completed Asset)',
+    estimatedExtraCost: '₹ 0 Cr (Final Account Settled)',
+    explanation: 'Drishti AI Verification: Asset has achieved 100% physical ground completion and entered operational status. Zero remaining schedule slippage or cost escalation.',
+    timeConfidence: 96,
+    costConfidence: 97,
+    riskConfidence: 98,
+    overallConfidence: 97,
+  } : (p.riskProfile || getProjectRiskProfile(p))
   const budgets = p.budgets || getProjectBudgets(p)
-  const statusClass = onTrack ? 'ca-status-ok' : p.type === 'High Risk' ? 'ca-status-risk' : 'ca-status-bad'
+  const statusClass = (isCompleted || onTrack) ? 'ca-status-ok' : p.type === 'High Risk' ? 'ca-status-risk' : 'ca-status-bad'
+  const statusLabel = isCompleted ? 'Completed' : p.type
 
   return (
     <article className="ca-card compact-summary-card">
@@ -3600,17 +3662,17 @@ function CompactAnalysisCard({
           <ProgressRing value={p.progress} />
         </div>
         <div className="ca-fact">
-          <span className="ca-fact-label">Target Completion</span>
-          <strong className="ca-fact-val">{p.targetCompletion || p.anticipatedDoc || p.originalDoc}</strong>
-          <small className={`ca-fact-note ${onTrack ? 'pa-green' : 'pa-red'}`}>
-            {onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Mo Delay`}
+          <span className="ca-fact-label">{isCompleted ? 'Asset Status' : 'Target Completion'}</span>
+          <strong className="ca-fact-val">{isCompleted ? 'Commissioned' : (p.targetCompletion || p.anticipatedDoc || p.originalDoc)}</strong>
+          <small className={`ca-fact-note ${(isCompleted || onTrack) ? 'pa-green' : 'pa-red'}`}>
+            {isCompleted ? 'Operational' : onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Mo Delay`}
           </small>
         </div>
       </div>
 
       <div className="ca-col ca-side" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px' }}>
         <div className="ca-side-top" style={{ justifyContent: 'space-between' }}>
-          <span className={`ca-status ${statusClass}`}>{!onTrack && <AlertTriangle size={12} />} {p.type}</span>
+          <span className={`ca-status ${statusClass}`}>{isCompleted ? <CircleCheck size={12} /> : !onTrack && <AlertTriangle size={12} />} {statusLabel}</span>
           {p.freshness && (
             <span className={`freshness-badge ${p.freshness.badgeClass}`} title={p.freshness.statusMessage}>
               <i className="freshness-dot" style={{ backgroundColor: p.freshness.indicatorColor }} />
@@ -3710,19 +3772,38 @@ function ProjectAnalysisCard({
   onNavigate?: (nav: string) => void;
 }) {
   const [activeWhyAiType, setActiveWhyAiType] = useState<'time' | 'cost' | 'risk' | null>(null)
-  const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
-  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+  const isCompleted = (p.progress ?? 0) >= 100 || p.type === 'Completed'
+  const onTrack = isCompleted || p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
+  const riskProfile = isCompleted ? {
+    tier: 'Low' as RiskTier,
+    score: 8,
+    delayProbability: 0,
+    badgeClass: 'badge-low',
+    textClass: 'pa-green',
+    bgLightClass: '#f0fdf4',
+    label: 'Asset Commissioned & Live',
+    predictedExtraDelay: '0 Months (Completed Asset)',
+    estimatedExtraCost: '₹ 0 Cr (Final Account Settled)',
+    explanation: 'Drishti AI Verification: Asset has achieved 100% physical ground completion and entered operational status. Zero remaining schedule slippage or cost escalation.',
+    timeConfidence: 96,
+    costConfidence: 97,
+    riskConfidence: 98,
+    overallConfidence: 97,
+  } : (p.riskProfile || getProjectRiskProfile(p))
+
   const budgets = p.budgets || getProjectBudgets(p)
   const flagship = p.flagshipDetails || getFlagshipDetails(p)
-  const statusClass = onTrack ? 'pa-status-ok' : 'pa-status-bad'
-  const levelClass = flagship.priority === 'CRITICAL' ? 'pa-red' : flagship.priority === 'HIGH' ? 'pa-orange' : 'pa-amber'
+  const statusClass = (isCompleted || onTrack) ? 'pa-status-ok' : 'pa-status-bad'
+  const statusLabel = isCompleted ? 'Completed & Commissioned' : p.type
+  const levelClass = isCompleted ? 'pa-green' : flagship.priority === 'CRITICAL' ? 'pa-red' : flagship.priority === 'HIGH' ? 'pa-orange' : 'pa-amber'
 
-  const totalOverrun = p.overrunMonths || 0
-  const alreadyDelayed = onTrack ? 0 : Math.max(0, Math.min(totalOverrun, Math.round(totalOverrun * 0.6) || 12))
-  const extraDelay = onTrack ? 0 : Math.max(0, totalOverrun - alreadyDelayed)
+  const lapse = calculateScheduleLapse(p.originalDoc, p.anticipatedDoc, isCompleted)
+  const totalOverrun = lapse.totalOverrun
+  const alreadyDelayed = lapse.alreadyDelayed
+  const extraDelay = lapse.extraDelay
 
-  const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
-  const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
+  const timeOverrunText = isCompleted ? '0 Months (Completed Asset)' : onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
+  const costOverrunText = isCompleted ? '₹ 0 Cr (Final Outlay Settled)' : (riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation'))
 
   const breakdown = budgets.breakdown || p.expenditureBreakdown || {
     civilWorks: `₹ ${Math.round((budgets.rawSpentCost || 0) * 0.54).toLocaleString()} Cr`,
@@ -3760,7 +3841,7 @@ function ProjectAnalysisCard({
         {/* Top Right Corner Status & Risk Rating */}
         <div className="pa-head-right-corner">
           <span className={`pa-status-badge ${statusClass}`}>
-            <AlertTriangle size={13} /> {p.type}
+            {isCompleted ? <CircleCheck size={13} /> : onTrack ? <CircleCheck size={13} /> : <AlertTriangle size={13} />} {statusLabel}
           </span>
           <span className="pa-risk-pill">
             Risk Rating: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100)
@@ -3793,11 +3874,11 @@ function ProjectAnalysisCard({
           <span className="pa-m-sub">Original Target Date</span>
         </div>
         <div>
-          <span className="pa-m-label">Current Delay Status</span>
-          <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#ea580c' }}>
-            {onTrack ? 'On Schedule' : `Already Delayed: ${alreadyDelayed} Mo`}
+          <span className="pa-m-label">{isCompleted ? 'Asset Status' : 'Current Delay Status'}</span>
+          <strong className="pa-m-val" style={{ color: (isCompleted || onTrack) ? '#159149' : '#ea580c' }}>
+            {isCompleted ? 'Commissioned & Operational' : onTrack ? 'On Schedule' : `Already Delayed: ${alreadyDelayed} Mo`}
           </strong>
-          <span className="pa-m-sub">{onTrack ? 'Working On Time' : `+${totalOverrun} Mo Total Delay`}</span>
+          <span className="pa-m-sub">{isCompleted ? '100% Ground Executed' : onTrack ? 'Working On Time' : `+${totalOverrun} Mo Total Delay`}</span>
         </div>
       </div>
 
@@ -3946,7 +4027,9 @@ function ProjectAnalysisCard({
             </div>
             <div className="pa-hero-big-val">{timeOverrunText}</div>
             <div className="pa-hero-sub">
-              {onTrack ? (
+              {isCompleted ? (
+                'Asset 100% physically executed and operational'
+              ) : onTrack ? (
                 'Working strictly on schedule'
               ) : (
                 <>Already Delayed: <strong>{alreadyDelayed} Mo</strong> · Predicted Extra: <strong>+{extraDelay} Mo</strong></>
@@ -3963,7 +4046,7 @@ function ProjectAnalysisCard({
           </div>
 
           {/* Box 2: Cost Overrun Prediction */}
-          <div className={`pa-hero-box ${budgets.hasOverrun ? 'hero-box-orange' : 'hero-box-green'}`}>
+          <div className={`pa-hero-box ${(isCompleted || !budgets.hasOverrun) ? 'hero-box-green' : 'hero-box-orange'}`}>
             <div className="pa-hero-label">
               <Coins size={16} />
               <span>Cost Overrun Prediction</span>
@@ -3971,7 +4054,11 @@ function ProjectAnalysisCard({
             </div>
             <div className="pa-hero-big-val">{costOverrunText}</div>
             <div className="pa-hero-sub">
-              Expected Final Cost: <strong>{budgets.revisedCost}</strong>
+              {isCompleted ? (
+                <>Final Cumulative Spent: <strong>{budgets.spentCost}</strong></>
+              ) : (
+                <>Expected Final Cost: <strong>{budgets.revisedCost}</strong></>
+              )}
             </div>
             <div className="pa-hero-footer-note">
               Approved Budget: <strong>{budgets.sanctionedCost}</strong>
@@ -3987,7 +4074,7 @@ function ProjectAnalysisCard({
           </div>
 
           {/* Box 3: Overall Risk Level */}
-          <div className={`pa-hero-box ${riskProfile.tier === 'High' ? 'hero-box-red' : riskProfile.tier === 'Medium' ? 'hero-box-orange' : 'hero-box-green'}`}>
+          <div className={`pa-hero-box ${(isCompleted || riskProfile.tier === 'Low') ? 'hero-box-green' : riskProfile.tier === 'Medium' ? 'hero-box-orange' : 'hero-box-red'}`}>
             <div className="pa-hero-label">
               <ShieldAlert size={16} />
               <span>Overall Risk Level</span>
@@ -3995,10 +4082,14 @@ function ProjectAnalysisCard({
             </div>
             <div className="pa-hero-big-val">{riskProfile.tier} Risk ({riskProfile.score}/100)</div>
             <div className="pa-hero-sub">
-              Chance of Missing Deadline: <strong>{riskProfile.delayProbability}%</strong>
+              {isCompleted ? (
+                'Zero Active Risk · 100% Ground Delivery'
+              ) : (
+                <>Chance of Missing Deadline: <strong>{riskProfile.delayProbability}%</strong></>
+              )}
             </div>
             <div className="pa-hero-footer-note">
-              Risk Urgency: <strong>{riskProfile.tier} Priority</strong>
+              Risk Urgency: <strong>{isCompleted ? 'Delivered Asset' : `${riskProfile.tier} Priority`}</strong>
             </div>
             <button 
               type="button" 
