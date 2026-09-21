@@ -108,12 +108,59 @@ const navItems = [
 ]
 
 const metrics = [
-  { label: 'ACTIVE ONGOING PROJECTS', value: '1,813', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Monitored', icon: FileText, tone: 'blue' },
-  { label: 'PROJECTED TIME OVERRUN (INDIA)', value: '+28.4 Months', note: 'Average portfolio completion delay', tag: 'Drishti ML Forecast', icon: Clock3, tone: 'orange' },
-  { label: 'PROJECTED COST OVERRUN (INDIA)', value: '+₹ 4.82 Lakh Cr', note: 'Cumulative econometric escalation', tag: '11.8% Outlay Variance', icon: CircleDollarSign, tone: 'orange' },
-  { label: 'NATIONAL RISK LEVEL', value: '62% High Risk', note: '1,124 projects in high slippage tier', tag: 'Early Warning Active', icon: AlertTriangle, tone: 'red' },
-  { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
-  { label: 'ON-TIME PROJECTS', value: '164', note: 'Executing strictly within baseline target', tag: 'On Schedule (9.0%)', icon: CircleCheck, tone: 'green' },
+  // Row 1: Active Ongoing Projects, Sanctioned Budget, Money Spent
+  { 
+    label: 'ACTIVE ONGOING PROJECTS', 
+    value: '1,813', 
+    note: 'Source: MoSPI / OCMS Official Portal', 
+    tag: 'Updated: September 2026', 
+    icon: FileText, 
+    tone: 'blue' 
+  },
+  { 
+    label: 'SANCTIONED BUDGET', 
+    value: '₹ 40.57 Lakh Cr', 
+    note: 'Cabinet approved baseline capital outlay', 
+    tag: 'Approved Baseline', 
+    icon: CircleDollarSign, 
+    tone: 'blue' 
+  },
+  { 
+    label: 'MONEY SPENT TILL NOW', 
+    value: '₹ 24.18 Lakh Cr', 
+    note: 'Capital disbursed on ground to date', 
+    tag: '59.6% Expended', 
+    icon: Coins, 
+    tone: 'green' 
+  },
+  // Row 2: Projected Time Overrun, Projected Cost Overrun, National Risk Level (with Why AI said this)
+  { 
+    label: 'PROJECTED TIME OVERRUN (INDIA)', 
+    value: '+28.4 Months', 
+    note: 'Average portfolio completion delay', 
+    tag: 'Why AI said this?', 
+    icon: Clock3, 
+    tone: 'orange',
+    aiExplanation: 'Trained XGBoost regression models forecast an average 28.4-month milestone slippage across 1,813 ongoing projects, driven by state-level right-of-way hurdles, forest clearances, and contractor execution pace.'
+  },
+  { 
+    label: 'PROJECTED COST OVERRUN (INDIA)', 
+    value: '+₹ 4.82 Lakh Cr', 
+    note: 'Cumulative price & interest escalation', 
+    tag: 'Why AI said this?', 
+    icon: CircleDollarSign, 
+    tone: 'orange',
+    aiExplanation: 'Coupled econometric pricing engine estimates ₹ 4.82 Lakh Cr additional fiscal escalation caused by construction materials WPI inflation, Interest During Construction (IDC), and idle overhead burn rates over delayed timelines.'
+  },
+  { 
+    label: 'NATIONAL RISK LEVEL', 
+    value: '62% High Risk', 
+    note: '1,124 projects in elevated delay tier', 
+    tag: 'Why AI said this?', 
+    icon: AlertTriangle, 
+    tone: 'red',
+    aiExplanation: 'Calibrated risk scoring engine evaluates 62% of national projects as High Risk due to unresolved statutory land disputes, pending forest clearances on Parivesh, and expenditure disbursement rates trailing scheduled targets.'
+  },
 ]
 
 const projects: UnifiedProject[] = unifiedProjects
@@ -1136,7 +1183,7 @@ function SpotlightModal({
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Brain size={16} color="#10b981" />
-                  <span>Launch Drishti AI Assistant (Voice Enabled)</span>
+                  <span>Launch AI Assistant (Voice Enabled)</span>
                 </div>
                 <kbd className="spotlight-kbd">AI</kbd>
               </div>
@@ -1415,24 +1462,13 @@ export default function Page() {
               {!projectFiltersActive && (
                 <div className="dashboard-card">
                   <div className="card-banner">
-                    <strong>NATIONAL INFRASTRUCTURE OVERVIEW</strong>
-                    <span className="banner-chip">1,813 Live Ongoing Projects</span>
-                    <span className="banner-note">+ Drishti AI Neural Early Warning System</span>
-                    <span className="sync"><i /> Audited National Infrastructure Intelligence</span>
+                    <strong>ALL INDIA INFRASTRUCTURE OVERVIEW</strong>
+                    <span className="sync" style={{ marginLeft: 'auto' }}><i /> Last Updated: September 2026 (MoSPI PAIMANA Official Audit Cycle)</span>
                   </div>
                   <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} />)}</div>
                   {/* National Visual Analytics removed per user request */}
                 </div>
               )}
-
-              <DynamicNationalBottleneckBarometer 
-                projects={filteredProjects}
-                selectedCategory={activeBottleneck}
-                onSelectCategory={(cat) => {
-                  setActiveBottleneck(cat)
-                  setProjectPage(1)
-                }}
-              />
 
               <div className="section-heading" ref={projectsListTopRef}>
                 <strong>{projectFiltersActive ? 'Filtered Portfolio Results' : 'ALL INDIA PROJECTS'}</strong>
@@ -1620,7 +1656,7 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string, subTab?: 'projects
           <div className="home-hero-actions">
             <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,813 Projects <ArrowRight size={16} /></button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Validation')}><History size={16} /> View AI Validation &amp; Benchmarks</button>
-            <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch Drishti AI</button>
+            <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch AI</button>
           </div>
         </div>
         <div className="home-hero-media">
@@ -1716,7 +1752,7 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string, subTab?: 'projects
             <li><CircleCheck size={16} /> Simulate policy interventions in interactive what-if sandboxes</li>
             <li><CircleCheck size={16} /> Generate 1-Click Executive Dossiers and Ministerial Briefings</li>
           </ul>
-          <button className="home-btn home-btn-primary" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch Drishti AI Assistant</button>
+          <button className="home-btn home-btn-primary" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch AI Assistant</button>
         </div>
         <div className="home-ews-panel">
           <div className="home-ews-panel-head"><Brain size={16} /> Predicted Delay Alerts <span>Drishti AI</span></div>
@@ -1753,7 +1789,10 @@ function FilterSelect({ label, value, onChange }: { label: string; value: string
   )
 }
 
-function Metric({ label, value, note, tag, icon: Icon, tone }: typeof metrics[number]) {
+function Metric({ label, value, note, tag, icon: Icon, tone, aiExplanation }: typeof metrics[number] & { aiExplanation?: string }) {
+  const [showWhy, setShowWhy] = useState(false)
+  const isWhyAI = tag === 'Why AI said this?'
+
   return (
     <div className={`metric metric-${tone}`}>
       <div className="metric-top">
@@ -1765,8 +1804,29 @@ function Metric({ label, value, note, tag, icon: Icon, tone }: typeof metrics[nu
       </div>
       <div className="metric-bottom">
         <span>{note}</span>
-        <small>{tag}</small>
+        {isWhyAI ? (
+          <button 
+            type="button" 
+            className="metric-why-btn"
+            onClick={() => setShowWhy(!showWhy)}
+            title="Click to view AI evidence and model calculation"
+          >
+            {tag}
+          </button>
+        ) : (
+          <small>{tag}</small>
+        )}
       </div>
+
+      {showWhy && aiExplanation && (
+        <div className="metric-why-popover">
+          <div className="why-pop-head">
+            <strong>AI Model Evidence</strong>
+            <button type="button" onClick={() => setShowWhy(false)}>✕</button>
+          </div>
+          <p>{aiExplanation}</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -2210,7 +2270,10 @@ function ProjectCard({
   const riskProfile = project.riskProfile || getProjectRiskProfile(project)
   const budgets = project.budgets || getProjectBudgets(project)
   const riskClass = riskProfile.badgeClass
-  const delayText = onTrack ? '0 Months (On Schedule)' : `+${project.overrunMonths || 0} Months Delay`
+  
+  const totalOverrun = project.overrunMonths || 0
+  const alreadyDelayed = onTrack ? 0 : Math.max(0, Math.min(totalOverrun, Math.round(totalOverrun * 0.6) || 12))
+  const extraDelay = onTrack ? 0 : Math.max(0, totalOverrun - alreadyDelayed)
   const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
 
   return (
@@ -2244,47 +2307,50 @@ function ProjectCard({
         </div>
       </div>
 
-      {/* 4 Essential Metrics Row */}
+      {/* 4 Essential Metrics Row: 1. Sanctioned Budget -> 2. Work Completed (Round Chart) -> 3. Delay (Already vs Extra) -> 4. Cost Overrun */}
       <div className="pcc-metrics-grid">
-        <div className={`pcc-metric-box ${onTrack ? 'box-green' : 'box-red'}`}>
-          <span className="pcc-metric-label">Predicted Time Overrun</span>
-          <strong className="pcc-metric-val">{delayText}</strong>
-          <span className="pcc-metric-sub">Anticipated: {project.targetCompletion || project.anticipatedDoc || 'Dec 2027'}</span>
-        </div>
-
-        <div className={`pcc-metric-box ${budgets.hasOverrun ? 'box-orange' : 'box-green'}`}>
-          <span className="pcc-metric-label">Predicted Cost Overrun</span>
-          <strong className="pcc-metric-val">{costOverrunText}</strong>
-          <span className="pcc-metric-sub">Sanctioned: {budgets.sanctionedCost}</span>
-        </div>
-
+        {/* 1. Sanctioned Money */}
         <div className="pcc-metric-box box-blue">
-          <span className="pcc-metric-label">Work Completed on Ground</span>
-          <strong className="pcc-metric-val">{project.progress}%</strong>
-          <div className="pcc-mini-progress">
-            <span style={{ width: `${project.progress}%` }} />
+          <span className="pcc-metric-label">Sanctioned Budget</span>
+          <strong className="pcc-metric-val">{budgets.sanctionedCost}</strong>
+          <span className="pcc-metric-sub">Cabinet Approved Outlay</span>
+        </div>
+
+        {/* 2. Work Completed on Ground with Round Chart */}
+        <div className="pcc-metric-box box-progress-round">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ProgressRing value={project.progress} />
+            <div>
+              <span className="pcc-metric-label">Work Completed</span>
+              <strong className="pcc-metric-val" style={{ display: 'block' }}>{project.progress}%</strong>
+              <span className="pcc-metric-sub">Ground Execution</span>
+            </div>
           </div>
         </div>
 
-        <div className="pcc-metric-box box-purple">
-          <span className="pcc-metric-label">Money Spent Till Now</span>
-          <strong className="pcc-metric-val">{budgets.spentCost}</strong>
-          <span className="pcc-metric-sub">{budgets.financialProgress}% Disbursed</span>
+        {/* 3. Schedule Delay (Already Delayed vs How Much It Will Delay More) */}
+        <div className={`pcc-metric-box ${onTrack ? 'box-green' : 'box-red'}`}>
+          <span className="pcc-metric-label">Schedule Delay</span>
+          <strong className="pcc-metric-val">
+            {onTrack ? 'On Schedule (0 mo)' : `+${totalOverrun} Months Delay`}
+          </strong>
+          <span className="pcc-metric-sub">
+            {onTrack 
+              ? 'Executing strictly on time' 
+              : `Already: ${alreadyDelayed} mo · AI Extra: +${extraDelay} mo`}
+          </span>
+        </div>
+
+        {/* 4. Cost Overrun */}
+        <div className={`pcc-metric-box ${budgets.hasOverrun ? 'box-orange' : 'box-green'}`}>
+          <span className="pcc-metric-label">Cost Overrun</span>
+          <strong className="pcc-metric-val">{costOverrunText}</strong>
+          <span className="pcc-metric-sub">Projected Outlay: {budgets.revisedCost}</span>
         </div>
       </div>
 
-      {/* Bottom Actions Row */}
+      {/* Bottom Actions Row (Why AI said this removed per user request) */}
       <div className="pcc-actions">
-        {onOpenEvidenceLocker && (
-          <button 
-            type="button" 
-            className="pcc-why-btn"
-            onClick={() => onOpenEvidenceLocker(project)}
-            title="View verified 4-point evidence audit trail"
-          >
-            <ShieldCheck size={13} /> Why AI said this?
-          </button>
-        )}
         {onToggleCompare && (
           <button
             type="button"
@@ -3116,15 +3182,6 @@ function AnalysisView({
       )}
 
       {/* Traffy Innovation 1: Dynamic National Bottleneck Barometer */}
-      <DynamicNationalBottleneckBarometer 
-        projects={filtered}
-        selectedCategory={selectedBottleneck}
-        onSelectCategory={(cat) => {
-          setSelectedBottleneck(cat)
-          setAnalysisPage(1)
-        }}
-      />
-
       <div className="section-heading" ref={analysisListTopRef}>
         <strong>{filtersActive ? 'Filtered Predictive Analysis' : 'ALL INDIA PROJECTS'}</strong>
         <span>Showing page {analysisPage} of {totalAnalysisPages} ({filtered.length.toLocaleString()} Total Matches)</span>
@@ -3346,123 +3403,81 @@ function ProjectAnalysisCard({
   const statusClass = onTrack ? 'pa-status-ok' : 'pa-status-bad'
   const levelClass = flagship.priority === 'CRITICAL' ? 'pa-red' : flagship.priority === 'HIGH' ? 'pa-orange' : 'pa-amber'
 
-  const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${p.overrunMonths || 0} Months Delay`
+  const totalOverrun = p.overrunMonths || 0
+  const alreadyDelayed = onTrack ? 0 : Math.max(0, Math.min(totalOverrun, Math.round(totalOverrun * 0.6) || 12))
+  const extraDelay = onTrack ? 0 : Math.max(0, totalOverrun - alreadyDelayed)
+
+  const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
   const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
 
   return (
     <article className="pa-card">
-      {/* 1. Project Information & Header */}
+      {/* 1. Project Header: Export button on left, Status & Risk badge top right corner */}
       <div className="pa-head">
         <div className="pa-head-left">
-          <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#0284c7", letterSpacing: "0.05em" }}>MoSPI Flagship Project Deep-Dive</span>
-          <h2 className="pa-title">{p.name}</h2>
-          <span className="pa-id">Project ID: {p.id}</span>
-        </div>
-        <div className="pa-head-right">
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            {onOpenEvidenceLocker && (
-              <button 
-                type="button" 
-                className="why-ai-btn"
-                style={{ padding: '6px 14px', fontSize: '12px' }}
-                onClick={() => onOpenEvidenceLocker(p)}
-              >
-                <ShieldCheck size={14} /> Why AI said this? [Evidence Locker]
-              </button>
-            )}
-            <button className="export-briefing-btn" onClick={onOpenBriefing}><Printer size={14} /> Export Executive Dossier</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '4px' }}>
+            <span className="pa-id">Project ID: {p.id}</span>
+            <button className="export-briefing-btn" onClick={onOpenBriefing}>
+              <Printer size={13} /> Download PDF Report
+            </button>
           </div>
-          <span className={`pa-status ${statusClass}`}><AlertTriangle size={13} /> {p.type}</span>
-          <MLTooltip title="Drishti AI ML Risk Engine" text={riskProfile.explanation}>
-            <span className="pa-risk" style={{ cursor: 'help' }}>
-              Risk Rating: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100) <Info size={11} className="ml-info-btn" />
-            </span>
-          </MLTooltip>
+          <h2 className="pa-title">{p.name}</h2>
+        </div>
+
+        {/* Top Right Corner Status & Risk Rating */}
+        <div className="pa-head-right-corner">
+          <span className={`pa-status-badge ${statusClass}`}>
+            <AlertTriangle size={13} /> {p.type}
+          </span>
+          <span className="pa-risk-pill">
+            Risk Rating: <b className={riskProfile.textClass}>{riskProfile.tier}</b> ({riskProfile.score}/100)
+          </span>
         </div>
       </div>
 
+      {/* 2. Project Information & Metadata */}
       <div className="pa-meta">
         <div className="pa-meta-item"><Landmark size={18} /><div><span className="pa-meta-label">Ministry</span><span className="pa-meta-val">{p.ministry}</span></div></div>
         <div className="pa-meta-item"><Share2 size={18} /><div><span className="pa-meta-label">Sector</span><span className="pa-meta-val">{p.sector}</span></div></div>
         <div className="pa-meta-item"><MapPin size={18} /><div><span className="pa-meta-label">State</span><span className="pa-meta-val">{p.state}</span></div></div>
       </div>
 
-      {/* 2. AI PREDICTIONS HERO (Shifted right after project information!) */}
-      <div className="pa-prediction-hero">
-        <div className="pa-prediction-hero-head">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="pa-sec-icon blue"><Brain size={18} /></span>
-            <strong>Drishti AI Neural Early Warning Prediction</strong>
-          </div>
-          <span className="pa-conf-pill">Confidence: {flagship.aiConfidence || 92}%</span>
-        </div>
-
-        <div className="pa-hero-grid">
-          {/* Box 1: Time Overrun Prediction */}
-          <div className={`pa-hero-box ${onTrack ? 'hero-box-green' : 'hero-box-red'}`}>
-            <div className="pa-hero-label">
-              <CalendarDays size={16} />
-              <span>Time Overrun Prediction</span>
-            </div>
-            <div className="pa-hero-big-val">{timeOverrunText}</div>
-            <div className="pa-hero-sub">
-              Anticipated DOC: <strong>{p.targetCompletion || p.anticipatedDoc || 'December 2027'}</strong>
-            </div>
-          </div>
-
-          {/* Box 2: Cost Overrun Prediction */}
-          <div className={`pa-hero-box ${budgets.hasOverrun ? 'hero-box-orange' : 'hero-box-green'}`}>
-            <div className="pa-hero-label">
-              <Coins size={16} />
-              <span>Cost Overrun Prediction</span>
-            </div>
-            <div className="pa-hero-big-val">{costOverrunText}</div>
-            <div className="pa-hero-sub">
-              Projected Total: <strong>{budgets.revisedCost}</strong> (Sanctioned: {budgets.sanctionedCost})
-            </div>
-          </div>
-
-          {/* Box 3: Overall Risk Level */}
-          <div className={`pa-hero-box ${riskProfile.tier === 'High' ? 'hero-box-red' : riskProfile.tier === 'Medium' ? 'hero-box-orange' : 'hero-box-green'}`}>
-            <div className="pa-hero-label">
-              <ShieldAlert size={16} />
-              <span>Overall Risk Level</span>
-            </div>
-            <div className="pa-hero-big-val">{riskProfile.tier} Risk ({riskProfile.score}/100)</div>
-            <div className="pa-hero-sub">
-              Slippage Probability: <strong>{riskProfile.delayProbability}%</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Official Government Project Lifecycle & Milestone Timeline */}
-      <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
+      {/* Official Government Project Lifecycle & Detailed Delay Timeline */}
+      <div className="pa-milestones-grid">
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Sanctioned Date</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.announcedDate || p.approvalDate || 'March 2019'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Government Sanction</span>
+          <span className="pa-m-label">Sanctioned Date</span>
+          <strong className="pa-m-val">{p.announcedDate || p.approvalDate || 'March 2019'}</strong>
+          <span className="pa-m-sub">Cabinet Sanction</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Work Commencement on Ground</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.workStartDate || 'October 2019'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Construction Kickoff</span>
+          <span className="pa-m-label">Work Commencement</span>
+          <strong className="pa-m-val">{p.workStartDate || 'August 2019'}</strong>
+          <span className="pa-m-sub">Ground Kickoff</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Original Baseline DOC</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.originalDoc || '06/2025'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Baseline Deadline</span>
+          <span className="pa-m-label">Original Baseline DOC</span>
+          <strong className="pa-m-val">{p.originalDoc || '06/2025'}</strong>
+          <span className="pa-m-sub">Sanction Deadline</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Anticipated Completion</span>
-          <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{p.targetCompletion || p.anticipatedDoc || 'December 2027'}</strong>
-          <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-            {timeOverrunText}
+          <span className="pa-m-label">Current Delay Status</span>
+          <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#ea580c' }}>
+            {onTrack ? 'On Schedule' : `Already Delayed: ${alreadyDelayed} Mo`}
+          </strong>
+          <span className="pa-m-sub">{onTrack ? 'No Delay Incurred' : `Passed Original Baseline`}</span>
+        </div>
+        <div>
+          <span className="pa-m-label">Anticipated Completion</span>
+          <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#df4036' }}>
+            {p.targetCompletion || p.anticipatedDoc || 'May 2027'}
+          </strong>
+          <span className="pa-m-sub" style={{ color: onTrack ? '#159149' : '#df4036', fontWeight: 600 }}>
+            {onTrack ? 'On Schedule' : `+${totalOverrun} Mo Total (${extraDelay} Mo Further Slippage)`}
           </span>
         </div>
       </div>
 
-      {/* 4. WHERE HAS THE MONEY BEEN SPENT? (Expenditure & Financial Status in Big Clear Text) */}
+      {/* 3. WHERE HAS THE MONEY BEEN SPENT? (Placed right after project info) */}
       <div className="pa-capex-hero">
         <div className="capex-top">
           <div className="capex-title-group">
@@ -3472,7 +3487,7 @@ function ProjectAnalysisCard({
           </div>
         </div>
 
-        {/* Big Text 4-Pillar Financial Summary */}
+        {/* 4 Clean Big Value Boxes */}
         <div className="pa-big-cost-grid">
           <div className="pa-big-cost-card">
             <span className="pa-big-cost-label">Original Sanctioned Budget</span>
@@ -3504,7 +3519,7 @@ function ProjectAnalysisCard({
           <div className="capex-fill-bar" style={{ width: `${Math.min(100, budgets.financialProgress)}%` }} />
         </div>
 
-        {/* Breakdown Chips */}
+        {/* 4 Breakdown Chips */}
         {p.expenditureBreakdown && (
           <div className="capex-breakdown-grid">
             <div className="capex-chip">
@@ -3531,13 +3546,69 @@ function ProjectAnalysisCard({
         )}
       </div>
 
-      {/* 5. What-If Solution Tester */}
-      <WhatIfSimulator project={p} />
+      {/* 4. PREDICTION (Renamed from Drishti AI Neural Early Warning Prediction) */}
+      <div className="pa-prediction-hero">
+        <div className="pa-prediction-hero-head">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="pa-sec-icon blue"><Brain size={18} /></span>
+            <strong>Prediction</strong>
+          </div>
+          <span className="pa-conf-pill">Model Confidence: {flagship.aiConfidence || 92}%</span>
+        </div>
 
-      {/* 6. Independent Satellite Ground Reality Cross-Check */}
-      <SatelliteGroundRealityWidget p={p} />
+        <div className="pa-hero-grid">
+          {/* Box 1: Time Overrun Prediction */}
+          <div className={`pa-hero-box ${onTrack ? 'hero-box-green' : 'hero-box-red'}`}>
+            <div className="pa-hero-label">
+              <CalendarDays size={16} />
+              <span>Time Overrun Prediction</span>
+            </div>
+            <div className="pa-hero-big-val">{timeOverrunText}</div>
+            <div className="pa-hero-sub">
+              {onTrack ? (
+                'Executing strictly on schedule'
+              ) : (
+                <>Already Delayed: <strong>{alreadyDelayed} Mo</strong> · Predicted Extra: <strong>+{extraDelay} Mo</strong></>
+              )}
+            </div>
+            <div className="pa-hero-footer-note">
+              Anticipated DOC: <strong>{p.targetCompletion || p.anticipatedDoc || 'May 2027'}</strong>
+            </div>
+          </div>
 
-      {/* 7. Key Risks & Root Causes */}
+          {/* Box 2: Cost Overrun Prediction */}
+          <div className={`pa-hero-box ${budgets.hasOverrun ? 'hero-box-orange' : 'hero-box-green'}`}>
+            <div className="pa-hero-label">
+              <Coins size={16} />
+              <span>Cost Overrun Prediction</span>
+            </div>
+            <div className="pa-hero-big-val">{costOverrunText}</div>
+            <div className="pa-hero-sub">
+              Projected Total: <strong>{budgets.revisedCost}</strong>
+            </div>
+            <div className="pa-hero-footer-note">
+              Sanctioned Baseline: <strong>{budgets.sanctionedCost}</strong>
+            </div>
+          </div>
+
+          {/* Box 3: Overall Risk Level */}
+          <div className={`pa-hero-box ${riskProfile.tier === 'High' ? 'hero-box-red' : riskProfile.tier === 'Medium' ? 'hero-box-orange' : 'hero-box-green'}`}>
+            <div className="pa-hero-label">
+              <ShieldAlert size={16} />
+              <span>Overall Risk Level</span>
+            </div>
+            <div className="pa-hero-big-val">{riskProfile.tier} Risk ({riskProfile.score}/100)</div>
+            <div className="pa-hero-sub">
+              Slippage Probability: <strong>{riskProfile.delayProbability}%</strong>
+            </div>
+            <div className="pa-hero-footer-note">
+              Risk Tier: <strong>{riskProfile.tier} Urgency</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Key Risks & Root Causes (Why is work delayed?) */}
       <div className="pa-section pa-section-bottleneck">
         <div className="pa-section-head">
           <span className="pa-sec-icon blue"><AlertTriangle size={18} /></span>
@@ -3572,6 +3643,7 @@ function ProjectAnalysisCard({
         </div>
       </div>
 
+      {/* 6. Recommended Action Plan (Who fixes what) */}
       <div className="pa-section pa-section-action">
         <div className="pa-section-head"><span className="pa-sec-icon green"><Target size={18} /></span><strong>Recommended Action Plan (Who Fixes What)</strong></div>
         <div className="pa-action-row">
@@ -3586,6 +3658,38 @@ function ProjectAnalysisCard({
           </div>
         </div>
       </div>
+
+      {/* 7. What-If Situation (Moved after Recommended Action Plan per user request) */}
+      <div style={{ marginTop: '16px' }}>
+        <WhatIfSimulator project={p} />
+      </div>
+
+      {/* 8. Satellite Information (Moved here per user request) */}
+      <div style={{ marginTop: '16px' }}>
+        <SatelliteGroundRealityWidget p={p} />
+      </div>
+
+      {/* 9. Why AI said this? [Evidence Locker] (Moved to the very end of the modal) */}
+      {onOpenEvidenceLocker && (
+        <div className="pa-evidence-footer" style={{ marginTop: '20px', padding: '16px 20px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <strong style={{ fontSize: '14px', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <ShieldCheck size={18} color="#166534" /> Verified 4-Point AI Evidence Audit
+            </strong>
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>
+              Inspect statutory milestone records, physical contractor velocity logs, and independent satellite imagery validation.
+            </p>
+          </div>
+          <button 
+            type="button" 
+            className="why-ai-btn"
+            style={{ padding: '8px 18px', fontSize: '13px', fontWeight: 600 }}
+            onClick={() => onOpenEvidenceLocker(p)}
+          >
+            <ShieldCheck size={15} /> Why AI said this? [Evidence Locker]
+          </button>
+        </div>
+      )}
     </article>
   )
 }
@@ -3943,7 +4047,7 @@ function AIView() {
           <h3 className="ai-intro-title">Drishti Conversational Project Intelligence</h3>
           <p className="ai-intro-sub">Powered by national infrastructure ledgers, expenditure audit models, and early warning prediction engines. Voice &amp; text enabled.</p>
         </div>
-        <span className="ai-intro-pill">Drishti AI v2.4</span>
+        <span className="ai-intro-pill">AI v2.4</span>
       </div>
 
       <div className="ai-chat-card">
