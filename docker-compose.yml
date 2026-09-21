@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  nirman-drishti:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nirman-drishti-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
