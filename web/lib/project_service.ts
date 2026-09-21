@@ -59,6 +59,8 @@ export interface Project {
   coordinates?: [number, number]
   reportPeriod?: string
   reportYear?: number
+  deadlockCategory?: string
+  frontLoadedLandAcquisition?: boolean
 }
 
 export interface ProjectRiskProfile {
@@ -84,6 +86,8 @@ export interface ProjectBudgets {
   spentCost: string
   balanceCost: string
   financialProgress: number
+  financialProgressRevised: number
+  expectedFinalCostNum: number
   costOverrunCr: number
   costOverrunPct: number
   hasOverrun: boolean
@@ -106,6 +110,7 @@ export interface FlagshipAnalysisDetails {
   expectedImpact: string[]
   actionConf: number
   aiConfidence: number
+  deadlockCategory?: string
 }
 
 // -------------------------------------------------------------
@@ -552,6 +557,7 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
 
   const expectedFinalCostNum = Math.round((rawCostNum + (hasOverrun ? costOverrunCr : 0)) * 10) / 10
   const revisedCost = `₹ ${expectedFinalCostNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
+  const finProgressRevised = expectedFinalCostNum > 0 ? Math.min(100, Math.round((rawSpentNum / expectedFinalCostNum) * 100)) : finProgress
 
   const profile = getSectorExpenditureProfile(project.sector, project.id)
   const civilPct = project.expenditureBreakdown?.civilPct ?? profile.civilPct
@@ -589,6 +595,8 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
     spentCost,
     balanceCost,
     financialProgress: finProgress,
+    financialProgressRevised: finProgressRevised,
+    expectedFinalCostNum,
     costOverrunCr,
     costOverrunPct,
     hasOverrun,
@@ -618,6 +626,7 @@ export function getFlagshipDetails(project: Project): FlagshipAnalysisDetails {
       expectedImpact: existing.expectedImpact || ['Accelerate delivery milestones', 'Prevent secondary cost escalation'],
       actionConf: existing.actionConf || 90,
       aiConfidence: existing.aiConfidence || 92,
+      deadlockCategory: existing.deadlockCategory || project.deadlockCategory,
     }
   }
 
@@ -657,6 +666,7 @@ export function getFlagshipDetails(project: Project): FlagshipAnalysisDetails {
     ],
     actionConf: 88,
     aiConfidence: 89,
+    deadlockCategory: project.deadlockCategory,
   }
 }
 
