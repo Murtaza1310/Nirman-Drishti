@@ -9319,3 +9319,36 @@ body.dark-theme .dd-card-icon {
 .seg-land { background: #ea580c; }
 .seg-util { background: #16a34a; }
 .seg-pmc { background: #7c3aed; }
+
+/* Confidence tags & badges */
+.metric-conf-pill {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: auto;
+}
+
+.pcc-conf-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.pa-box-conf {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 3px;
+  padding: 1px 6px;
+  margin-left: auto;
+}

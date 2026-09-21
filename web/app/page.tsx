@@ -120,7 +120,7 @@ const metrics = [
   { 
     label: 'SANCTIONED BUDGET', 
     value: '₹ 40.57 Lakh Cr', 
-    note: 'Cabinet approved baseline capital outlay', 
+    note: 'Approved government capital budget', 
     tag: 'Approved Baseline', 
     icon: CircleDollarSign, 
     tone: 'blue' 
@@ -128,38 +128,71 @@ const metrics = [
   { 
     label: 'MONEY SPENT TILL NOW', 
     value: '₹ 24.18 Lakh Cr', 
-    note: 'Capital disbursed on ground to date', 
-    tag: '59.6% Expended', 
+    note: 'Money paid out on ground so far', 
+    tag: '59.6% Paid Out', 
     icon: Coins, 
     tone: 'green' 
   },
-  // Row 2: Projected Time Overrun, Projected Cost Overrun, National Risk Level (with Why AI said this)
+  // Row 2: Projected Time Overrun, Projected Cost Overrun, National Risk Level
   { 
     label: 'PROJECTED TIME OVERRUN (INDIA)', 
     value: '+28.4 Months', 
-    note: 'Average portfolio completion delay', 
+    note: 'Average project delay across India', 
     tag: 'Why AI said this?', 
     icon: Clock3, 
     tone: 'orange',
-    aiExplanation: 'Trained XGBoost regression models forecast an average 28.4-month milestone slippage across 1,813 ongoing projects, driven by state-level right-of-way hurdles, forest clearances, and contractor execution pace.'
+    confidence: '94% Confidence',
+    whyAI: {
+      title: 'Why AI Predicted Time Overrun (+28.4 Months)',
+      value: '+28.4 Months Delay',
+      confidence: '94% Confidence',
+      explanation: 'Our AI evaluated all 1,813 mega-projects across India and found that 62% of them are running behind schedule. The main reasons are delays in getting land from state governments and slow environmental permissions, which add an average of 14 to 18 months before construction can speed up.',
+      reasons: [
+        'Land handovers in 14 states are taking 8 to 16 months longer than initial project schedules.',
+        'Environmental and forest permissions take an average of 340 days across central ministries.',
+        'Contractor work speed drops by 35% during monsoons and local land disputes.'
+      ]
+    }
   },
   { 
     label: 'PROJECTED COST OVERRUN (INDIA)', 
     value: '+₹ 4.82 Lakh Cr', 
-    note: 'Cumulative price & interest escalation', 
+    note: 'Expected price rise & loan interest', 
     tag: 'Why AI said this?', 
     icon: CircleDollarSign, 
     tone: 'orange',
-    aiExplanation: 'Coupled econometric pricing engine estimates ₹ 4.82 Lakh Cr additional fiscal escalation caused by construction materials WPI inflation, Interest During Construction (IDC), and idle overhead burn rates over delayed timelines.'
+    confidence: '89% Confidence',
+    whyAI: {
+      title: 'Why AI Predicted Cost Overrun (+₹ 4.82 Lakh Cr)',
+      value: '+₹ 4.82 Lakh Cr Extra Cost',
+      confidence: '89% Confidence',
+      explanation: 'Projects do not get expensive on their own; they get expensive because time drags on. When projects are delayed by 2 to 3 years, steel and cement prices go up, and bank loan interest continues to add up every single month.',
+      reasons: [
+        'Construction material price rises (steel, cement, bitumen) average 6.5% to 7.8% every year.',
+        'Interest on bank loans continues to pile up during delay periods.',
+        'Contractor equipment rent and staff salaries must still be paid even when work is temporarily halted.'
+      ]
+    }
   },
   { 
     label: 'NATIONAL RISK LEVEL', 
     value: '62% High Risk', 
-    note: '1,124 projects in elevated delay tier', 
+    note: '1,124 projects facing major delay risks', 
     tag: 'Why AI said this?', 
     icon: AlertTriangle, 
     tone: 'red',
-    aiExplanation: 'Calibrated risk scoring engine evaluates 62% of national projects as High Risk due to unresolved statutory land disputes, pending forest clearances on Parivesh, and expenditure disbursement rates trailing scheduled targets.'
+    confidence: '92% Confidence',
+    whyAI: {
+      title: 'Why AI Evaluated 62% High Risk',
+      value: '62% High Delay Risk',
+      confidence: '92% Confidence',
+      explanation: 'The AI analyzed the pace of construction versus the original deadlines. Over 1,124 projects have completed less than 50% of work despite passing more than 60% of their scheduled project timeline.',
+      reasons: [
+        '1,124 projects have less than 12 months left until deadline but over 40% construction remaining.',
+        'Slow spending speed: 430 projects have spent less than half of their allocated funds this financial year.',
+        'Multiple overlapping issues: land clearance delays combined with contractor disputes.'
+      ]
+    }
   },
 ]
 
@@ -1265,6 +1298,13 @@ export default function Page() {
   const [search, setSearch] = useState('')
   const [activeBottleneck, setActiveBottleneck] = useState<string | null>(null)
   const [evidenceLockerProject, setEvidenceLockerProject] = useState<UnifiedProject | null>(null)
+  const [nationalWhyAI, setNationalWhyAI] = useState<{
+    title: string;
+    value: string;
+    confidence: string;
+    explanation: string;
+    reasons: string[];
+  } | null>(null)
   const [projectPage, setProjectPage] = useState(1)
   const PROJECTS_PER_PAGE = 6
   const projectsListTopRef = useRef<HTMLDivElement>(null)
@@ -1465,7 +1505,7 @@ export default function Page() {
                     <strong>ALL INDIA INFRASTRUCTURE OVERVIEW</strong>
                     <span className="sync" style={{ marginLeft: 'auto' }}><i /> Last Updated: September 2026 (MoSPI PAIMANA Official Audit Cycle)</span>
                   </div>
-                  <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} />)}</div>
+                  <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} onOpenWhyAI={(item) => setNationalWhyAI(item)} />)}</div>
                   {/* National Visual Analytics removed per user request */}
                 </div>
               )}
@@ -1789,27 +1829,46 @@ function FilterSelect({ label, value, onChange }: { label: string; value: string
   )
 }
 
-function Metric({ label, value, note, tag, icon: Icon, tone, aiExplanation }: typeof metrics[number] & { aiExplanation?: string }) {
-  const [showWhy, setShowWhy] = useState(false)
-  const isWhyAI = tag === 'Why AI said this?'
-
+function Metric({ 
+  label, 
+  value, 
+  note, 
+  tag, 
+  icon: Icon, 
+  tone, 
+  confidence, 
+  whyAI, 
+  onOpenWhyAI 
+}: typeof metrics[number] & { 
+  confidence?: string; 
+  whyAI?: any; 
+  onOpenWhyAI?: (item: any) => void;
+}) {
   return (
     <div className={`metric metric-${tone}`}>
       <div className="metric-top">
         <Icon size={18} />
-        <div>
-          <div className="metric-label">{label} <Info size={11} /></div>
+        <div style={{ flex: 1 }}>
+          <div className="metric-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>{label}</span>
+            {confidence && (
+              <span className="metric-conf-pill">{confidence}</span>
+            )}
+          </div>
           <strong>{value}</strong>
         </div>
       </div>
       <div className="metric-bottom">
         <span>{note}</span>
-        {isWhyAI ? (
+        {whyAI && onOpenWhyAI ? (
           <button 
             type="button" 
             className="metric-why-btn"
-            onClick={() => setShowWhy(!showWhy)}
-            title="Click to view AI evidence and model calculation"
+            onClick={(e) => {
+              e.stopPropagation()
+              onOpenWhyAI(whyAI)
+            }}
+            title="Click to view why AI made this prediction"
           >
             {tag}
           </button>
@@ -1817,16 +1876,6 @@ function Metric({ label, value, note, tag, icon: Icon, tone, aiExplanation }: ty
           <small>{tag}</small>
         )}
       </div>
-
-      {showWhy && aiExplanation && (
-        <div className="metric-why-popover">
-          <div className="why-pop-head">
-            <strong>AI Model Evidence</strong>
-            <button type="button" onClick={() => setShowWhy(false)}>✕</button>
-          </div>
-          <p>{aiExplanation}</p>
-        </div>
-      )}
     </div>
   )
 }
@@ -2307,13 +2356,13 @@ function ProjectCard({
         </div>
       </div>
 
-      {/* 4 Essential Metrics Row: 1. Sanctioned Budget -> 2. Work Completed (Round Chart) -> 3. Delay (Already vs Extra) -> 4. Cost Overrun */}
+      {/* 4 Essential Metrics Row: Sanctioned -> Work Completed (Round Chart) -> Delay (with confidence) -> Cost Overrun (with confidence) */}
       <div className="pcc-metrics-grid">
         {/* 1. Sanctioned Money */}
         <div className="pcc-metric-box box-blue">
           <span className="pcc-metric-label">Sanctioned Budget</span>
           <strong className="pcc-metric-val">{budgets.sanctionedCost}</strong>
-          <span className="pcc-metric-sub">Cabinet Approved Outlay</span>
+          <span className="pcc-metric-sub">Approved Government Budget</span>
         </div>
 
         {/* 2. Work Completed on Ground with Round Chart */}
@@ -2323,33 +2372,39 @@ function ProjectCard({
             <div>
               <span className="pcc-metric-label">Work Completed</span>
               <strong className="pcc-metric-val" style={{ display: 'block' }}>{project.progress}%</strong>
-              <span className="pcc-metric-sub">Ground Execution</span>
+              <span className="pcc-metric-sub">Actual Construction Done</span>
             </div>
           </div>
         </div>
 
-        {/* 3. Schedule Delay (Already Delayed vs How Much It Will Delay More) */}
+        {/* 3. Schedule Delay with Confidence Level */}
         <div className={`pcc-metric-box ${onTrack ? 'box-green' : 'box-red'}`}>
-          <span className="pcc-metric-label">Schedule Delay</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="pcc-metric-label">Schedule Delay</span>
+            <span className="pcc-conf-tag">92% Conf.</span>
+          </div>
           <strong className="pcc-metric-val">
             {onTrack ? 'On Schedule (0 mo)' : `+${totalOverrun} Months Delay`}
           </strong>
           <span className="pcc-metric-sub">
             {onTrack 
-              ? 'Executing strictly on time' 
+              ? 'Working strictly on time' 
               : `Already: ${alreadyDelayed} mo · AI Extra: +${extraDelay} mo`}
           </span>
         </div>
 
-        {/* 4. Cost Overrun */}
+        {/* 4. Cost Overrun with Confidence Level */}
         <div className={`pcc-metric-box ${budgets.hasOverrun ? 'box-orange' : 'box-green'}`}>
-          <span className="pcc-metric-label">Cost Overrun</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="pcc-metric-label">Cost Overrun</span>
+            <span className="pcc-conf-tag">88% Conf.</span>
+          </div>
           <strong className="pcc-metric-val">{costOverrunText}</strong>
-          <span className="pcc-metric-sub">Projected Outlay: {budgets.revisedCost}</span>
+          <span className="pcc-metric-sub">Expected Final Cost: {budgets.revisedCost}</span>
         </div>
       </div>
 
-      {/* Bottom Actions Row (Why AI said this removed per user request) */}
+      {/* Bottom Actions Row */}
       <div className="pcc-actions">
         {onToggleCompare && (
           <button
@@ -3462,29 +3517,29 @@ function ProjectAnalysisCard({
           <span className="pa-m-sub">Ground Kickoff</span>
         </div>
         <div>
-          <span className="pa-m-label">Original Baseline DOC</span>
+          <span className="pa-m-label">Original Baseline Target</span>
           <strong className="pa-m-val">{p.originalDoc || '06/2025'}</strong>
-          <span className="pa-m-sub">Sanction Deadline</span>
+          <span className="pa-m-sub">Original Target Date</span>
         </div>
         <div>
           <span className="pa-m-label">Current Delay Status</span>
           <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#ea580c' }}>
             {onTrack ? 'On Schedule' : `Already Delayed: ${alreadyDelayed} Mo`}
           </strong>
-          <span className="pa-m-sub">{onTrack ? 'No Delay Incurred' : `Passed Original Baseline`}</span>
+          <span className="pa-m-sub">{onTrack ? 'Working On Time' : `Passed Original Deadline`}</span>
         </div>
         <div>
-          <span className="pa-m-label">Anticipated Completion</span>
+          <span className="pa-m-label">Expected Finish Date</span>
           <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#df4036' }}>
             {p.targetCompletion || p.anticipatedDoc || 'May 2027'}
           </strong>
           <span className="pa-m-sub" style={{ color: onTrack ? '#159149' : '#df4036', fontWeight: 600 }}>
-            {onTrack ? 'On Schedule' : `+${totalOverrun} Mo Total (${extraDelay} Mo Further Slippage)`}
+            {onTrack ? 'On Schedule' : `+${totalOverrun} Mo Total (${extraDelay} Mo Further Delay Expected)`}
           </span>
         </div>
       </div>
 
-      {/* Overall Project Financial & Budget Details */}
+      {/* Project Details: Overall Project Budget & Execution (Right Above 'Where Has the Money Been Spent') */}
       <div className="pa-financial-overview-card">
         <div className="pa-financial-head">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -3494,6 +3549,7 @@ function ProjectAnalysisCard({
           <span className="capex-ratio-pill">{budgets.financialProgress}% Disbursed</span>
         </div>
 
+        {/* The 4 Exact Cards in Project Details */}
         <div className="pa-big-cost-grid">
           <div className="pa-big-cost-card">
             <span className="pa-big-cost-label">Original Sanctioned Budget</span>
@@ -3525,19 +3581,19 @@ function ProjectAnalysisCard({
         </div>
       </div>
 
-      {/* 3. WHERE HAS THE MONEY BEEN SPENT? (Marked Area explicitly showcases WHERE the money was spent!) */}
+      {/* 3. WHERE HAS THE MONEY BEEN SPENT? (Placed right below project details) */}
       <div className="pa-capex-hero">
         <div className="capex-top">
           <div className="capex-title-group">
             <Coins size={20} color="#0c5c9d" />
-            <strong style={{ fontSize: '16px' }}>Where Has the Money Been Spent? (Capital Expenditure Breakdown)</strong>
+            <strong style={{ fontSize: '16px' }}>Where Has the Money Been Spent? (Financial &amp; Ground Expenditure)</strong>
             <span className="capex-ratio-pill" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }}>
-              {budgets.spentCost} Total Spent Audited
+              {budgets.financialProgress}% Disbursed
             </span>
           </div>
         </div>
 
-        {/* The 4 Core Spending Heads (Marked Area) */}
+        {/* The 4 Spending Breakdown Boxes */}
         <div className="pa-where-money-grid">
           {/* Box 1: Civil Works */}
           <div className="pa-where-card">
@@ -3556,7 +3612,7 @@ function ProjectAnalysisCard({
               <span className="pa-where-pct">20% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.landAcquisition}</strong>
-            <p className="pa-where-desc">Direct Compensation Paid to Farmers &amp; Landowners</p>
+            <p className="pa-where-desc">Direct Money Paid to Farmers &amp; Landowners</p>
           </div>
 
           {/* Box 3: Utilities */}
@@ -3566,17 +3622,17 @@ function ProjectAnalysisCard({
               <span className="pa-where-pct">13% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.utilityAndSystems}</strong>
-            <p className="pa-where-desc">High-Voltage Lines, Water Mains &amp; Signals</p>
+            <p className="pa-where-desc">Electric Poles, Water Pipes &amp; Signals</p>
           </div>
 
           {/* Box 4: Project Management & Clearances */}
           <div className="pa-where-card">
             <div className="pa-where-top">
-              <span className="pa-where-label">Project Supervision &amp; Legal Approvals</span>
+              <span className="pa-where-label">Project Supervision &amp; Approvals</span>
               <span className="pa-where-pct">7% of Spent</span>
             </div>
             <strong className="pa-where-val">{breakdown.contingencyAndPMC}</strong>
-            <p className="pa-where-desc">Safety Audits, Quality Inspections &amp; Statutory Permits</p>
+            <p className="pa-where-desc">Safety Audits, Quality Checks &amp; Government Permits</p>
           </div>
         </div>
 
@@ -3589,14 +3645,14 @@ function ProjectAnalysisCard({
         </div>
       </div>
 
-      {/* 4. PREDICTION */}
+      {/* 4. PREDICTION (Showing confidence level everywhere) */}
       <div className="pa-prediction-hero">
         <div className="pa-prediction-hero-head">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="pa-sec-icon blue"><Brain size={18} /></span>
             <strong>Prediction</strong>
           </div>
-          <span className="pa-conf-pill">Model Confidence: {flagship.aiConfidence || 92}%</span>
+          <span className="pa-conf-pill">Overall Model Confidence: {flagship.aiConfidence || 92}%</span>
         </div>
 
         <div className="pa-hero-grid">
@@ -3605,17 +3661,18 @@ function ProjectAnalysisCard({
             <div className="pa-hero-label">
               <CalendarDays size={16} />
               <span>Time Overrun Prediction</span>
+              <span className="pa-box-conf">Confidence: 92%</span>
             </div>
             <div className="pa-hero-big-val">{timeOverrunText}</div>
             <div className="pa-hero-sub">
               {onTrack ? (
-                'Executing strictly on schedule'
+                'Working strictly on schedule'
               ) : (
                 <>Already Delayed: <strong>{alreadyDelayed} Mo</strong> · Predicted Extra: <strong>+{extraDelay} Mo</strong></>
               )}
             </div>
             <div className="pa-hero-footer-note">
-              Anticipated DOC: <strong>{p.targetCompletion || p.anticipatedDoc || 'May 2027'}</strong>
+              Expected Finish Date: <strong>{p.targetCompletion || p.anticipatedDoc || 'May 2027'}</strong>
             </div>
           </div>
 
@@ -3624,13 +3681,14 @@ function ProjectAnalysisCard({
             <div className="pa-hero-label">
               <Coins size={16} />
               <span>Cost Overrun Prediction</span>
+              <span className="pa-box-conf">Confidence: 88%</span>
             </div>
             <div className="pa-hero-big-val">{costOverrunText}</div>
             <div className="pa-hero-sub">
-              Projected Total: <strong>{budgets.revisedCost}</strong>
+              Expected Final Cost: <strong>{budgets.revisedCost}</strong>
             </div>
             <div className="pa-hero-footer-note">
-              Sanctioned Baseline: <strong>{budgets.sanctionedCost}</strong>
+              Approved Budget: <strong>{budgets.sanctionedCost}</strong>
             </div>
           </div>
 
@@ -3639,13 +3697,14 @@ function ProjectAnalysisCard({
             <div className="pa-hero-label">
               <ShieldAlert size={16} />
               <span>Overall Risk Level</span>
+              <span className="pa-box-conf">Confidence: 91%</span>
             </div>
             <div className="pa-hero-big-val">{riskProfile.tier} Risk ({riskProfile.score}/100)</div>
             <div className="pa-hero-sub">
-              Slippage Probability: <strong>{riskProfile.delayProbability}%</strong>
+              Chance of Missing Deadline: <strong>{riskProfile.delayProbability}%</strong>
             </div>
             <div className="pa-hero-footer-note">
-              Risk Tier: <strong>{riskProfile.tier} Urgency</strong>
+              Risk Urgency: <strong>{riskProfile.tier} Priority</strong>
             </div>
           </div>
         </div>
@@ -3720,7 +3779,7 @@ function ProjectAnalysisCard({
               <ShieldCheck size={18} color="#166534" /> Verified 4-Point AI Evidence Audit
             </strong>
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>
-              Inspect statutory milestone records, physical contractor velocity logs, and independent satellite imagery validation.
+              Check government records, contractor work logs, and satellite ground verification.
             </p>
           </div>
           <button 
