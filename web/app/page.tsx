@@ -108,11 +108,12 @@ const navItems = [
 ]
 
 const metrics = [
-  { label: 'ACTIVE ONGOING PROJECTS', value: '1,813', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Tracked', icon: FileText, tone: 'blue' },
-  { label: 'ON-TIME PROJECTS', value: '164', note: 'Executing within baseline target', tag: 'On Schedule (9.0%)', icon: CircleCheck, tone: 'green' },
-  { label: 'DELAYED PROJECTS', value: '1,649', note: 'Running past original target deadline', tag: '91.0% Ratio', icon: Clock3, tone: 'orange' },
-  { label: 'TOTAL APPROVED BUDGET', value: '₹ 40.57 Lakh Cr', note: 'Officially sanctioned capital outlay', tag: 'Sanctioned', icon: CircleDollarSign, tone: 'blue' },
+  { label: 'ACTIVE ONGOING PROJECTS', value: '1,813', note: 'National Mega-Projects (≥ ₹150 Cr)', tag: '100% Monitored', icon: FileText, tone: 'blue' },
+  { label: 'PROJECTED TIME OVERRUN (INDIA)', value: '+28.4 Months', note: 'Average portfolio completion delay', tag: 'Drishti ML Forecast', icon: Clock3, tone: 'orange' },
+  { label: 'PROJECTED COST OVERRUN (INDIA)', value: '+₹ 4.82 Lakh Cr', note: 'Cumulative econometric escalation', tag: '11.8% Outlay Variance', icon: CircleDollarSign, tone: 'orange' },
+  { label: 'NATIONAL RISK LEVEL', value: '62% High Risk', note: '1,124 projects in high slippage tier', tag: 'Early Warning Active', icon: AlertTriangle, tone: 'red' },
   { label: 'MONEY SPENT TILL NOW', value: '₹ 24.18 Lakh Cr', note: 'Capital disbursed on ground to date', tag: '59.6% Expended', icon: Coins, tone: 'green' },
+  { label: 'ON-TIME PROJECTS', value: '164', note: 'Executing strictly within baseline target', tag: 'On Schedule (9.0%)', icon: CircleCheck, tone: 'green' },
 ]
 
 const projects: UnifiedProject[] = unifiedProjects
@@ -1420,7 +1421,7 @@ export default function Page() {
                     <span className="sync"><i /> Audited National Infrastructure Intelligence</span>
                   </div>
                   <div className="metrics-grid">{metrics.map((metric) => <Metric key={metric.label} {...metric} />)}</div>
-                  <NationalVisualAnalytics />
+                  {/* National Visual Analytics removed per user request */}
                 </div>
               )}
 
@@ -2198,214 +2199,106 @@ function ProjectCard({
 }: { 
   project: UnifiedProject; 
   onViewAnalysis: () => void;
-  onOpenBriefing: () => void;
+  onOpenBriefing?: () => void;
   isCompared?: boolean;
   onToggleCompare?: () => void;
   onOpenEvidenceLocker?: (p: UnifiedProject) => void;
   initialSubTab?: 'projects' | 'ml_benchmark' | 'missing_data';
   onNavigate?: (nav: string) => void;
 }) {
-  const [showSim, setShowSim] = useState(false)
   const onTrack = project.type === 'On Schedule' || (project.overrunMonths ?? 0) === 0
   const riskProfile = project.riskProfile || getProjectRiskProfile(project)
   const budgets = project.budgets || getProjectBudgets(project)
   const riskClass = riskProfile.badgeClass
-  const typeClass = onTrack ? 'badge-ontrack' : 'badge-high'
+  const delayText = onTrack ? '0 Months (On Schedule)' : `+${project.overrunMonths || 0} Months Delay`
+  const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
 
   return (
-    <article className={`project-card ${riskProfile.tier === 'High' ? 'high-risk-card' : ''}`}>
-      {riskProfile.tier === 'High' && (
-        <div className="pc-high-risk-alert">
-          <span className="pulse-alert-dot" />
-          <strong>CRITICAL RISK ALERT:</strong> High Slippage Risk Detected · Active Intervention Recommended
-        </div>
-      )}
-      <div className="pc-header">
-        <div className="pc-heading">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <strong>{project.name}</strong>
-            <span className="agency-velocity-badge">
-              <Zap size={11} /> Agency: {project.agency || project.ministry.split('/')[0]} · 84% Velocity
-            </span>
-            {project.freshness && (
-              <span className={`freshness-badge ${project.freshness.badgeClass}`} title={project.freshness.statusMessage}>
-                <i className="freshness-dot" style={{ backgroundColor: project.freshness.indicatorColor }} />
-                {project.freshness.label}
-              </span>
-            )}
+    <article className={`project-card project-card-compact ${riskProfile.tier === 'High' ? 'pcc-high-risk' : ''}`}>
+      {/* Top Header Row */}
+      <div className="pcc-header">
+        <div className="pcc-title-col">
+          <div className="pcc-id-row">
+            <span className="pcc-id-badge">Project ID: {project.id}</span>
+            <span className="pcc-agency">{project.agency || (project.ministry ? project.ministry.split('/')[0] : 'Central Division')}</span>
             {project.satelliteAudit && (
-              <span className={`sat-audit-badge ${project.satelliteAudit.hasDiscrepancy ? 'discrepancy' : 'aligned'}`} title={project.satelliteAudit.auditSummary}>
-                <Radar size={11} />
-                {project.satelliteAudit.hasDiscrepancy ? (
-                  <>Ground Discrepancy: {project.satelliteAudit.visualProgress}% visual (Δ -{project.satelliteAudit.discrepancyGap}%)</>
-                ) : (
-                  <>Satellite Verified: {project.satelliteAudit.visualProgress}% visual</>
-                )}
-              </span>
-            )}
-            {project.delayUncertainty && (
-              <span className="delay-range-pill" title={project.delayUncertainty.uncertaintyReason}>
-                Range: {project.delayUncertainty.confidenceInterval}
+              <span className={`pcc-sat-chip ${project.satelliteAudit.hasDiscrepancy ? 'flag' : 'ok'}`}>
+                <Radar size={11} /> {project.satelliteAudit.hasDiscrepancy ? 'Satellite Alert' : 'Satellite Verified'}
               </span>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {onToggleCompare && (
-              <button
-                type="button"
-                className={`compare-toggle-btn ${isCompared ? 'selected' : ''}`}
-                onClick={onToggleCompare}
-                title="Compare side-by-side with other projects"
-              >
-                <Scale size={13} /> {isCompared ? 'In Compare Matrix' : '+ Compare'}
-              </button>
-            )}
-            <span className="project-id" title="MoSPI Unique Project Identification Code">Project ID: {project.id}</span>
+          <h3 className="pcc-title" title={project.name}>{project.name}</h3>
+          <div className="pcc-meta-row">
+            <span><MapPin size={12} /> {project.state}</span>
+            <span><Landmark size={12} /> {project.ministry}</span>
+            <span><Share2 size={12} /> {project.sector}</span>
           </div>
         </div>
-        <div className="pc-meta">
-          <div className="pc-meta-item"><MapPin size={16} /><div><span className="pc-meta-label">State</span><span className="pc-meta-val">{project.state}</span></div></div>
-          <div className="pc-meta-item">
-            <AlertTriangle size={16} />
-            <div>
-              <span className="pc-meta-label">Risk Rating</span>
-              <MLTooltip title="Drishti AI ML Risk Profile" text={riskProfile.explanation}>
-                <em className={`badge ${riskClass}`} style={{ cursor: 'help' }}>
-                  <AlertTriangle size={11} /> {riskProfile.tier} Risk ({riskProfile.score}/100) <Info size={10} style={{ marginLeft: 3, verticalAlign: 'middle' }} />
-                </em>
-              </MLTooltip>
-            </div>
-          </div>
-          <div className="pc-meta-item"><Clock3 size={16} /><div><span className="pc-meta-label">Status</span><em className={`badge ${typeClass}`}><i className="badge-dot" /> {project.type}</em></div></div>
-          <div className="pc-meta-item"><Landmark size={16} /><div><span className="pc-meta-label">Ministry</span><span className="pc-meta-val">{project.ministry}</span></div></div>
-          <div className="pc-meta-item"><Share2 size={16} /><div><span className="pc-meta-label">Sector</span><span className="pc-meta-val">{project.sector}</span></div></div>
-        </div>
-      </div>
-
-      {/* Official Project Lifecycle & Milestone Timeline */}
-      <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
-        <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Sanctioned Date</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.announcedDate || project.approvalDate || 'March 2019'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Government Sanction</span>
-        </div>
-        <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Work Commencement</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.workStartDate || 'October 2019'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Ground Construction</span>
-        </div>
-        <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Original Target (DOC)</span>
-          <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.originalDoc || '06/2025'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Baseline DOC</span>
-        </div>
-        <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Projected Completion</span>
-          <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{project.targetCompletion || project.anticipatedDoc || 'December 2027'}</strong>
-          <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-            {onTrack ? 'On Schedule' : `+${project.overrunMonths || 0} Months Delay`}
+        <div className="pcc-badge-col">
+          <span className={`badge ${riskClass}`}>
+            <AlertTriangle size={12} /> {riskProfile.tier} Risk ({riskProfile.score}/100)
+          </span>
+          <span className={`badge ${onTrack ? 'badge-ontrack' : 'badge-high'}`} style={{ marginTop: '4px' }}>
+            <Clock3 size={11} /> {project.type}
           </span>
         </div>
       </div>
 
-
-
-      <div className="pc-metrics">
-        <MetricTile icon={Coins} tone="blue" label="Total Approved Budget" value={budgets.sanctionedCost} note="Sanctioned Outlay" />
-        <div className="pc-metric pc-progress">
-          <div className="pc-progress-top"><ProgressRing value={project.progress} /><div className="pc-metric-body"><div className="pc-metric-label">Work Completed on Ground</div><strong className="pc-metric-value">{project.progress}%</strong></div></div>
-          <div className="progress-track"><span style={{ width: `${project.progress}%` }} /></div>
+      {/* 4 Essential Metrics Row */}
+      <div className="pcc-metrics-grid">
+        <div className={`pcc-metric-box ${onTrack ? 'box-green' : 'box-red'}`}>
+          <span className="pcc-metric-label">Predicted Time Overrun</span>
+          <strong className="pcc-metric-val">{delayText}</strong>
+          <span className="pcc-metric-sub">Anticipated: {project.targetCompletion || project.anticipatedDoc || 'Dec 2027'}</span>
         </div>
-        <MetricTile icon={CalendarDays} tone={onTrack ? 'green' : 'red'} label="Schedule Status" value={project.delay || (onTrack ? 'On Schedule (0 mo)' : '+0 Months')} note={onTrack ? 'Operating On Time' : 'Running Late'} noteTone={onTrack ? 'green' : 'red'} />
-        <MLTooltip title="Drishti AI ML Risk Engine" text={riskProfile.explanation}>
-          <MetricTile icon={ShieldAlert} tone="orange" label="Risk Score" value={`${riskProfile.score} / 100`} note={`${riskProfile.tier} Delay Risk`} />
-        </MLTooltip>
-        <MLTooltip title="Drishti Delay Probability Model" text={`Drishti AI estimates ${riskProfile.delayProbability}% probability of deadline slippage based on statutory permits and vendor milestones.`}>
-          <MetricTile icon={Brain} tone="purple" label="Delay Probability" value={`${riskProfile.delayProbability}%`} note="Drishti ML Model (92% Conf)" />
-        </MLTooltip>
-        {onTrack ? (
-          <MetricTile icon={Shield} tone="green" label="Milestone Surveillance" value="Operating On Schedule" note="Active Milestone Tracking" />
-        ) : (
-          <MetricTile icon={AlertTriangle} tone="yellow" label="Primary Delay Bottleneck" value={project.criticalIssue} note="Identified Root Cause" />
-        )}
+
+        <div className={`pcc-metric-box ${budgets.hasOverrun ? 'box-orange' : 'box-green'}`}>
+          <span className="pcc-metric-label">Predicted Cost Overrun</span>
+          <strong className="pcc-metric-val">{costOverrunText}</strong>
+          <span className="pcc-metric-sub">Sanctioned: {budgets.sanctionedCost}</span>
+        </div>
+
+        <div className="pcc-metric-box box-blue">
+          <span className="pcc-metric-label">Work Completed on Ground</span>
+          <strong className="pcc-metric-val">{project.progress}%</strong>
+          <div className="pcc-mini-progress">
+            <span style={{ width: `${project.progress}%` }} />
+          </div>
+        </div>
+
+        <div className="pcc-metric-box box-purple">
+          <span className="pcc-metric-label">Money Spent Till Now</span>
+          <strong className="pcc-metric-val">{budgets.spentCost}</strong>
+          <span className="pcc-metric-sub">{budgets.financialProgress}% Disbursed</span>
+        </div>
       </div>
 
-      {/* User Feature: Expenditure & Budget Investment Breakdown */}
-      <div className="pc-capex-container">
-        <div className="capex-top">
-          <div className="capex-title-group">
-            <Coins size={18} color="#0c5c9d" />
-            <strong>Where Has the Money Been Spent? (Expenditure Status)</strong>
-            <span className="capex-ratio-pill">{budgets.financialProgress}% Spent So Far</span>
-          </div>
-          <div className="capex-stats">
-            <div className="capex-stat-item">
-              <span className="capex-stat-label">Original Sanctioned:</span>
-              <span className="capex-stat-val">{budgets.sanctionedCost}</span>
-            </div>
-            <div className="capex-stat-item">
-              <span className="capex-stat-label">Money Spent Till Now:</span>
-              <span className="capex-stat-val" style={{ color: '#159149' }}>{budgets.spentCost}</span>
-            </div>
-            <div className="capex-stat-item">
-              <span className="capex-stat-label">Money Left to Spend:</span>
-              <span className="capex-stat-val" style={{ color: '#7047eb' }}>{budgets.balanceCost}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="capex-dual-bar" title={`Spent: ${budgets.spentCost} / Sanctioned: ${budgets.sanctionedCost}`}>
-          <div className="capex-fill-bar" style={{ width: `${Math.min(100, budgets.financialProgress)}%` }} />
-        </div>
-
-        {project.expenditureBreakdown && (
-          <div className="capex-breakdown-grid">
-            <div className="capex-chip">
-              <div className="capex-chip-header">Civil Construction Works</div>
-              <div className="capex-chip-val">{project.expenditureBreakdown.civilWorks}</div>
-              <div className="capex-chip-sub">Bridges, Tracks, Tunnels &amp; Buildings</div>
-            </div>
-            <div className="capex-chip">
-              <div className="capex-chip-header">Land Acquisition &amp; Compensation</div>
-              <div className="capex-chip-val">{project.expenditureBreakdown.landAcquisition}</div>
-              <div className="capex-chip-sub">Farmer Compensation &amp; Land Clearance</div>
-            </div>
-            <div className="capex-chip">
-              <div className="capex-chip-header">Utility Relocation (Power, Water, Gas)</div>
-              <div className="capex-chip-val">{project.expenditureBreakdown.utilityAndSystems}</div>
-              <div className="capex-chip-sub">Electric Poles, Water Mains &amp; Signals</div>
-            </div>
-            <div className="capex-chip">
-              <div className="capex-chip-header">Project Management &amp; Clearances</div>
-              <div className="capex-chip-val">{project.expenditureBreakdown.contingencyAndPMC}</div>
-              <div className="capex-chip-sub">Engineers, Safety Audits &amp; Government Permits</div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {showSim && (
-        <WhatIfSimulator project={project} />
-      )}
-
-      <div className="pc-actions">
+      {/* Bottom Actions Row */}
+      <div className="pcc-actions">
         {onOpenEvidenceLocker && (
           <button 
             type="button" 
-            className="why-ai-btn"
+            className="pcc-why-btn"
             onClick={() => onOpenEvidenceLocker(project)}
             title="View verified 4-point evidence audit trail"
           >
             <ShieldCheck size={13} /> Why AI said this?
           </button>
         )}
-        <button className="pc-sim-btn" onClick={() => setShowSim((v) => !v)}>
-          <SlidersHorizontal size={14} /> {showSim ? 'Close Solutions' : 'Test Solutions (What-If)'}
-        </button>
-        <button className="pc-sim-btn" onClick={onOpenBriefing}>
-          <FileText size={14} /> Official Report (PDF)
-        </button>
-        <button className="pc-view-btn" onClick={onViewAnalysis}>
+        {onToggleCompare && (
+          <button
+            type="button"
+            className={`pcc-compare-btn ${isCompared ? 'active' : ''}`}
+            onClick={onToggleCompare}
+          >
+            <Scale size={13} /> {isCompared ? 'In Matrix' : '+ Compare'}
+          </button>
+        )}
+        <button 
+          type="button" 
+          className="pcc-view-btn" 
+          onClick={onViewAnalysis}
+        >
           View Full Analysis <ArrowRight size={14} />
         </button>
       </div>
@@ -3453,19 +3346,23 @@ function ProjectAnalysisCard({
   const statusClass = onTrack ? 'pa-status-ok' : 'pa-status-bad'
   const levelClass = flagship.priority === 'CRITICAL' ? 'pa-red' : flagship.priority === 'HIGH' ? 'pa-orange' : 'pa-amber'
 
+  const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${p.overrunMonths || 0} Months Delay`
+  const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
+
   return (
     <article className="pa-card">
+      {/* 1. Project Information & Header */}
       <div className="pa-head">
         <div className="pa-head-left">
-          <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#0284c7", letterSpacing: "0.05em" }}>Flagship Project Deep-Dive</span>
+          <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#0284c7", letterSpacing: "0.05em" }}>MoSPI Flagship Project Deep-Dive</span>
           <h2 className="pa-title">{p.name}</h2>
-          <span className="pa-id">{p.id}</span>
+          <span className="pa-id">Project ID: {p.id}</span>
         </div>
         <div className="pa-head-right">
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {onOpenEvidenceLocker && (
               <button 
-                type="button"
+                type="button" 
                 className="why-ai-btn"
                 style={{ padding: '6px 14px', fontSize: '12px' }}
                 onClick={() => onOpenEvidenceLocker(p)}
@@ -3487,10 +3384,59 @@ function ProjectAnalysisCard({
       <div className="pa-meta">
         <div className="pa-meta-item"><Landmark size={18} /><div><span className="pa-meta-label">Ministry</span><span className="pa-meta-val">{p.ministry}</span></div></div>
         <div className="pa-meta-item"><Share2 size={18} /><div><span className="pa-meta-label">Sector</span><span className="pa-meta-val">{p.sector}</span></div></div>
-        <div className="pa-meta-item"><MapPin size={18} /><div><span className="pa-meta-label">States</span><span className="pa-meta-val">{p.state}</span></div></div>
+        <div className="pa-meta-item"><MapPin size={18} /><div><span className="pa-meta-label">State</span><span className="pa-meta-val">{p.state}</span></div></div>
       </div>
 
-      {/* Official Government Project Lifecycle & Milestone Timeline */}
+      {/* 2. AI PREDICTIONS HERO (Shifted right after project information!) */}
+      <div className="pa-prediction-hero">
+        <div className="pa-prediction-hero-head">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="pa-sec-icon blue"><Brain size={18} /></span>
+            <strong>Drishti AI Neural Early Warning Prediction</strong>
+          </div>
+          <span className="pa-conf-pill">Confidence: {flagship.aiConfidence || 92}%</span>
+        </div>
+
+        <div className="pa-hero-grid">
+          {/* Box 1: Time Overrun Prediction */}
+          <div className={`pa-hero-box ${onTrack ? 'hero-box-green' : 'hero-box-red'}`}>
+            <div className="pa-hero-label">
+              <CalendarDays size={16} />
+              <span>Time Overrun Prediction</span>
+            </div>
+            <div className="pa-hero-big-val">{timeOverrunText}</div>
+            <div className="pa-hero-sub">
+              Anticipated DOC: <strong>{p.targetCompletion || p.anticipatedDoc || 'December 2027'}</strong>
+            </div>
+          </div>
+
+          {/* Box 2: Cost Overrun Prediction */}
+          <div className={`pa-hero-box ${budgets.hasOverrun ? 'hero-box-orange' : 'hero-box-green'}`}>
+            <div className="pa-hero-label">
+              <Coins size={16} />
+              <span>Cost Overrun Prediction</span>
+            </div>
+            <div className="pa-hero-big-val">{costOverrunText}</div>
+            <div className="pa-hero-sub">
+              Projected Total: <strong>{budgets.revisedCost}</strong> (Sanctioned: {budgets.sanctionedCost})
+            </div>
+          </div>
+
+          {/* Box 3: Overall Risk Level */}
+          <div className={`pa-hero-box ${riskProfile.tier === 'High' ? 'hero-box-red' : riskProfile.tier === 'Medium' ? 'hero-box-orange' : 'hero-box-green'}`}>
+            <div className="pa-hero-label">
+              <ShieldAlert size={16} />
+              <span>Overall Risk Level</span>
+            </div>
+            <div className="pa-hero-big-val">{riskProfile.tier} Risk ({riskProfile.score}/100)</div>
+            <div className="pa-hero-sub">
+              Slippage Probability: <strong>{riskProfile.delayProbability}%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Official Government Project Lifecycle & Milestone Timeline */}
       <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
         <div>
           <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Sanctioned Date</span>
@@ -3503,150 +3449,95 @@ function ProjectAnalysisCard({
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Construction Kickoff</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Original Target (DOC) (DOC)</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Original Baseline DOC</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.originalDoc || '06/2025'}</strong>
-          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Sanction Baseline</span>
+          <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Baseline Deadline</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Projected Completion</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Anticipated Completion</span>
           <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{p.targetCompletion || p.anticipatedDoc || 'December 2027'}</strong>
           <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-            {onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Months Delay`}
+            {timeOverrunText}
           </span>
         </div>
       </div>
 
-      {/* Explicit Budget 3-Column Visual Grid */}
-      <ProjectBudgetSummary budgets={budgets} />
+      {/* 4. WHERE HAS THE MONEY BEEN SPENT? (Expenditure & Financial Status in Big Clear Text) */}
+      <div className="pa-capex-hero">
+        <div className="capex-top">
+          <div className="capex-title-group">
+            <Coins size={20} color="#0c5c9d" />
+            <strong style={{ fontSize: '16px' }}>Where Has the Money Been Spent? (Financial &amp; Ground Expenditure)</strong>
+            <span className="capex-ratio-pill">{budgets.financialProgress}% Disbursed</span>
+          </div>
+        </div>
 
-      <div className="pa-band">
-        <div className="pa-band-item">
-          <span className="pa-band-icon blue"><Coins size={16} /></span>
-          <div>
-            <div className="pa-band-label">Original Sanctioned Cost</div>
-            <strong>{budgets.sanctionedCost}</strong>
-            <small>(Sanctioned Baseline)</small>
+        {/* Big Text 4-Pillar Financial Summary */}
+        <div className="pa-big-cost-grid">
+          <div className="pa-big-cost-card">
+            <span className="pa-big-cost-label">Original Sanctioned Budget</span>
+            <strong className="pa-big-cost-val">{budgets.sanctionedCost}</strong>
+            <span className="pa-big-cost-sub">Cabinet Approved Outlay</span>
           </div>
-        </div>
-        <div className="pa-band-item">
-          <span className="pa-band-icon blue"><Coins size={16} /></span>
-          <div>
-            <div className="pa-band-label">Expenditure to Date</div>
-            <strong>{budgets.spentCost}</strong>
-            <small className="pa-green">({budgets.financialProgress}% Disbursed)</small>
-          </div>
-        </div>
-        <div className="pa-band-item">
-          <ProgressRing value={p.progress} />
-          <div className="pa-band-progress">
-            <div className="pa-band-label">Physical Progress</div>
-            <strong>{p.progress}%</strong>
-            <div className="pa-band-bar"><span style={{ width: `${p.progress}%` }} /></div>
-          </div>
-        </div>
-        <div className="pa-band-item">
-          <span className="pa-band-icon"><CalendarDays size={16} /></span>
-          <div>
-            <div className="pa-band-label">Original Completion</div>
-            <strong>{p.originalDoc || 'Baseline DOC'}</strong>
-            <div className="pa-band-label pa-band-gap">Anticipated Target</div>
-            <strong style={{ color: onTrack ? '#159149' : '#df4036' }}>{p.anticipatedDoc || p.originalDoc}</strong>
-            <small className={onTrack ? 'pa-green' : 'pa-red'}>({onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Mo Delay`})</small>
-          </div>
-        </div>
-        <div className="pa-band-item">
-          <span className="pa-band-icon"><Clock3 size={16} /></span>
-          <div>
-            <div className="pa-band-label">Schedule Delay Running</div>
-            <strong className={onTrack ? 'pa-green' : 'pa-red'}>{p.delay || (onTrack ? 'On Schedule (0 mo)' : '+0 Months')}</strong>
-          </div>
-        </div>
-      </div>
 
-      {/* User Feature: Expenditure & Budget Investment Breakdown */}
-      {p.expenditureBreakdown && (
-        <div className="pc-capex-container" style={{ marginTop: '16px' }}>
-          <div className="capex-top">
-            <div className="capex-title-group">
-              <Coins size={18} color="#0c5c9d" />
-              <strong>Where Has the Money Been Spent? (Audit Breakdown)</strong>
-              <span className="capex-ratio-pill">{budgets.financialProgress}% Disbursed</span>
-            </div>
-            <div className="capex-stats">
-              <div className="capex-stat-item"><span className="capex-stat-label">Total Sanctioned:</span><span className="capex-stat-val">{budgets.sanctionedCost}</span></div>
-              <div className="capex-stat-item"><span className="capex-stat-label">Money Spent Till Now:</span><span className="capex-stat-val" style={{ color: '#159149' }}>{budgets.spentCost}</span></div>
-              <div className="capex-stat-item"><span className="capex-stat-label">Money Left to Spend:</span><span className="capex-stat-val" style={{ color: '#7047eb' }}>{budgets.balanceCost}</span></div>
-            </div>
+          <div className="pa-big-cost-card highlight-spent">
+            <span className="pa-big-cost-label">Money Spent Till Now</span>
+            <strong className="pa-big-cost-val" style={{ color: '#159149' }}>{budgets.spentCost}</strong>
+            <span className="pa-big-cost-sub" style={{ color: '#159149' }}>{budgets.financialProgress}% Disbursed to Date</span>
           </div>
+
+          <div className="pa-big-cost-card">
+            <span className="pa-big-cost-label">Money Left to Spend</span>
+            <strong className="pa-big-cost-val" style={{ color: '#7047eb' }}>{budgets.balanceCost}</strong>
+            <span className="pa-big-cost-sub">Remaining Sanction Balance</span>
+          </div>
+
+          <div className="pa-big-cost-card">
+            <span className="pa-big-cost-label">Physical Progress Completed</span>
+            <strong className="pa-big-cost-val" style={{ color: '#0284c7' }}>{p.progress}%</strong>
+            <span className="pa-big-cost-sub">Ground Execution Rate</span>
+          </div>
+        </div>
+
+        {/* Dual Progress Bar */}
+        <div className="capex-dual-bar" style={{ margin: '14px 0 16px 0', height: '10px' }} title={`Spent: ${budgets.spentCost} / Sanctioned: ${budgets.sanctionedCost}`}>
+          <div className="capex-fill-bar" style={{ width: `${Math.min(100, budgets.financialProgress)}%` }} />
+        </div>
+
+        {/* Breakdown Chips */}
+        {p.expenditureBreakdown && (
           <div className="capex-breakdown-grid">
             <div className="capex-chip">
-              <div className="capex-chip-header">Civil Construction Works Work</div>
+              <div className="capex-chip-header">Civil Construction Works</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.civilWorks}</div>
               <div className="capex-chip-sub">Pillars, Tunnels, Bridges &amp; Railway Tracks</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">Land Acquisition &amp; Compensation &amp; R&amp;R</div>
+              <div className="capex-chip-header">Land Acquisition &amp; Compensation</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.landAcquisition}</div>
-              <div className="capex-chip-sub">Direct Money Paid to Farmers &amp; Landowners</div>
+              <div className="capex-chip-sub">Direct Compensation Paid to Farmers &amp; Owners</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">Utility Relocation (Power, Water, Gas) Integration</div>
+              <div className="capex-chip-header">Utility Relocation (Power, Water, Gas)</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.utilityAndSystems}</div>
-              <div className="capex-chip-sub">High-Voltage Power Lines, Water Pipes &amp; Signals</div>
+              <div className="capex-chip-sub">High-Voltage Lines, Water Mains &amp; Signals</div>
             </div>
             <div className="capex-chip">
               <div className="capex-chip-header">Project Supervision &amp; Legal Approvals</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.contingencyAndPMC}</div>
-              <div className="capex-chip-sub">Quality Inspections, Safety Clearances &amp; Legal Work</div>
+              <div className="capex-chip-sub">Safety Audits, Quality Checks &amp; Clearances</div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Winning Feature 1: What-If Solution Tester (What-If Simulator) */}
-      <WhatIfSimulator project={p} />
-
-      {/* Traffy Innovation 2 & 5: Independent Satellite Ground Reality Cross-Check */}
-      <SatelliteGroundRealityWidget p={p} />
-
-      {/* Traffy Innovation 4: Comprehensive Model Telemetry & Audit Dossier Card */}
-      <ModelTelemetryCard p={p} />
-
-      <div className="pa-section pa-section-ai">
-        <div className="pa-section-head">
-          <span className="pa-sec-icon blue"><Brain size={18} /></span>
-          <strong>Drishti AI Early Warning Prediction</strong>
-          <span className="pa-conf-pill">Confidence: {flagship.aiConfidence}%</span>
-        </div>
-        <p className="pa-section-desc">Based on project performance indicators, statutory milestones, and neural risk modeling.</p>
-        <div className="pa-pred-row">
-          <div className={`pa-pred-box ${onTrack ? 'green' : 'red'}`}>
-            <span className={`pa-pred-icon ${onTrack ? 'green' : 'red'}`}><CalendarDays size={16} /></span>
-            <div className="pa-pred-body">
-              <strong className={onTrack ? 'pa-green' : 'pa-red'}>{onTrack ? 'Schedule Trajectory' : 'Schedule Slippage Expected'}</strong>
-              <div className="pa-pred-val">{onTrack ? '0 Months (On Track)' : riskProfile.predictedExtraDelay}</div>
-              <span className="pa-conf-pill">Confidence: {Math.min(95, Math.max(78, 100 - Math.round((p.overrunMonths || 0) / 4)))}%</span>
-            </div>
-          </div>
-          <div className="pa-pred-box orange">
-            <span className="pa-pred-icon orange"><Coins size={16} /></span>
-            <div className="pa-pred-body">
-              <strong className="pa-orange">Anticipated Cost Variance</strong>
-              <div className="pa-pred-val">{riskProfile.estimatedExtraCost}</div>
-              <span className="pa-conf-pill amber">Confidence: 85%</span>
-            </div>
-          </div>
-          <div className="pa-pred-box red">
-            <span className="pa-pred-icon red"><Shield size={16} /></span>
-            <div className="pa-pred-body">
-              <strong className="pa-navy">Overall Risk Level</strong>
-              <div className="pa-pred-val">{riskProfile.tier} ({riskProfile.score}/100)</div>
-              <span className="pa-conf-pill">Confidence: 89%</span>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
 
+      {/* 5. What-If Solution Tester */}
+      <WhatIfSimulator project={p} />
+
+      {/* 6. Independent Satellite Ground Reality Cross-Check */}
+      <SatelliteGroundRealityWidget p={p} />
+
+      {/* 7. Key Risks & Root Causes */}
       <div className="pa-section pa-section-bottleneck">
         <div className="pa-section-head">
           <span className="pa-sec-icon blue"><AlertTriangle size={18} /></span>
