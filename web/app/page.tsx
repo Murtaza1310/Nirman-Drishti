@@ -3614,16 +3614,7 @@ function ProjectAnalysisCard({
           <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#ea580c' }}>
             {onTrack ? 'On Schedule' : `Already Delayed: ${alreadyDelayed} Mo`}
           </strong>
-          <span className="pa-m-sub">{onTrack ? 'Working On Time' : `Passed Original Deadline`}</span>
-        </div>
-        <div>
-          <span className="pa-m-label">Expected Finish Date</span>
-          <strong className="pa-m-val" style={{ color: onTrack ? '#159149' : '#df4036' }}>
-            {p.targetCompletion || p.anticipatedDoc || 'May 2027'}
-          </strong>
-          <span className="pa-m-sub" style={{ color: onTrack ? '#159149' : '#df4036', fontWeight: 600 }}>
-            {onTrack ? 'On Schedule' : `+${totalOverrun} Mo Total (${extraDelay} Mo Further Delay Expected)`}
-          </span>
+          <span className="pa-m-sub">{onTrack ? 'Working On Time' : `+${totalOverrun} Mo Total Delay`}</span>
         </div>
       </div>
 
@@ -3645,10 +3636,15 @@ function ProjectAnalysisCard({
             <span className="pa-big-cost-sub">Cabinet Approved Outlay</span>
           </div>
 
-          <div className="pa-big-cost-card highlight-spent">
-            <span className="pa-big-cost-label">Money Spent Till Now</span>
-            <strong className="pa-big-cost-val" style={{ color: '#159149' }}>{budgets.spentCost}</strong>
-            <span className="pa-big-cost-sub" style={{ color: '#159149' }}>{budgets.financialProgress}% Disbursed to Date</span>
+          <div className="pa-big-cost-card highlight-spent pa-spent-circle-card">
+            <div className="pa-spent-circle-wrap">
+              <ProgressRing value={budgets.financialProgress} />
+            </div>
+            <div className="pa-spent-text-wrap">
+              <span className="pa-big-cost-label">Money Spent Till Now</span>
+              <strong className="pa-big-cost-val" style={{ color: '#159149' }}>{budgets.spentCost}</strong>
+              <span className="pa-big-cost-sub" style={{ color: '#159149' }}>{budgets.financialProgress}% Disbursed to Date</span>
+            </div>
           </div>
 
           <div className="pa-big-cost-card">
@@ -3664,9 +3660,7 @@ function ProjectAnalysisCard({
           </div>
         </div>
 
-        <div className="capex-dual-bar" style={{ margin: '14px 0 6px 0', height: '8px' }} title={`Spent: ${budgets.spentCost} / Sanctioned: ${budgets.sanctionedCost}`}>
-          <div className="capex-fill-bar" style={{ width: `${Math.min(100, budgets.financialProgress)}%` }} />
-        </div>
+
       </div>
 
       {/* 3. WHERE HAS THE MONEY BEEN SPENT? (Placed right below project details) */}
@@ -3759,9 +3753,7 @@ function ProjectAnalysisCard({
                 <>Already Delayed: <strong>{alreadyDelayed} Mo</strong> · Predicted Extra: <strong>+{extraDelay} Mo</strong></>
               )}
             </div>
-            <div className="pa-hero-footer-note">
-              Expected Finish Date: <strong>{p.targetCompletion || p.anticipatedDoc || 'May 2027'}</strong>
-            </div>
+
           </div>
 
           {/* Box 2: Cost Overrun Prediction */}
