@@ -298,8 +298,6 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
   const sanctionedCost = `₹ ${rawCostNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
   const spentCost = `₹ ${rawSpentNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
   const balanceCost = `₹ ${balanceNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
-  const revisedCost = project.revisedCost || sanctionedCost
-
   let costOverrunCr = project.costOverrunCr ?? 0
   const overrunMo = project.overrunMonths ?? 0
   if (costOverrunCr <= 0 && overrunMo > 0) {
@@ -307,6 +305,9 @@ export function getProjectBudgets(project: Project): ProjectBudgets {
   }
   const costOverrunPct = project.costOverrunPct ?? (costOverrunCr > 0 ? Math.round((costOverrunCr / rawCostNum) * 100) : 0)
   const hasOverrun = costOverrunCr > 0
+
+  const expectedFinalCostNum = Math.round((rawCostNum + (hasOverrun ? costOverrunCr : 0)) * 10) / 10
+  const revisedCost = `₹ ${expectedFinalCostNum.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr`
 
   // Guaranteed 100% sum: Civil 60%, Land 20%, Utilities 13%, PMC 7%
   const civil = Math.round(rawSpentNum * 0.60 * 10) / 10

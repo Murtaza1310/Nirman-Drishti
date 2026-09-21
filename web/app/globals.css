@@ -8714,6 +8714,30 @@ body.dark-theme .dd-card-icon {
   color: #64748b;
 }
 
+.pa-why-ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0284c7;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+  width: fit-content;
+}
+
+.pa-why-ai-btn:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0369a1;
+  transform: translateY(-1px);
+}
+
 /* Big Cost Grid in Modal */
 .pa-capex-hero {
   background: #ffffff;

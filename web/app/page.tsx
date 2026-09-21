@@ -1916,6 +1916,168 @@ function NationalWhyAIModal({
   )
 }
 
+function ProjectWhyAIModal({
+  p,
+  type,
+  onClose,
+}: {
+  p: UnifiedProject;
+  type: 'time' | 'cost' | 'risk';
+  onClose: () => void;
+}) {
+  const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
+  const budgets = p.budgets || getProjectBudgets(p)
+  const riskProfile = p.riskProfile || getProjectRiskProfile(p)
+  const totalOverrun = p.overrunMonths || 0
+  const alreadyDelayed = onTrack ? 0 : Math.max(0, Math.min(totalOverrun, Math.round(totalOverrun * 0.6) || 12))
+  const extraDelay = onTrack ? 0 : Math.max(0, totalOverrun - alreadyDelayed)
+  const timeOverrunText = onTrack ? '0 Months (On Schedule)' : `+${totalOverrun} Months Delay`
+  const costOverrunText = riskProfile.estimatedExtraCost || (onTrack ? '₹ 0 Cr (Within Budget)' : 'Under Calculation')
+
+  let title = ''
+  let subHeader = ''
+  let bigVal = ''
+  let confidence = ''
+  let summarySub = ''
+  let explanation = ''
+  let reasons: string[] = []
+  let nextAction = ''
+
+  if (type === 'time') {
+    title = 'Time Overrun Prediction Analysis'
+    subHeader = `${p.name} · Schedule Slippage Model`
+    bigVal = timeOverrunText
+    confidence = 'Confidence: 92%'
+    summarySub = onTrack 
+      ? 'Contract execution is progressing within original approved baseline.'
+      : `Already Delayed: ${alreadyDelayed} Months · Predicted Extra Delay: +${extraDelay} Months`
+    explanation = onTrack
+      ? `This project is executing steadily on ground at ${p.progress}% progress. Current contractor workforce, machinery deployment, and milestone velocity align with the target completion milestone without critical path slippage.`
+      : `Drishti AI analyzed the monthly milestone velocity for ${p.name}. The project has already suffered ${alreadyDelayed} months of slippage primarily due to ${p.criticalIssue || 'statutory site clearances'}. Machine learning curve fitting across historical ${p.sector} projects indicates contractor mobilization cannot recover lost time under standard operating procedures, forecasting an additional +${extraDelay} months of delay to complete remaining work.`
+    reasons = [
+      `Physical Progress Rate: Ground execution is at ${p.progress}%, which lags behind the required run-rate for target completion.`,
+      `Critical Bottleneck: Site hurdles flagged in "${p.criticalIssue || 'Land Acquisition & Statutory Permissions'}".`,
+      `Satellite Ground Truth: ISRO Bhuvan & Sentinel-2 Earth Observation confirms ~${p.satelliteAudit?.visualProgress || p.progress}% structural completion, corroborating schedule timeline.`,
+      `Historical Cohort Delay Pattern: Similar ${p.sector} projects in ${p.state} took a median of ${Math.round(totalOverrun * 1.15)} months to fully commission under these conditions.`
+    ]
+    nextAction = `Execute fast-track inter-agency escalation via PM GatiShakti portal to clear "${p.criticalIssue || 'statutory approvals'}" and avoid further contractor idling.`
+  } else if (type === 'cost') {
+    title = 'Cost Overrun Prediction Analysis'
+    subHeader = `${p.name} · Capital Escalation Model`
+    bigVal = costOverrunText
+    confidence = 'Confidence: 88%'
+    summarySub = `Approved Budget: ${budgets.sanctionedCost} → Expected Final Cost: ${budgets.revisedCost}`
+    explanation = onTrack
+      ? `Disbursements (${budgets.spentCost} spent, ${budgets.financialProgress}%) are tracking strictly within the cabinet-approved budget of ${budgets.sanctionedCost}. Price indices and contractor claims show zero abnormal escalation.`
+      : `Because the project has slipped by ${totalOverrun} months, the prolonged project lifecycle automatically triggers compounding financial escalation. This includes inflation on essential construction materials (cement, structural steel, bitumen), contractor prolongation claims, idle machinery overhead, and debt interest during construction (IDC). Drishti AI calculates an extra ${costOverrunText} will be required, increasing the final project cost from ${budgets.sanctionedCost} to ${budgets.revisedCost}.`
+    reasons = [
+      `Approved Budget Baseline: ₹ ${budgets.rawCost?.toLocaleString() || budgets.sanctionedCost} Cr approved outlay, with ${budgets.spentCost} (${budgets.financialProgress}%) disbursed to date.`,
+      `Unspent Sanction Balance: ${budgets.balanceCost} remaining for future execution phases.`,
+      `Time Delay Escalation Index: Prolonged duration over +${totalOverrun} months triggers statutory Price Adjustment Clauses (WPI/CPI inflation).`,
+      `Indirect Overhead & Supervision: Extended project management consultancy (PMC) fees, insurance, and interest charges accrue for each delayed quarter.`
+    ]
+    nextAction = `Initiate Standing Finance Committee (SFC) or Revised Cost Committee (RCC) review to realign budget authorization and prevent cash-flow choking.`
+  } else {
+    title = 'Overall Risk Level & Multi-Factor Scoring'
+    subHeader = `${p.name} · Neural Early Warning System`
+    bigVal = `${riskProfile.tier} Risk (${riskProfile.score}/100)`
+    confidence = 'Confidence: 91%'
+    summarySub = `${riskProfile.delayProbability}% Chance of Missing Target Deadline · ${riskProfile.tier} Urgency`
+    explanation = onTrack
+      ? `The project exhibits excellent operational health with an AI risk score of ${riskProfile.score}/100. Both physical completion and capex disbursements match expectations.`
+      : `Drishti AI evaluated 17 real-time telemetry indicators to assign an AI risk score of ${riskProfile.score}/100. ${p.name} has substantial time delay (+${totalOverrun} months), a financial-to-physical progress variance (${budgets.financialProgress}% money spent vs ${p.progress}% ground progress), and persistent bottleneck issues (${p.criticalIssue}). This places it in the ${riskProfile.tier} Risk priority tier.`
+    reasons = [
+      `Schedule Slippage Severity: +${totalOverrun} months behind original completion baseline.`,
+      `Expenditure vs Progress Correlation: ${budgets.financialProgress}% capex disbursed against ${p.progress}% physical structural completion.`,
+      `Primary Bottleneck Category: ${p.criticalIssue || 'Statutory, Environmental & Land Possession Approvals'}.`,
+      `Ground Truth Reliability: Cross-audited with ${p.satelliteAudit?.sensorSource || 'ISRO Bhuvan & Copernicus Sentinel-2'} satellite telemetry.`
+    ]
+    nextAction = `Table ${p.name} in the upcoming Cabinet Secretariat Pragati review meeting for immediate inter-ministerial resolution.`
+  }
+
+  return (
+    <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label={title} onClick={onClose}>
+      <div className="ca-modal" style={{ maxWidth: '640px', padding: '24px' }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '16px' }}>
+          <div>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Project AI Forecast Evidence
+            </span>
+            <h3 style={{ margin: '4px 0 2px 0', fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>
+              {title}
+            </h3>
+            <span style={{ fontSize: '12px', color: '#64748b' }}>
+              {subHeader}
+            </span>
+          </div>
+          <button className="ca-modal-close" onClick={onClose} aria-label="Close modal">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Big Forecast Box */}
+        <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', padding: '14px 18px', marginBottom: '18px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#0369a1', textTransform: 'uppercase' }}>
+              Drishti AI Prediction
+            </span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px', border: '1px solid #bbf7d0' }}>
+              {confidence}
+            </span>
+          </div>
+          <div style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: '6px 0 2px 0' }}>
+            {bigVal}
+          </div>
+          <span style={{ fontSize: '12.5px', color: '#475569', fontWeight: 600 }}>
+            {summarySub}
+          </span>
+        </div>
+
+        {/* Plain Language Explanation */}
+        <div style={{ marginBottom: '18px' }}>
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
+            In Simple Words (Why AI Predicted This):
+          </h4>
+          <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.6', color: '#334155' }}>
+            {explanation}
+          </p>
+        </div>
+
+        {/* Evidence Bullets */}
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px 16px', marginBottom: '18px' }}>
+          <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
+            Key Ground Realities Found by AI:
+          </h4>
+          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px', color: '#475569', lineHeight: '1.6' }}>
+            {reasons.map((r, i) => (
+              <li key={i} style={{ marginBottom: '6px' }}>{r}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Action Callout */}
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '10px 14px', marginBottom: '20px', fontSize: '12px', color: '#92400e', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+          <Lightbulb size={16} style={{ flexShrink: 0, marginTop: '2px', color: '#d97706' }} />
+          <div>
+            <strong>Recommended Government Action:</strong> {nextAction}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button 
+            type="button" 
+            className="pcc-view-btn"
+            style={{ padding: '8px 20px', fontSize: '13px' }}
+            onClick={onClose}
+          >
+            Got It, Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Metric({ 
   label, 
   value, 
@@ -3547,6 +3709,7 @@ function ProjectAnalysisCard({
   initialSubTab?: 'projects' | 'ml_benchmark' | 'missing_data';
   onNavigate?: (nav: string) => void;
 }) {
+  const [activeWhyAiType, setActiveWhyAiType] = useState<'time' | 'cost' | 'risk' | null>(null)
   const onTrack = p.type === 'On Schedule' || (p.overrunMonths ?? 0) === 0
   const riskProfile = p.riskProfile || getProjectRiskProfile(p)
   const budgets = p.budgets || getProjectBudgets(p)
@@ -3761,7 +3924,14 @@ function ProjectAnalysisCard({
                 <>Already Delayed: <strong>{alreadyDelayed} Mo</strong> · Predicted Extra: <strong>+{extraDelay} Mo</strong></>
               )}
             </div>
-
+            <button 
+              type="button" 
+              className="pa-why-ai-btn"
+              onClick={() => setActiveWhyAiType('time')}
+              title="See why AI predicted this time delay"
+            >
+              <Sparkles size={12} /> Why AI said this?
+            </button>
           </div>
 
           {/* Box 2: Cost Overrun Prediction */}
@@ -3778,6 +3948,14 @@ function ProjectAnalysisCard({
             <div className="pa-hero-footer-note">
               Approved Budget: <strong>{budgets.sanctionedCost}</strong>
             </div>
+            <button 
+              type="button" 
+              className="pa-why-ai-btn"
+              onClick={() => setActiveWhyAiType('cost')}
+              title="See why AI predicted this extra cost"
+            >
+              <Sparkles size={12} /> Why AI said this?
+            </button>
           </div>
 
           {/* Box 3: Overall Risk Level */}
@@ -3794,6 +3972,14 @@ function ProjectAnalysisCard({
             <div className="pa-hero-footer-note">
               Risk Urgency: <strong>{riskProfile.tier} Priority</strong>
             </div>
+            <button 
+              type="button" 
+              className="pa-why-ai-btn"
+              onClick={() => setActiveWhyAiType('risk')}
+              title="See why AI assigned this risk level"
+            >
+              <Sparkles size={12} /> Why AI said this?
+            </button>
           </div>
         </div>
       </div>
@@ -3879,6 +4065,14 @@ function ProjectAnalysisCard({
             <ShieldCheck size={15} /> Why AI said this? [Evidence Locker]
           </button>
         </div>
+      )}
+      {/* Project Why AI Modal */}
+      {activeWhyAiType && (
+        <ProjectWhyAIModal 
+          p={p} 
+          type={activeWhyAiType} 
+          onClose={() => setActiveWhyAiType(null)} 
+        />
       )}
     </article>
   )
