@@ -1595,6 +1595,13 @@ export default function Page() {
         ))}
       </nav>
 
+            {nationalWhyAI && (
+        <NationalWhyAIModal
+          data={nationalWhyAI}
+          onClose={() => setNationalWhyAI(null)}
+        />
+      )}
+
       {briefingModalProject && (
         <ExecutiveDossierModal 
           project={briefingModalProject} 
@@ -1829,6 +1836,86 @@ function FilterSelect({ label, value, onChange }: { label: string; value: string
   )
 }
 
+function NationalWhyAIModal({
+  data,
+  onClose,
+}: {
+  data: {
+    title: string;
+    value: string;
+    confidence: string;
+    explanation: string;
+    reasons: string[];
+  };
+  onClose: () => void;
+}) {
+  return (
+    <div className="ca-modal-overlay" role="dialog" aria-modal="true" aria-label={data.title} onClick={onClose}>
+      <div className="ca-modal" style={{ maxWidth: '620px', padding: '24px' }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '16px' }}>
+          <div>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              National AI Forecast Evidence
+            </span>
+            <h3 style={{ margin: '4px 0 0 0', fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>
+              {data.title}
+            </h3>
+          </div>
+          <button className="ca-modal-close" onClick={onClose} aria-label="Close modal">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', padding: '14px 18px', marginBottom: '18px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#0369a1', textTransform: 'uppercase' }}>All India Forecast</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px', border: '1px solid #bbf7d0' }}>
+              {data.confidence}
+            </span>
+          </div>
+          <div style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', margin: '6px 0 2px 0' }}>
+            {data.value}
+          </div>
+          <span style={{ fontSize: '12px', color: '#64748b' }}>
+            Calculated across 1,813 active mega-projects
+          </span>
+        </div>
+
+        <div style={{ marginBottom: '18px' }}>
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
+            In Simple Words (Why AI Predicted This):
+          </h4>
+          <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.6', color: '#334155' }}>
+            {data.explanation}
+          </p>
+        </div>
+
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
+          <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
+            Key Ground Realities Found by AI:
+          </h4>
+          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px', color: '#475569', lineHeight: '1.6' }}>
+            {data.reasons.map((r, i) => (
+              <li key={i} style={{ marginBottom: '6px' }}>{r}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button 
+            type="button" 
+            className="pcc-view-btn"
+            style={{ padding: '8px 20px', fontSize: '13px' }}
+            onClick={onClose}
+          >
+            Got It, Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Metric({ 
   label, 
   value, 
@@ -1865,8 +1952,9 @@ function Metric({
             type="button" 
             className="metric-why-btn"
             onClick={(e) => {
+              e.preventDefault()
               e.stopPropagation()
-              onOpenWhyAI(whyAI)
+              if (onOpenWhyAI) onOpenWhyAI(whyAI)
             }}
             title="Click to view why AI made this prediction"
           >
