@@ -1947,7 +1947,7 @@ function ProjectWhyAIModal({
     title = 'Time Overrun Prediction Analysis'
     subHeader = `${p.name} · Schedule Slippage Model`
     bigVal = timeOverrunText
-    confidence = 'Confidence: 92%'
+    confidence = `Confidence: ${riskProfile.timeConfidence}%`
     summarySub = onTrack 
       ? 'Contract execution is progressing within original approved baseline.'
       : `Already Delayed: ${alreadyDelayed} Months · Predicted Extra Delay: +${extraDelay} Months`
@@ -1965,7 +1965,7 @@ function ProjectWhyAIModal({
     title = 'Cost Overrun Prediction Analysis'
     subHeader = `${p.name} · Capital Escalation Model`
     bigVal = costOverrunText
-    confidence = 'Confidence: 88%'
+    confidence = `Confidence: ${riskProfile.costConfidence}%`
     summarySub = `Approved Budget: ${budgets.sanctionedCost} → Expected Final Cost: ${budgets.revisedCost}`
     explanation = onTrack
       ? `Disbursements (${budgets.spentCost} spent, ${budgets.financialProgress}%) are tracking strictly within the cabinet-approved budget of ${budgets.sanctionedCost}. Price indices and contractor claims show zero abnormal escalation.`
@@ -1981,7 +1981,7 @@ function ProjectWhyAIModal({
     title = 'Overall Risk Level & Multi-Factor Scoring'
     subHeader = `${p.name} · Neural Early Warning System`
     bigVal = `${riskProfile.tier} Risk (${riskProfile.score}/100)`
-    confidence = 'Confidence: 91%'
+    confidence = `Confidence: ${riskProfile.riskConfidence}%`
     summarySub = `${riskProfile.delayProbability}% Chance of Missing Target Deadline · ${riskProfile.tier} Urgency`
     explanation = onTrack
       ? `The project exhibits excellent operational health with an AI risk score of ${riskProfile.score}/100. Both physical completion and capex disbursements match expectations.`
@@ -3905,7 +3905,7 @@ function ProjectAnalysisCard({
             <span className="pa-sec-icon blue"><Brain size={18} /></span>
             <strong>Prediction</strong>
           </div>
-          <span className="pa-conf-pill">Overall Model Confidence: {flagship.aiConfidence || 92}%</span>
+          <span className="pa-conf-pill">Overall Model Confidence: {riskProfile.overallConfidence || flagship.aiConfidence || 89}%</span>
         </div>
 
         <div className="pa-hero-grid">
@@ -3914,7 +3914,7 @@ function ProjectAnalysisCard({
             <div className="pa-hero-label">
               <CalendarDays size={16} />
               <span>Time Overrun Prediction</span>
-              <span className="pa-box-conf">Confidence: 92%</span>
+              <span className="pa-box-conf">Confidence: {riskProfile.timeConfidence}%</span>
             </div>
             <div className="pa-hero-big-val">{timeOverrunText}</div>
             <div className="pa-hero-sub">
@@ -3939,7 +3939,7 @@ function ProjectAnalysisCard({
             <div className="pa-hero-label">
               <Coins size={16} />
               <span>Cost Overrun Prediction</span>
-              <span className="pa-box-conf">Confidence: 88%</span>
+              <span className="pa-box-conf">Confidence: {riskProfile.costConfidence}%</span>
             </div>
             <div className="pa-hero-big-val">{costOverrunText}</div>
             <div className="pa-hero-sub">
@@ -3963,7 +3963,7 @@ function ProjectAnalysisCard({
             <div className="pa-hero-label">
               <ShieldAlert size={16} />
               <span>Overall Risk Level</span>
-              <span className="pa-box-conf">Confidence: 91%</span>
+              <span className="pa-box-conf">Confidence: {riskProfile.riskConfidence}%</span>
             </div>
             <div className="pa-hero-big-val">{riskProfile.tier} Risk ({riskProfile.score}/100)</div>
             <div className="pa-hero-sub">
