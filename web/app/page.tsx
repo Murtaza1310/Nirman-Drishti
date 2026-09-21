@@ -135,9 +135,9 @@ const metrics = [
   },
   // Row 2: Projected Time Overrun, Projected Cost Overrun, National Risk Level
   { 
-    label: 'PROJECTED TIME OVERRUN (INDIA)', 
+    label: 'PROJECTED TIME OVERRUN', 
     value: '+28.4 Months', 
-    note: 'Average project delay across India', 
+    note: 'Average delay expected across projects', 
     tag: 'Why AI said this?', 
     icon: Clock3, 
     tone: 'orange',
@@ -155,9 +155,9 @@ const metrics = [
     }
   },
   { 
-    label: 'PROJECTED COST OVERRUN (INDIA)', 
+    label: 'PROJECTED COST OVERRUN', 
     value: '+₹ 4.82 Lakh Cr', 
-    note: 'Expected price rise & loan interest', 
+    note: 'Extra money needed due to project delays', 
     tag: 'Why AI said this?', 
     icon: CircleDollarSign, 
     tone: 'orange',
