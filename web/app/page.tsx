@@ -103,9 +103,7 @@ import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps
 const navItems = [
   { label: 'Home', icon: Home },
   { label: 'Projects', icon: LayoutGrid, active: true, badge: '1,813' },
-  { label: 'Analysis', icon: BarChart3 },
   { label: 'Validation', icon: History, badge: '0.98 AUC' },
-  { label: 'Map', icon: Map },
   { label: 'AI', icon: Sparkles },
 ]
 
@@ -370,7 +368,7 @@ function UnifiedFilterBar({
             style={filters.urgentOnly ? { background: '#ef4444', color: '#ffffff', borderColor: '#dc2626' } : {}}
             title="Immediate Attention: High Risk projects delayed 24+ months"
           >
-            <span style={{ color: filters.urgentOnly ? '#ffffff' : '#ef4444' }}>🚨</span> Urgent Attention <span className="uf-pill-badge" style={filters.urgentOnly ? { background: '#ffffff', color: '#ef4444' } : {}}>{urgentCount}</span>
+            Urgent Attention <span className="uf-pill-badge" style={filters.urgentOnly ? { background: '#ffffff', color: '#ef4444' } : {}}>{urgentCount}</span>
           </button>
           <button
             className={`uf-pill ${filters.Risk === 'High' && !filters.urgentOnly ? 'active' : ''}`}
@@ -670,7 +668,7 @@ function NationalVisualAnalytics() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Activity size={18} color="#0284c7" />
-          <strong style={{ fontSize: '15px', color: '#0b2f52' }}>National Infrastructure War Room Analytics</strong>
+          <strong style={{ fontSize: '15px', color: '#0b2f52' }}>National Project Expenditure &amp; Delivery Velocity Dashboard</strong>
           <span style={{ fontSize: '11px', background: '#e0f2fe', color: '#0369a1', fontWeight: 800, padding: '2px 8px', borderRadius: '12px' }}>
             Live Intelligence
           </span>
@@ -681,8 +679,11 @@ function NationalVisualAnalytics() {
       <div className="analytics-grid">
         {/* Capex Allocation & Flow Multi-Bar */}
         <div>
-          <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '4px' }}>
-            CAPEX UTILIZATION FLOW (₹ 24.18 L Cr Expended)
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '2px' }}>
+            CAPITAL EXPENDITURE (BUDGET SPENT) BREAKDOWN: ₹ 24.18 LAKH CR DISBURSED
+          </div>
+          <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '6px' }}>
+            Official fund distribution across core project execution categories
           </div>
           <div className="capex-flow-bar" title="Capex Flow Breakdown across Civil Works, Land, Utilities & PMC">
             <div className="capex-seg" style={{ width: '62%', background: '#0284c7' }} title="Civil Works & Construction: 62% (₹ 14.99 L Cr)" />
@@ -691,10 +692,10 @@ function NationalVisualAnalytics() {
             <div className="capex-seg" style={{ width: '6%', background: '#8b5cf6' }} title="Supervision & PMC: 6% (₹ 1.45 L Cr)" />
           </div>
           <div className="capex-legend">
-            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#0284c7' }} /> Civil (62%)</span>
-            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} /> Land (21%)</span>
-            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b' }} /> Utilities (11%)</span>
-            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6' }} /> PMC (6%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#0284c7' }} /> Civil Construction (62%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} /> Land Acquisition &amp; Compensation (21%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b' }} /> Utility Relocation: Power, Water, Gas (11%)</span>
+            <span className="capex-leg-item"><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6' }} /> Project Supervision &amp; Clearances (6%)</span>
           </div>
         </div>
 
@@ -832,7 +833,7 @@ function ComparisonStudioModal({
                 <div className="compare-metric-row">
                   <span style={{ color: '#64748b' }}>Schedule Trajectory</span>
                   <strong style={{ color: onTrack ? '#10b981' : '#ef4444' }}>
-                    {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mos Delay`}
+                    {onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Mos Delay`}
                   </strong>
                 </div>
 
@@ -852,7 +853,7 @@ function ComparisonStudioModal({
 
                 <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '10px 12px', marginTop: 'auto' }}>
                   <div style={{ fontSize: '11px', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase' }}>
-                    💡 Advance Fund Intervention ROI
+                    Fund Intervention Impact Analysis
                   </div>
                   <div style={{ fontSize: '12px', color: '#1e3a8a', marginTop: '3px' }}>
                     ₹ 500 Cr cash advance accelerates vendor civil works by approx <strong>3.5 months</strong> and mitigates cost escalation.
@@ -1084,7 +1085,7 @@ function SpotlightModal({
           {query.trim() === '' ? (
             <>
               <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', padding: '6px 14px' }}>
-                🚀 Quick System Actions
+                System Actions
               </div>
               <div
                 className="spotlight-item"
@@ -1211,7 +1212,7 @@ export default function Page() {
 
   const [analysisSelectedId, setAnalysisSelectedId] = useState<string | null>(null)
 
-  const [analysisSubTab, setAnalysisSubTab] = useState<'projects' | 'ml_benchmark' | 'missing_data'>('projects')
+  const [validationMode, setValidationMode] = useState<'audit' | 'benchmark' | 'datagap' | 'pipeline'>('audit')
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
   const [search, setSearch] = useState('')
   const [activeBottleneck, setActiveBottleneck] = useState<string | null>(null)
@@ -1318,10 +1319,10 @@ export default function Page() {
   const projectFiltersActive =
     filters.State !== 'All' || filters.Risk !== 'All' || filters.Type !== 'All' || filters.Ministry !== 'All' || filters.Sector !== 'All' || search.trim() !== '' || Boolean(filters.urgentOnly) || activeBottleneck !== null
 
-  const handleNav = (nav: string, subTab?: 'projects' | 'ml_benchmark' | 'missing_data') => {
+  const handleNav = (nav: string, subTab?: 'audit' | 'benchmark' | 'datagap' | 'pipeline') => {
     setActiveNav(nav)
     if (subTab) {
-      setAnalysisSubTab(subTab)
+      setValidationMode(subTab)
     }
     setBriefingModalProject(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -1329,9 +1330,7 @@ export default function Page() {
 
   const handleOpenAnalysisForProject = (projectId: string) => {
     setAnalysisSelectedId(projectId)
-    setActiveNav('Analysis')
     setBriefingModalProject(null)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -1388,27 +1387,8 @@ export default function Page() {
         <section className="content">
           {activeNav === 'Home' ? (
             <HomeView onNavigate={handleNav} />
-          ) : activeNav === 'Analysis' ? (
-            <AnalysisView 
-              initialSelectedId={analysisSelectedId} 
-              onClearInitialSelected={() => setAnalysisSelectedId(null)}
-              onOpenBriefing={(p) => setBriefingModalProject(p)}
-              comparedIds={comparedIds}
-              onToggleCompare={toggleCompareProject}
-              onOpenEvidenceLocker={(p) => setEvidenceLockerProject(p)}
-              initialSubTab={analysisSubTab}
-              onNavigate={handleNav}
-            />
           ) : activeNav === 'Validation' ? (
-            <ValidationView onNavigate={handleNav} />
-          ) : activeNav === 'Map' ? (
-            <MapView onSeeProject={(proj) => {
-              if (proj) {
-                handleOpenAnalysisForProject(proj.id)
-              } else {
-                handleNav('Projects')
-              }
-            }} />
+            <ValidationView onNavigate={handleNav} initialMode={validationMode} />
           ) : activeNav === 'AI' ? (
             <AIView />
           ) : (
@@ -1443,8 +1423,6 @@ export default function Page() {
                   <NationalVisualAnalytics />
                 </div>
               )}
-
-              <PresenterMissionBar />
 
               <DynamicNationalBottleneckBarometer 
                 projects={filteredProjects}
@@ -1486,6 +1464,27 @@ export default function Page() {
                       projectsListTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }}
                   />
+
+                  {/* Direct In-Tab Project Analysis Modal */}
+                  {analysisSelectedId && (
+                    <div className="ca-modal-overlay" role="dialog" aria-modal="true" onClick={() => setAnalysisSelectedId(null)}>
+                      <div className="ca-modal" onClick={(event) => event.stopPropagation()}>
+                        <button className="ca-modal-close" onClick={() => setAnalysisSelectedId(null)} aria-label="Close detailed analysis"><X size={18} /></button>
+                        <div className="ca-modal-body">
+                          {getAnalysisProjectById(analysisSelectedId) && (
+                            <ProjectAnalysisCard 
+                              p={getAnalysisProjectById(analysisSelectedId)!} 
+                              onOpenBriefing={() => {
+                                const ap = getAnalysisProjectById(analysisSelectedId)
+                                if (ap) setBriefingModalProject(ap)
+                              }} 
+                              onOpenEvidenceLocker={(p) => setEvidenceLockerProject(p)}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="project-empty">
@@ -1595,7 +1594,7 @@ export default function Page() {
 
 const homeCapabilities = [
   { icon: FileText, tone: 'blue', title: 'Explore 1,813 Projects', desc: 'Search and track real national infrastructure projects with state, ministry, sector, and risk filters.', cta: 'Go to Projects', nav: 'Projects' },
-  { icon: BarChart3, tone: 'purple', title: 'Deep Predictive Analytics', desc: 'Inspect root causes, time-cost variance, and policy simulation sandboxes for flagship initiatives.', cta: 'Go to Analysis', nav: 'Analysis' },
+  { icon: History, tone: 'purple', title: 'Empirical AI Validation', desc: 'Inspect historical performance audits, ML vs stats benchmarks, and MoSPI data gap analysis.', cta: 'Go to Validation', nav: 'Validation' },
   { icon: Sparkles, tone: 'green', title: 'Launch AI Early Warning', desc: 'Predict potential milestone slippages months in advance using XGBoost and Random Forest ML models.', cta: 'Go to AI', nav: 'AI' },
 ] as const
 
@@ -1616,12 +1615,10 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string, subTab?: 'projects
           <p className="home-hero-desc">
             An AI-powered infrastructure intelligence platform that detects emerging project risks, explains their causes, predicts future delays and cost escalation, and supports evidence-based intervention.
           </p>
-          <div style={{ marginTop: '14px', marginBottom: '14px' }}>
-            <PresenterMissionBar />
-          </div>
+
           <div className="home-hero-actions">
             <button className="home-btn home-btn-primary" onClick={() => onNavigate('Projects')}>Explore 1,813 Projects <ArrowRight size={16} /></button>
-            <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Analysis')}><BarChart3 size={16} /> View Analysis &amp; Simulations</button>
+            <button className="home-btn home-btn-ghost" onClick={() => onNavigate('Validation')}><History size={16} /> View AI Validation &amp; Benchmarks</button>
             <button className="home-btn home-btn-ghost" onClick={() => onNavigate('AI')}><Sparkles size={16} /> Launch Drishti AI</button>
           </div>
         </div>
@@ -1678,7 +1675,7 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string, subTab?: 'projects
 
         <div className="home-spotlight-grid">
           {/* Spotlight Card 1: ML vs Stats */}
-          <div className="home-spotlight-card" onClick={() => onNavigate('Analysis', 'ml_benchmark')}>
+          <div className="home-spotlight-card" onClick={() => onNavigate('Validation', 'benchmark')}>
             <span className="spotlight-pill blue"><Scale size={13} /> Empirical Benchmark</span>
             <h3 className="spotlight-card-title">ML vs. Conventional Statistics Comparison</h3>
             <p className="spotlight-card-desc">
@@ -1692,7 +1689,7 @@ function HomeView({ onNavigate }: { onNavigate: (nav: string, subTab?: 'projects
           </div>
 
           {/* Spotlight Card 2: Missing Data */}
-          <div className="home-spotlight-card" onClick={() => onNavigate('Analysis', 'missing_data')}>
+          <div className="home-spotlight-card" onClick={() => onNavigate('Validation', 'datagap')}>
             <span className="spotlight-pill amber"><FileQuestion size={13} /> Policy Recommendation</span>
             <h3 className="spotlight-card-title">The MoSPI Data Gap: What Data Are We Missing?</h3>
             <p className="spotlight-card-desc">
@@ -1992,7 +1989,7 @@ function SatelliteGroundRealityWidget({ p }: { p: UnifiedProject }) {
       <div className="sat-source-callout" style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '10px 12px', marginBottom: '12px', fontSize: '11.5px', color: '#0369a1', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
         <Radar size={15} style={{ flexShrink: 0, marginTop: '2px', color: '#0284c7' }} />
         <div>
-          <strong>🛰️ Independent Satellite Telemetry Source:</strong> Automated earth observation feeds via <b>ISRO Bhuvan Remote Sensing</b> and <b>Copernicus Sentinel-2 Optical/SAR Earth Observation</b> satellites. Computer vision algorithms evaluate actual earthwork physical footprint and site activity to cross-verify against contractor PAIMANA claims.
+          <strong>Satellite Telemetry Source:</strong> Automated earth observation feeds via <b>ISRO Bhuvan Remote Sensing</b> and <b>Copernicus Sentinel-2 Optical/SAR Earth Observation</b> satellites. Computer vision algorithms evaluate actual earthwork physical footprint and site activity to cross-verify against contractor PAIMANA claims.
         </div>
       </div>
       <div className="sat-reality-header">
@@ -2001,7 +1998,7 @@ function SatelliteGroundRealityWidget({ p }: { p: UnifiedProject }) {
           <strong>Independent Satellite Ground Reality Cross-Check</strong>
         </div>
         <span className={`sat-status-pill ${s.hasDiscrepancy ? 'discrepancy' : 'verified'}`}>
-          {s.hasDiscrepancy ? '⚠️ DISCREPANCY DETECTED' : '✓ GROUND TRUTH VERIFIED'}
+          {s.hasDiscrepancy ? 'DISCREPANCY DETECTED' : 'GROUND TRUTH VERIFIED'}
         </span>
       </div>
 
@@ -2092,7 +2089,7 @@ function ModelTelemetryCard({ p }: { p: UnifiedProject }) {
             <span className="freshness-dot" style={{ backgroundColor: f?.indicatorColor || '#10b981', display: 'inline-block', marginRight: 6 }} />
             {f?.daysAgo || 12} Days Ago
           </strong>
-          <small>{f?.isStale ? `⚠️ Confidence decayed (-${f.penaltyPct}%)` : 'Fresh field telemetry'}</small>
+          <small>{f?.isStale ? `Confidence decayed (-${f.penaltyPct}%)` : 'Fresh field telemetry'}</small>
         </div>
 
         <div className="mt-item">
@@ -2151,7 +2148,7 @@ function EvidenceLockerModal({
           <div className="el-project-strip">
             <div>
               <strong style={{ fontSize: '15px', color: '#0b3157' }}>{p.name}</strong>
-              <span style={{ marginLeft: 8, color: '#68829c', fontSize: '12px' }}>({p.id})</span>
+              <span style={{ marginLeft: 8, color: '#68829c', fontSize: '12px' }}>[Project ID: {p.id}]</span>
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <span className={`badge ${p.riskProfile?.badgeClass}`}>{p.riskProfile?.tier} Risk</span>
@@ -2263,7 +2260,7 @@ function ProjectCard({
                 <Scale size={13} /> {isCompared ? 'In Compare Matrix' : '+ Compare'}
               </button>
             )}
-            <span className="project-id">{project.id}</span>
+            <span className="project-id" title="MoSPI Unique Project Identification Code">Project ID: {project.id}</span>
           </div>
         </div>
         <div className="pc-meta">
@@ -2288,25 +2285,25 @@ function ProjectCard({
       {/* Official Project Lifecycle & Milestone Timeline */}
       <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏛️ Announced / Sanctioned</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Sanctioned Date</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.announcedDate || project.approvalDate || 'March 2019'}</strong>
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Government Sanction</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏗️ Work Started</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Work Commencement</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.workStartDate || 'October 2019'}</strong>
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Ground Construction</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🎯 Original Target</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Original Target (DOC)</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{project.originalDoc || '06/2025'}</strong>
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Baseline DOC</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>⏱️ Projected Completion</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Projected Completion</span>
           <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{project.targetCompletion || project.anticipatedDoc || 'December 2027'}</strong>
           <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-            {onTrack ? '✓ On Schedule' : `+${project.overrunMonths || 0} Months Delay`}
+            {onTrack ? 'On Schedule' : `+${project.overrunMonths || 0} Months Delay`}
           </span>
         </div>
       </div>
@@ -2364,22 +2361,22 @@ function ProjectCard({
         {project.expenditureBreakdown && (
           <div className="capex-breakdown-grid">
             <div className="capex-chip">
-              <div className="capex-chip-header">🏗️ Building &amp; Construction</div>
+              <div className="capex-chip-header">Civil Construction Works</div>
               <div className="capex-chip-val">{project.expenditureBreakdown.civilWorks}</div>
               <div className="capex-chip-sub">Bridges, Tracks, Tunnels &amp; Buildings</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">🗺️ Buying Land &amp; Paying Landowners</div>
+              <div className="capex-chip-header">Land Acquisition &amp; Compensation</div>
               <div className="capex-chip-val">{project.expenditureBreakdown.landAcquisition}</div>
               <div className="capex-chip-sub">Farmer Compensation &amp; Land Clearance</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">⚡ Moving Power Lines, Pipes &amp; Cables</div>
+              <div className="capex-chip-header">Utility Relocation (Power, Water, Gas)</div>
               <div className="capex-chip-val">{project.expenditureBreakdown.utilityAndSystems}</div>
               <div className="capex-chip-sub">Electric Poles, Water Mains &amp; Signals</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">📋 Planning, Supervision &amp; Approvals</div>
+              <div className="capex-chip-header">Project Management &amp; Clearances</div>
               <div className="capex-chip-val">{project.expenditureBreakdown.contingencyAndPMC}</div>
               <div className="capex-chip-sub">Engineers, Safety Audits &amp; Government Permits</div>
             </div>
@@ -2464,7 +2461,7 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
         <div className="sim-controls">
           <div className="sim-slider-group">
             <div className="sim-slider-label">
-              <span>🗺️ Speed Up Land Buying:</span>
+              <span>Accelerate Land Acquisition:</span>
               <span>{landSpeedupMonths} Months Earlier</span>
             </div>
             <input
@@ -2481,7 +2478,7 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
 
           <div className="sim-slider-group">
             <div className="sim-slider-label">
-              <span>💰 Release Extra Funds in Advance:</span>
+              <span>Advance Capital Allocation:</span>
               <span>+{fundInjectionPct}% Extra Advance Money</span>
             </div>
             <input
@@ -2498,7 +2495,7 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
 
           <div className="sim-slider-group">
             <div className="sim-slider-label">
-              <span>⚙️ Add More Workers &amp; Machines:</span>
+              <span>Augment Contractor Machinery:</span>
               <span>+{contractorAugment}% More Capacity</span>
             </div>
             <input
@@ -2525,7 +2522,7 @@ function WhatIfSimulator({ project }: { project: Project | AnalysisProject }) {
                 {isCurrentlyOnTime ? '0 mos (On Track)' : simulatedDelayMonths === 0 ? 'On Baseline' : `${simulatedDelayMonths} mos`}
               </div>
               <div className="sim-kpi-delta">
-                {isCurrentlyOnTime ? '✓ On-Time Schedule Protected' : `↓ Saves ${delayReductionMonths} Months`}
+                {isCurrentlyOnTime ? 'On-Time Schedule Protected' : `↓ Saves ${delayReductionMonths} Months`}
               </div>
             </div>
             <div className="sim-kpi">
@@ -2696,8 +2693,8 @@ function MLVsStatsBenchmarkView({ onNavigate }: { onNavigate?: (nav: string) => 
               <td>0.521</td>
               <td>±11.4 Mo</td>
               <td><span className="badge-pill-poor">58.3%</span></td>
-              <td><span className="badge-pill-poor">❌ Fails (Assumes linear)</span></td>
-              <td><span className="badge-pill-poor">❌ Tabular Only</span></td>
+              <td><span className="badge-pill-poor">Unsupported (Assumes linear)</span></td>
+              <td><span className="badge-pill-poor">Tabular Only</span></td>
             </tr>
             <tr>
               <td>
@@ -2708,8 +2705,8 @@ function MLVsStatsBenchmarkView({ onNavigate }: { onNavigate?: (nav: string) => 
               <td>0.448</td>
               <td>±13.8 Mo</td>
               <td><span className="badge-pill-poor">49.2%</span></td>
-              <td><span className="badge-pill-poor">❌ Fails on Stalls</span></td>
-              <td><span className="badge-pill-poor">❌ Univariate Only</span></td>
+              <td><span className="badge-pill-poor">Fails on Stalls</span></td>
+              <td><span className="badge-pill-poor">Univariate Only</span></td>
             </tr>
             <tr>
               <td>
@@ -2720,8 +2717,8 @@ function MLVsStatsBenchmarkView({ onNavigate }: { onNavigate?: (nav: string) => 
               <td>0.612</td>
               <td>±8.9 Mo</td>
               <td><span className="badge-pill-mid">64.1%</span></td>
-              <td><span className="badge-pill-poor">❌ S-Curve Distortion</span></td>
-              <td><span className="badge-pill-poor">❌ Accounting Only</span></td>
+              <td><span className="badge-pill-poor">S-Curve Distortion</span></td>
+              <td><span className="badge-pill-poor">Accounting Only</span></td>
             </tr>
             <tr className="highlight-ai">
               <td>
@@ -2732,8 +2729,8 @@ function MLVsStatsBenchmarkView({ onNavigate }: { onNavigate?: (nav: string) => 
               <td><span className="badge-pill-good">0.963</span></td>
               <td><span className="badge-pill-good">±3.5 Mo</span></td>
               <td><span className="badge-pill-good">95.0%</span></td>
-              <td><span className="badge-pill-good">✓ Native Step Split</span></td>
-              <td><span className="badge-pill-good">✓ 5-Source Fusion</span></td>
+              <td><span className="badge-pill-good">Supported (Native Step Split)</span></td>
+              <td><span className="badge-pill-good">Supported (5-Source Fusion)</span></td>
             </tr>
           </tbody>
         </table>
@@ -3343,7 +3340,7 @@ function CompactAnalysisCard({
           <span className="ca-fact-label">Target Completion</span>
           <strong className="ca-fact-val">{p.targetCompletion || p.anticipatedDoc || p.originalDoc}</strong>
           <small className={`ca-fact-note ${onTrack ? 'pa-green' : 'pa-red'}`}>
-            {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mo Delay`}
+            {onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Mo Delay`}
           </small>
         </div>
       </div>
@@ -3496,25 +3493,25 @@ function ProjectAnalysisCard({
       {/* Official Government Project Lifecycle & Milestone Timeline */}
       <div style={{ background: '#f4f8fc', border: '1px solid #dce7f1', borderRadius: '8px', padding: '12px 16px', margin: '14px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', fontSize: '12px' }}>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏛️ Announced / Sanctioned</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Sanctioned Date</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.announcedDate || p.approvalDate || 'March 2019'}</strong>
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Government Sanction</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🏗️ Work Started on Ground</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Work Commencement on Ground</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.workStartDate || 'October 2019'}</strong>
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Construction Kickoff</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>🎯 Original Target (DOC)</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Original Target (DOC) (DOC)</span>
           <strong style={{ color: '#0b3157', fontSize: '13px' }}>{p.originalDoc || '06/2025'}</strong>
           <span style={{ color: '#68829c', fontSize: '11px', display: 'block', marginTop: '2px' }}>Sanction Baseline</span>
         </div>
         <div>
-          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>⏱️ Projected Completion</span>
+          <span style={{ color: '#526e89', display: 'block', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Projected Completion</span>
           <strong style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '13px' }}>{p.targetCompletion || p.anticipatedDoc || 'December 2027'}</strong>
           <span style={{ color: onTrack ? '#159149' : '#df4036', fontSize: '11px', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-            {onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Months Delay`}
+            {onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Months Delay`}
           </span>
         </div>
       </div>
@@ -3554,7 +3551,7 @@ function ProjectAnalysisCard({
             <strong>{p.originalDoc || 'Baseline DOC'}</strong>
             <div className="pa-band-label pa-band-gap">Anticipated Target</div>
             <strong style={{ color: onTrack ? '#159149' : '#df4036' }}>{p.anticipatedDoc || p.originalDoc}</strong>
-            <small className={onTrack ? 'pa-green' : 'pa-red'}>({onTrack ? '✓ On Schedule' : `+${p.overrunMonths || 0} Mo Delay`})</small>
+            <small className={onTrack ? 'pa-green' : 'pa-red'}>({onTrack ? 'On Schedule' : `+${p.overrunMonths || 0} Mo Delay`})</small>
           </div>
         </div>
         <div className="pa-band-item">
@@ -3583,22 +3580,22 @@ function ProjectAnalysisCard({
           </div>
           <div className="capex-breakdown-grid">
             <div className="capex-chip">
-              <div className="capex-chip-header">🏗️ Building &amp; Construction Work</div>
+              <div className="capex-chip-header">Civil Construction Works Work</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.civilWorks}</div>
               <div className="capex-chip-sub">Pillars, Tunnels, Bridges &amp; Railway Tracks</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">🗺️ Buying Land &amp; Paying Landowners &amp; R&amp;R</div>
+              <div className="capex-chip-header">Land Acquisition &amp; Compensation &amp; R&amp;R</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.landAcquisition}</div>
               <div className="capex-chip-sub">Direct Money Paid to Farmers &amp; Landowners</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">⚡ Moving Power Lines, Pipes &amp; Cables Integration</div>
+              <div className="capex-chip-header">Utility Relocation (Power, Water, Gas) Integration</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.utilityAndSystems}</div>
               <div className="capex-chip-sub">High-Voltage Power Lines, Water Pipes &amp; Signals</div>
             </div>
             <div className="capex-chip">
-              <div className="capex-chip-header">📋 Project Supervision &amp; Legal Approvals</div>
+              <div className="capex-chip-header">Project Supervision &amp; Legal Approvals</div>
               <div className="capex-chip-val">{p.expenditureBreakdown.contingencyAndPMC}</div>
               <div className="capex-chip-sub">Quality Inspections, Safety Clearances &amp; Legal Work</div>
             </div>
@@ -3922,16 +3919,16 @@ function answerQuery(q: string): string {
     const pBalText = p.balanceCost || `₹ ${pBalNum.toLocaleString('en-IN')} Cr`
 
     if (wantMoneySpent || (wantCost && /(spent|how much)/.test(ql))) {
-      return `📊 Financial & Expenditure Audit for ${p.name} (${p.id}):\n` +
+      return `Financial & Expenditure Audit for ${p.name} (${p.id}):\n` +
         `• Total Sanctioned Budget: ${p.cost}\n` +
         `• Cumulative Invested/Spent: ${pSpentText} (${pFin}% utilized)\n` +
         `• Remaining Money Left to Spend: ${pBalText}\n\n` +
         (p.expenditureBreakdown ? 
           `Component Breakdown of Invested Capital:\n` +
-          `  🏗️ Civil & Physical Works: ${p.expenditureBreakdown.civilWorks}\n` +
-          `  🗺️ Buying Land & Compensating Landowners (R&R): ${p.expenditureBreakdown.landAcquisition}\n` +
-          `  ⚡ Utility Relocation & Systems: ${p.expenditureBreakdown.utilityAndSystems}\n` +
-          `  📋 PMC, Supervision & Statutory: ${p.expenditureBreakdown.contingencyAndPMC}`
+          `  Civil Construction Works: ${p.expenditureBreakdown.civilWorks}\n` +
+          `  Land Acquisition & Compensation: ${p.expenditureBreakdown.landAcquisition}\n` +
+          `  Utility Relocation & Systems: ${p.expenditureBreakdown.utilityAndSystems}\n` +
+          `  PMC & Statutory Clearances: ${p.expenditureBreakdown.contingencyAndPMC}`
           : `Breakdown: 55% civil infrastructure, 25% land compensation, 12% utility shifting, 8% PMC.`);
     }
     if (wantRisk) return `${p.name} (${p.id}) carries a ${p.risk} risk rating with a risk score of ${p.riskScore}/100. The AI model estimates a ${p.delayProbability}% probability of delay slippage. Primary bottleneck: ${p.criticalIssue}.`
@@ -3943,7 +3940,7 @@ function answerQuery(q: string): string {
   }
 
   if (/(money invested|how much money|total spent|expenditure|utilized)/.test(ql)) {
-    return `💰 National Portfolio Expenditure Audit:\n` +
+    return `National Portfolio Expenditure Audit:\n` +
       `• Total Sanctioned Budget: ₹ 18.94 Lakh Crore across 1,813 projects\n` +
       `• Cumulative Capital Invested/Spent: ₹ 11.48 Lakh Crore (60.6% utilization)\n` +
       `• Largest Single Investment: Mumbai–Ahmedabad High Speed Rail (₹ 72,257 Cr spent of ₹ 1.08 Lakh Cr budget, with ₹ 18,064 Cr invested in land acquisition alone).\n` +
@@ -4177,7 +4174,7 @@ function ExecutiveDossierModal({
 
           {/* Official Project Lifecycle & Milestones Table */}
           <div style={{ marginBottom: '20px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>📅 Project Lifecycle &amp; Statutory Milestone Audit</h4>
+            <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>Project Lifecycle &amp; Statutory Milestone Audit</h4>
             <div className="ca-table-responsive">
               <table style={{ width: '100%', minWidth: '580px', borderCollapse: 'collapse', fontSize: '13px' }}>
                 <tbody>
@@ -4232,22 +4229,22 @@ function ExecutiveDossierModal({
               <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0b3157', marginBottom: '10px' }}>Expenditure Audit &amp; Capital Utilization Breakdown</h4>
               <div className="capex-breakdown-grid">
                 <div className="capex-chip">
-                  <div className="capex-chip-header">🏗️ Building &amp; Construction</div>
+                  <div className="capex-chip-header">Civil Construction Works</div>
                   <div className="capex-chip-val">{p.expenditureBreakdown.civilWorks}</div>
                   <div className="capex-chip-sub">Procurement, Physical Structures</div>
                 </div>
                 <div className="capex-chip">
-                  <div className="capex-chip-header">🗺️ Buying Land &amp; Paying Landowners (R&amp;R)</div>
+                  <div className="capex-chip-header">Land Acquisition &amp; Compensation (R&amp;R)</div>
                   <div className="capex-chip-val">{p.expenditureBreakdown.landAcquisition}</div>
                   <div className="capex-chip-sub">Direct Compensation &amp; Resettlement</div>
                 </div>
                 <div className="capex-chip">
-                  <div className="capex-chip-header">⚡ Utility &amp; Systems Integration</div>
+                  <div className="capex-chip-header">Utility &amp; Systems Integration</div>
                   <div className="capex-chip-val">{p.expenditureBreakdown.utilityAndSystems}</div>
                   <div className="capex-chip-sub">Power Grids, Relocation, Signals</div>
                 </div>
                 <div className="capex-chip">
-                  <div className="capex-chip-header">📋 Project Supervision &amp; Legal Approvals</div>
+                  <div className="capex-chip-header">Project Supervision &amp; Legal Approvals</div>
                   <div className="capex-chip-val">{p.expenditureBreakdown.contingencyAndPMC}</div>
                   <div className="capex-chip-sub">Statutory Approvals &amp; Overhead</div>
                 </div>
@@ -4306,8 +4303,20 @@ function ExecutiveDossierModal({
    HISTORICAL VALIDATION & DATA ENGINEERING PIPELINE VIEW (THE DEMO MOMENT)
    ========================================================================= */
 
-function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
-  const [activeMode, setActiveMode] = useState<'timemachine' | 'pipeline'>('timemachine')
+function ValidationView({ 
+  onNavigate,
+  initialMode = 'audit'
+}: { 
+  onNavigate: (nav: string, sub?: any) => void;
+  initialMode?: 'audit' | 'benchmark' | 'datagap' | 'pipeline';
+}) {
+  const [activeMode, setActiveMode] = useState<'audit' | 'benchmark' | 'datagap' | 'pipeline'>(initialMode)
+
+  useEffect(() => {
+    if (initialMode) {
+      setActiveMode(initialMode)
+    }
+  }, [initialMode])
   const [selectedSector, setSelectedSector] = useState<string>('All')
   const [simLog, setSimLog] = useState<string[]>([])
   const [simulating, setSimulating] = useState(false)
@@ -4324,11 +4333,11 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
   const handleSimulateIngest = () => {
     setSimulating(true)
     setSimLog([
-      '⚡ [LIVE SYNC] Change Data Capture (CDC) detected new project in MoSPI PAIMANA...',
-      '📥 Ingesting: NH-930D 6-Lane Expressway Corridor (Surat–Navsari Bypass)',
-      '✓ Schema validation passed: Sanctioned budget ₹ 2,450 Cr | Timeline: 36 Months',
-      '🧠 Drishti AI Neural Model evaluated 17 indicators: Risk Tier: Medium (68/100) | Predicted Delay: +14 Months',
-      '🚀 Project instantly available in NIRMAN-Drishti live catalog within 1.8 seconds!',
+      '[LIVE SYNC] Change Data Capture (CDC) detected new project in MoSPI PAIMANA...',
+      'Ingesting: NH-930D 6-Lane Expressway Corridor (Surat–Navsari Bypass)',
+      'Schema validation passed: Sanctioned budget ₹ 2,450 Cr | Timeline: 36 Months',
+      'Drishti AI evaluated 17 indicators: Risk Tier: Medium (68/100) | Predicted Delay: +14 Months',
+      'Project indexed in live catalog within 1.8 seconds.',
     ])
     setTimeout(() => setSimulating(false), 600)
   }
@@ -4336,12 +4345,12 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
   const handleSimulateRetrain = () => {
     setRetraining(true)
     setSimRetrainLog([
-      '🎯 [COMPLETION EVENT] Commercial Operation Date (COD) verified for Mumbai Metro Line 3',
-      '📦 Project automatically archived to Audited Ground Truth Dataset (Total Projects: 49,095)',
-      '🔒 Data Leakage Check: Verified time-lock. No post-completion features leaked into training',
-      '⚙️ Nightly Retraining Worker launched: Recalibrating XGBoost & Random Forest models',
-      '📊 Champion-Challenger validation passed (+0.4% accuracy improvement across 5-fold GroupKFold)',
-      '✨ Live model updated in production seamlessly with zero downtime!',
+      '[COMPLETION EVENT] Commercial Operation Date (COD) verified for Mumbai Metro Line 3',
+      'Project archived to Audited Ground Truth Dataset (Total Projects: 49,095)',
+      'Data Leakage Check: Verified point-in-time lock. No post-completion features leaked into training',
+      'Nightly Retraining Worker launched: Recalibrating XGBoost & Random Forest models',
+      'Champion-Challenger validation passed (+0.4% accuracy improvement across 5-fold GroupKFold)',
+      'Live model updated in production seamlessly with zero downtime.',
     ])
     setTimeout(() => setRetraining(false), 700)
   }
@@ -4353,7 +4362,7 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
         <div className="clean-val-badge">
           <ShieldCheck size={15} /> EMPIRICAL PROOF OF AI ACCURACY
         </div>
-        <h1 className="clean-val-title">Historical Time-Machine: Did AI Predict Delays Accurately?</h1>
+        <h1 className="clean-val-title">Historical Performance Audit: Did Drishti AI Forecast Delays Accurately?</h1>
         <p className="clean-val-desc">
           Compare what contractors claimed years ago, what Drishti AI predicted, and what actually happened by 2026. See ground-truth proof of how our early warning system detected multi-year delays years before official records acknowledged them.
         </p>
@@ -4361,21 +4370,33 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
         {/* Top 2-Pill Mode Switcher */}
         <div className="clean-val-toggle-bar">
           <button
-            className={`clean-val-toggle-btn ${activeMode === 'timemachine' ? 'active' : ''}`}
-            onClick={() => setActiveMode('timemachine')}
+            className={`clean-val-toggle-btn ${activeMode === 'audit' ? 'active' : ''}`}
+            onClick={() => setActiveMode('audit')}
           >
-            <History size={16} /> ⏳ Time-Machine (Past Claims vs AI vs Reality)
+            <History size={15} /> 1. Historical Ground-Truth Audit
+          </button>
+          <button
+            className={`clean-val-toggle-btn ${activeMode === 'benchmark' ? 'active' : ''}`}
+            onClick={() => setActiveMode('benchmark')}
+          >
+            <Scale size={15} /> 2. ML vs. Conventional Statistics Benchmark
+          </button>
+          <button
+            className={`clean-val-toggle-btn ${activeMode === 'datagap' ? 'active' : ''}`}
+            onClick={() => setActiveMode('datagap')}
+          >
+            <FileText size={15} /> 3. MoSPI Data Gap: What Data Are We Missing?
           </button>
           <button
             className={`clean-val-toggle-btn ${activeMode === 'pipeline' ? 'active' : ''}`}
             onClick={() => setActiveMode('pipeline')}
           >
-            <Workflow size={16} /> ⚙️ Data Pipeline &amp; Live PAIMANA Integration
+            <Workflow size={15} /> 4. Continuous Ingestion &amp; Anti-Leakage
           </button>
         </div>
       </div>
 
-      {activeMode === 'timemachine' && (
+      {activeMode === 'audit' && (
         <div className="clean-val-body">
           {/* Addressing Class Imbalance & Evaluation Rigor Notice */}
           <div className="imbalance-notice-box">
@@ -4542,7 +4563,7 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
                         <span style={{ fontSize: '11px', color: '#334155' }}>{c.groundTruthActual.actualPrimaryCause}</span>
                       </div>
                       <div className="tm-reality-badge">
-                        ✓ Status: {c.groundTruthActual.status}
+                        Status: {c.groundTruthActual.status}
                       </div>
                     </div>
                   </div>
@@ -4556,6 +4577,18 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
               </article>
             ))}
           </div>
+        </div>
+      )}
+
+      {activeMode === 'benchmark' && (
+        <div className="clean-val-body">
+          <MLVsStatsBenchmarkView onNavigate={onNavigate} />
+        </div>
+      )}
+
+      {activeMode === 'datagap' && (
+        <div className="clean-val-body">
+          <MoSPIDataGapView onNavigate={onNavigate} />
         </div>
       )}
 
@@ -4641,7 +4674,7 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
                         onClick={handleSimulateIngest}
                         disabled={simulating}
                       >
-                        <Zap size={13} /> {simulating ? 'Ingesting...' : '⚡ Ingest New PAIMANA Project'}
+                        <Zap size={13} /> {simulating ? 'Ingesting...' : 'Ingest New PAIMANA Project'}
                       </button>
                       <button 
                         className="home-btn" 
@@ -4649,7 +4682,7 @@ function ValidationView({ onNavigate }: { onNavigate: (nav: string) => void }) {
                         onClick={handleSimulateRetrain}
                         disabled={retraining}
                       >
-                        <RefreshCw size={13} /> {retraining ? 'Retraining...' : '🔄 Complete Project & Retrain'}
+                        <RefreshCw size={13} /> {retraining ? 'Retraining...' : 'Complete Project & Retrain'}
                       </button>
                     </div>
                   </div>

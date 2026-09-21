@@ -8251,3 +8251,127 @@ body.dark-theme .dd-card-icon {
   background: #13243c !important;
   color: #38bdf8 !important;
 }
+
+/* =========================================================================
+   Tightened Executive Layout Spacing: Compact, Clean, Government-Grade
+   ========================================================================= */
+
+.project-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.project-card {
+  padding: 12px 16px !important;
+  border-radius: 10px !important;
+  margin-bottom: 0 !important;
+}
+
+.pc-header {
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+}
+
+.pc-heading strong {
+  font-size: 15px !important;
+}
+
+.pc-meta {
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+  gap: 12px !important;
+}
+
+.pc-metrics {
+  padding: 8px 0 4px !important;
+  gap: 8px !important;
+}
+
+.pc-metric {
+  padding: 8px 10px !important;
+  min-height: 52px !important;
+  border-radius: 8px !important;
+}
+
+.pc-metric-value {
+  font-size: 13.5px !important;
+}
+
+.pc-metric-label {
+  font-size: 10.5px !important;
+}
+
+.pc-capex-container {
+  margin-top: 8px !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+}
+
+.capex-top {
+  margin-bottom: 6px !important;
+}
+
+.capex-stats {
+  gap: 12px !important;
+}
+
+.capex-breakdown-grid {
+  margin-top: 8px !important;
+  gap: 8px !important;
+}
+
+.capex-chip {
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+}
+
+.capex-chip-header {
+  font-size: 10.5px !important;
+}
+
+.capex-chip-val {
+  font-size: 13.5px !important;
+}
+
+.pc-actions {
+  margin-top: 10px !important;
+  padding-top: 8px !important;
+  gap: 8px !important;
+}
+
+.pc-actions button {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+}
+
+/* Card banner and top metrics tightening */
+.card-banner {
+  height: 38px !important;
+  padding: 0 16px !important;
+}
+
+.metrics-grid {
+  padding: 6px 10px !important;
+}
+
+.metric {
+  min-height: 80px !important;
+  padding: 10px 14px !important;
+}
+
+.war-room-analytics-card {
+  padding: 12px 16px !important;
+  margin-top: 8px !important;
+  margin-bottom: 10px !important;
+}
+
+.national-bottleneck-barometer {
+  margin-top: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+.section-heading {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
