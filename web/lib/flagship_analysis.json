@@ -1425,5 +1425,51 @@
     "actionConf": 91,
     "announcedDate": "January 2020",
     "workStartDate": "June 2020"
+  },
+  {
+    "id": "NHAI_1245",
+    "name": "Four Laning of Panvel to Indapur Section (Mumbai-Goa Highway NH-66 / Kasu Stretch)",
+    "status": "Delayed",
+    "risk": "High",
+    "ministry": "Ministry of Road Transport & Highways",
+    "sector": "Road Transport & Highways",
+    "states": "Maharashtra",
+    "cost": "₹ 329.8 Cr",
+    "revisedCost": "₹ 381.3 Cr",
+    "revisedPct": "+15.6%",
+    "progress": 40.1,
+    "originalCompletion": "07/2027",
+    "currentExpected": "07/2029",
+    "expectedDelta": "+24 Months",
+    "currentDelay": "+24 Months Delay",
+    "aiConfidence": 91,
+    "predictedDelay": "+24 Months",
+    "predictedDelayConf": 89,
+    "estFunding": "₹ 51.5 Cr (Escalation)",
+    "estFundingConf": 86,
+    "overallRisk": "High (82/100)",
+    "overallRiskConf": 90,
+    "bottleneck": "Right-of-Way Handover, Monsoon Washouts & Contractor Replacement Stalls",
+    "bottleneckDesc": "The Panvel-Indapur section (Kasu stretch) has experienced multiple concessionaire defaults, delayed right-of-way handover in Raigad district, and intense Konkan monsoon soil erosion requiring slope stabilization.",
+    "impact": "Heavy traffic bottlenecks connecting Mumbai metropolitan region to southern Konkan and Goa, with severe travel time delays.",
+    "affectedActivity": "Carriageway widening, Kasu bypass flyover construction, and bituminous concrete wearing course laying",
+    "riskFurther": "High risk of monsoon-triggered landslides and pavement deterioration if pre-monsoon overlay is incomplete.",
+    "bottleneckConf": 90,
+    "rootCause": [
+      "Historical EPC contractor insolvency and contract re-tendering cycles",
+      "Heavy Konkan coastal precipitation suspending earthworks 4 months a year",
+      "Utility cable and pipeline relocation along dense coastal urban clusters"
+    ],
+    "rootCauseConf": 88,
+    "priority": "CRITICAL",
+    "actionText": "Direct coordination between NHAI, Maharashtra PWD, and Raigad District Collectorate to resolve pending ROW encroacher compensation and deploy pre-cast drainage culverts before the monsoon window.",
+    "expectedImpact": [
+      "Unblocks Panvel-Kasu 42 km dual carriageway commissioning within 8 months",
+      "Reduces travel time between Mumbai and Goa by 2.5 hours",
+      "Eliminates contractor idle equipment claims"
+    ],
+    "actionConf": 91,
+    "announcedDate": "February 2022",
+    "workStartDate": "August 2022"
   }
 ]

@@ -78359,7 +78359,7 @@
   },
   {
     "id": "NHAI_1245",
-    "name": "Balance work of 4L Panvel to Indapur section of NH-66 Old NH- 17 from km 0.000 Panvel to km 42.300 Kasu",
+    "name": "Four Laning of Panvel to Indapur Section (Mumbai-Goa Highway NH-66 / Kasu Stretch)",
     "state": "Maharashtra",
     "risk": "High",
     "type": "Delayed",
@@ -78403,10 +78403,10 @@
     "overrunMonths": 24,
     "riskScore": 82,
     "delayProbability": 80,
-    "criticalIssue": "Inter-Agency Statutory NOCs & ROW Handover",
+    "criticalIssue": "Land Possession Handover & Forest Wildlife Stage-II Clearances",
     "coordinates": [
-      75.97,
-      19.56
+      73.11,
+      18.98
     ],
     "reportPeriod": "JUL-2026",
     "reportYear": 2026,
@@ -87523,8 +87523,8 @@
   },
   {
     "id": "MoRTH_1465",
-    "name": "Kashedi ghat tunnel NH-66 [Bhogaon Khurd - Kashedi section] 4 lanes under NHDP on EPC mode",
-    "state": "Rajasthan",
+    "name": "Kashedi Ghat Twin Tunnel & 4-Lane Road (Mumbai-Goa Highway NH-66)",
+    "state": "Maharashtra",
     "risk": "High",
     "type": "Delayed",
     "ministry": "Ministry of Road Transport & Highways",
@@ -87567,10 +87567,10 @@
     "overrunMonths": 51,
     "riskScore": 80,
     "delayProbability": 77,
-    "criticalIssue": "Inter-Agency Statutory NOCs & ROW Handover",
+    "criticalIssue": "Ghat Terrain Geological Stabilization & Contractor Liquidity",
     "coordinates": [
-      74.21,
-      27.39
+      73.45,
+      17.92
     ],
     "reportPeriod": "JUL-2026",
     "reportYear": 2026,
@@ -87581,8 +87581,8 @@
   },
   {
     "id": "MoRTH_1466",
-    "name": "Kashedi to Parshuram Ghat section of NH-66 from Km 161/600 - Km 205/400 - 4L PS",
-    "state": "Rajasthan",
+    "name": "Four Laning of Kashedi to Parshuram Ghat Section (Mumbai-Goa Highway NH-66)",
+    "state": "Maharashtra",
     "risk": "High",
     "type": "Delayed",
     "ministry": "Ministry of Road Transport & Highways",
@@ -87625,10 +87625,10 @@
     "overrunMonths": 18,
     "riskScore": 80,
     "delayProbability": 77,
-    "criticalIssue": "Inter-Agency Statutory NOCs & ROW Handover",
+    "criticalIssue": "Hilly Terrain Landslip Mitigation & Utility Shifting",
     "coordinates": [
-      74.4,
-      27.35
+      73.51,
+      17.55
     ],
     "reportPeriod": "JUL-2026",
     "reportYear": 2026,
@@ -88277,8 +88277,8 @@
   },
   {
     "id": "MoRTH_1478",
-    "name": "Arawali Kante section of NH-17New NH-66 4L PS from Km.241/300 to 281/300",
-    "state": "Rajasthan",
+    "name": "Four Laning of Arawali to Kante Section (Mumbai-Goa Highway NH-66)",
+    "state": "Maharashtra",
     "risk": "High",
     "type": "Delayed",
     "ministry": "Ministry of Road Transport & Highways",
@@ -88321,10 +88321,10 @@
     "overrunMonths": 18,
     "riskScore": 80,
     "delayProbability": 77,
-    "criticalIssue": "Inter-Agency Statutory NOCs & ROW Handover",
+    "criticalIssue": "Land Compensation Disbursement & Bridge Construction",
     "coordinates": [
-      73.94,
-      26.64
+      73.54,
+      17.22
     ],
     "reportPeriod": "JUL-2026",
     "reportYear": 2026,
@@ -88451,8 +88451,8 @@
   },
   {
     "id": "MoRTH_1481",
-    "name": "Kante - Wakad section of NH-66 4L PS from Km.281/300 to 332/200",
-    "state": "Sikkim",
+    "name": "Four Laning of Kante to Wakad Section (Mumbai-Goa Highway NH-66)",
+    "state": "Maharashtra",
     "risk": "High",
     "type": "Delayed",
     "ministry": "Ministry of Road Transport & Highways",
@@ -88495,10 +88495,10 @@
     "overrunMonths": 56,
     "riskScore": 82,
     "delayProbability": 80,
-    "criticalIssue": "Inter-Agency Statutory NOCs & ROW Handover",
+    "criticalIssue": "Right-of-Way (RoW) Clearance & Monsoon Earthwork Delays",
     "coordinates": [
-      88.78,
-      27.06
+      73.52,
+      16.65
     ],
     "reportPeriod": "JUL-2026",
     "reportYear": 2026,
